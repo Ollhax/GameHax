@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3F167F06-8D75-4111-882C-7239EA91F13B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MG.Framework</RootNamespace>
+    <AssemblyName>Framework</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NVorbis">
+      <HintPath>Externals\NVorbis\NVorbis.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="nunit.framework">
+      <HintPath>Externals\NUnit\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
+      <HintPath>Externals\OpenTK\OpenTK.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\AudioDevice.cs" />
+    <Compile Include="Audio\MusicStream.cs" />
+    <Compile Include="Audio\Logging.cs" />
+    <Compile Include="Audio\OggLogger.cs" />
+    <Compile Include="Audio\OggStream.cs" />
+    <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Converters\FieldPropertyDescriptor.cs" />
+    <Compile Include="Converters\MathTypeConverter.cs" />
+    <Compile Include="Converters\MemberPropertyDescriptor.cs" />
+    <Compile Include="Converters\PropertyPropertyDescriptor.cs" />
+    <Compile Include="Converters\RectangleConverter.cs" />
+    <Compile Include="Converters\RectangleFConverter.cs" />
+    <Compile Include="Converters\RelativePosition2Converter.cs" />
+    <Compile Include="Converters\TypeConvert.cs" />
+    <Compile Include="Converters\Vector2Converter.cs" />
+    <Compile Include="Converters\Vector2IConverter.cs" />
+    <Compile Include="Graphics\ColorEffect.cs" />
+    <Compile Include="Graphics\ColorTextureEffect.cs" />
+    <Compile Include="Graphics\RenderQueue.cs" />
+    <Compile Include="Graphics\TextureFill.cs" />
+    <Compile Include="Graphics\Effect.cs" />
+    <Compile Include="Graphics\Font.cs" />
+    <Compile Include="Graphics\FontDefinition.cs" />
+    <Compile Include="Graphics\FontLayout.cs" />
+    <Compile Include="Graphics\GraphicsDevice.cs" />
+    <Compile Include="Graphics\GraphicsTypes.cs" />
+    <Compile Include="Graphics\PrimitiveBatch.cs" />
+    <Compile Include="Graphics\RenderHelpers.cs" />
+    <Compile Include="Graphics\QuadEffects.cs" />
+    <Compile Include="Graphics\QuadBatch.cs" />
+    <Compile Include="Graphics\Texture2D.cs" />
+    <Compile Include="Graphics\TexturePath.cs" />
+    <Compile Include="Graphics\TextureSampling.cs" />
+    <Compile Include="Graphics\TextureSet.cs" />
+    <Compile Include="Graphics\TextureSetReference.cs" />
+    <Compile Include="Graphics\Vertex2Color.cs" />
+    <Compile Include="Graphics\Vertex2TexColor.cs" />
+    <Compile Include="Graphics\Viewport.cs" />
+    <Compile Include="Input\Button.cs" />
+    <Compile Include="Input\Input.cs" />
+    <Compile Include="Input\InputContext.cs" />
+    <Compile Include="Input\InputBinding.cs" />
+    <Compile Include="Input\InputHandler.cs" />
+    <Compile Include="Input\InputTranslation.cs" />
+    <Compile Include="Input\KeyModifier.cs" />
+    <Compile Include="Input\Range.cs" />
+    <Compile Include="Numerics\Alignment.cs" />
+    <Compile Include="Numerics\Circle.cs" />
+    <Compile Include="Numerics\Circle.Test.cs" />
+    <Compile Include="Numerics\Color.cs" />
+    <Compile Include="Numerics\Hexagon.cs" />
+    <Compile Include="Numerics\Line.cs" />
+    <Compile Include="Numerics\Line.Test.cs" />
+    <Compile Include="Numerics\MathTools.cs" />
+    <Compile Include="Numerics\MathTools.Test.cs" />
+    <Compile Include="Numerics\Matrix.cs" />
+    <Compile Include="Numerics\Noise.cs" />
+    <Compile Include="Numerics\Polygon.cs" />
+    <Compile Include="Numerics\Polygon.Test.cs" />
+    <Compile Include="Numerics\Randomizer.cs" />
+    <Compile Include="Numerics\Rectangle.cs" />
+    <Compile Include="Numerics\RectangleF.cs" />
+    <Compile Include="Numerics\RectangleF.Test.cs" />
+    <Compile Include="Numerics\RelativePosition2.cs" />
+    <Compile Include="Numerics\Tween.cs" />
+    <Compile Include="Numerics\Vector2.cs" />
+    <Compile Include="Numerics\Vector2I.cs" />
+    <Compile Include="Numerics\Vector3.cs" />
+    <Compile Include="Numerics\Vector3I.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\EnumHelper.cs" />
+    <Compile Include="Utility\Log.cs" />
+    <Compile Include="Utility\PathHelper.cs" />
+    <Compile Include="Utility\PathHelper.Test.cs" />
+    <Compile Include="Utility\Pool.cs" />
+    <Compile Include="Utility\TestTools.cs" />
+    <Compile Include="Utility\Time.cs" />
+    <Compile Include="Utility\XmlHelper.cs" />
+    <Compile Include="Window\Window.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
