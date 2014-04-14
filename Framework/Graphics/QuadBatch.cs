@@ -167,7 +167,7 @@ void main()
 			Vector2I realSize = new Vector2I(bounds.Width, bounds.Height);
 			float atlasWidth = realSize.X;
 			float atlasHeight = realSize.Y;
-			Quad q;
+			Quad q = new Quad();
 
 			Vector2 topLeft = new Vector2(-entry.Origin.X, -entry.Origin.Y);
 			Vector2 topRight = new Vector2(topLeft.X + w, topLeft.Y);
