@@ -6,39 +6,143 @@
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/ParticleEditor.exe" internal="true" />
+    <widget-library name="../../../../../Program Files (x86)/Xamarin Studio/bin/MonoDevelop.Ide.dll" />
+    <widget-library name="../../EditorCommon/bin/Debug/EditorCommon.dll" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="400 300">
+  <widget class="Gtk.Window" id="MainWindow" design-size="937 526">
+    <action-group name="Default">
+      <action id="FileAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+      <action id="MenuAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Menu</property>
+        <property name="ShortLabel" translatable="yes">Menu</property>
+      </action>
+      <action id="FileAction1">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+      <action id="FileAction2">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">File</property>
+        <property name="ShortLabel" translatable="yes">File</property>
+      </action>
+    </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">CenterOnParent</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
-      <widget class="Gtk.Notebook" id="notebook1">
+      <widget class="Gtk.VBox" id="vbox3">
         <property name="MemberName" />
-        <property name="CanFocus">True</property>
-        <property name="CurrentPage">0</property>
+        <property name="Spacing">6</property>
         <child>
-          <placeholder />
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label2">
+          <widget class="Gtk.MenuBar" id="menubar7">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">page2</property>
+            <node name="__gtksharp_130_Stetic_Editor_ActionMenuBar" type="Menubar">
+              <node type="Menu" action="FileAction2" />
+            </node>
           </widget>
           <packing>
-            <property name="type">tab</property>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
         <child>
-          <placeholder />
-        </child>
-        <child>
-          <widget class="Gtk.Label" id="label1">
+          <widget class="Gtk.HPaned" id="hpaned2">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">page1</property>
+            <property name="CanFocus">True</property>
+            <property name="Position">142</property>
+            <child>
+              <widget class="Gtk.VPaned" id="vpaned5">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Position">212</property>
+                <child>
+                  <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
+                    <property name="MemberName" />
+                    <property name="ShadowType">In</property>
+                    <child>
+                      <widget class="Gtk.TreeView" id="treeview2">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="ShowScrollbars">True</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="Resize">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Fixed" id="fixed6">
+                    <property name="MemberName" />
+                    <property name="HasWindow">False</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Resize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.VPaned" id="vpaned4">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Position">333</property>
+                <child>
+                  <widget class="Gtk.GLWidget" id="glwidget2">
+                    <property name="MemberName" />
+                    <property name="SingleBuffer">False</property>
+                    <property name="ColorBPP">0</property>
+                    <property name="AccumulatorBPP">0</property>
+                    <property name="DepthBPP">0</property>
+                    <property name="StencilBPP">0</property>
+                    <property name="Samples">0</property>
+                    <property name="Stereo">False</property>
+                    <property name="GlVersionMajor">0</property>
+                    <property name="GlVersionMinor">0</property>
+                    <signal name="RenderFrame" handler="OnGlwidget2RenderFrame" />
+                  </widget>
+                  <packing>
+                    <property name="Resize">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.DrawingArea" id="drawingarea1">
+                    <property name="MemberName" />
+                  </widget>
+                </child>
+              </widget>
+            </child>
           </widget>
           <packing>
-            <property name="type">tab</property>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Statusbar" id="statusbar5">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
       </widget>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -50,6 +50,9 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="MonoDevelop.Ide">
+      <HintPath>..\..\..\..\Program Files %28x86%29\Xamarin Studio\bin\MonoDevelop.Ide.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -68,6 +71,10 @@
     <ProjectReference Include="..\Framework\Framework.csproj">
       <Project>{3F167F06-8D75-4111-882C-7239EA91F13B}</Project>
       <Name>Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EditorCommon\EditorCommon.csproj">
+      <Project>{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}</Project>
+      <Name>EditorCommon</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
