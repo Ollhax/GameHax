@@ -68,9 +68,12 @@
     <Compile Include="Converters\TypeConvert.cs" />
     <Compile Include="Converters\Vector2Converter.cs" />
     <Compile Include="Converters\Vector2IConverter.cs" />
+    <Compile Include="Framework.cs" />
     <Compile Include="Graphics\ColorEffect.cs" />
     <Compile Include="Graphics\ColorTextureEffect.cs" />
+    <Compile Include="Graphics\RenderContext.cs" />
     <Compile Include="Graphics\RenderQueue.cs" />
+    <Compile Include="Graphics\Screen.cs" />
     <Compile Include="Graphics\TextureFill.cs" />
     <Compile Include="Graphics\Effect.cs" />
     <Compile Include="Graphics\Font.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Graphics\Vertex2Color.cs" />
     <Compile Include="Graphics\Vertex2TexColor.cs" />
     <Compile Include="Graphics\Viewport.cs" />
+    <Compile Include="Graphics\GraphicsWindowInfo.cs" />
     <Compile Include="Input\Button.cs" />
     <Compile Include="Input\Input.cs" />
     <Compile Include="Input\InputContext.cs" />

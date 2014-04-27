@@ -45,7 +45,6 @@ void main()
 }
 ";
 		
-		private readonly GraphicsDevice graphicsDevice;
 		private ColorTextureEffect currentEffect;
 		private ColorTextureEffect defaultEffect;
 
@@ -56,12 +55,11 @@ void main()
 
 		public Matrix Projection;
 
-		public TexturePath(GraphicsDevice graphicsDevice)
+		public TexturePath()
 		{
-			this.graphicsDevice = graphicsDevice;
 			defaultEffect = new ColorTextureEffect(defaultVs, defaultFs);
 			
-			Projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.BackBufferSize.X, graphicsDevice.BackBufferSize.Y, 0, -1024, 1024);
+			//Projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.BackBufferSize.X, graphicsDevice.BackBufferSize.Y, 0, -1024, 1024);
 
 			GL.GenBuffers(2, vertexBufferObjects);
 		}
@@ -107,7 +105,7 @@ void main()
 			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
 			GL.Enable(EnableCap.Texture2D);
-			GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+			//GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 
 			currentEffect.Projection = Projection;
 			currentEffect.View = transformMatrix;

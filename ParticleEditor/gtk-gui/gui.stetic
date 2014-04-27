@@ -5,6 +5,7 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../../../../../Program Files (x86)/Xamarin Studio/bin/MonoDevelop.Ide.dll" />
     <widget-library name="../../EditorCommon/bin/Debug/EditorCommon.dll" />
     <widget-library name="../bin/Debug/ParticleEditor.exe" internal="true" />
   </import>
@@ -57,12 +58,12 @@
           <widget class="Gtk.HPaned" id="hpaned2">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Position">142</property>
+            <property name="Position">1</property>
             <child>
               <widget class="Gtk.VPaned" id="vpaned5">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">212</property>
+                <property name="Position">1</property>
                 <child>
                   <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
                     <property name="MemberName" />
@@ -80,7 +81,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.GLWidget" id="glwidget1">
+                  <widget class="EditorCommon.HaxGLWidget" id="haxglwidget1">
                     <property name="MemberName" />
                     <property name="SingleBuffer">False</property>
                     <property name="ColorBPP">0</property>
@@ -89,9 +90,8 @@
                     <property name="StencilBPP">0</property>
                     <property name="Samples">0</property>
                     <property name="Stereo">False</property>
-                    <property name="GlVersionMajor">3</property>
-                    <property name="GlVersionMinor">2</property>
-                    <signal name="RenderFrame" handler="OnGlwidget1RenderFrame" />
+                    <property name="GlVersionMajor">0</property>
+                    <property name="GlVersionMinor">0</property>
                   </widget>
                 </child>
               </widget>
@@ -103,55 +103,26 @@
               <widget class="Gtk.VPaned" id="vpaned4">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">333</property>
+                <property name="Position">1</property>
                 <child>
-                  <placeholder />
+                  <widget class="EditorCommon.HaxGLWidget" id="MainGL">
+                    <property name="MemberName" />
+                    <property name="SingleBuffer">False</property>
+                    <property name="ColorBPP">0</property>
+                    <property name="AccumulatorBPP">0</property>
+                    <property name="DepthBPP">0</property>
+                    <property name="StencilBPP">0</property>
+                    <property name="Samples">0</property>
+                    <property name="Stereo">False</property>
+                    <property name="GlVersionMajor">3</property>
+                    <property name="GlVersionMinor">2</property>
+                  </widget>
+                  <packing>
+                    <property name="Resize">False</property>
+                  </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Notebook" id="notebook1">
-                    <property name="MemberName" />
-                    <property name="CanFocus">True</property>
-                    <property name="CurrentPage">1</property>
-                    <child>
-                      <placeholder />
-                    </child>
-                    <child>
-                      <widget class="Gtk.Label" id="label1">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">page1</property>
-                      </widget>
-                      <packing>
-                        <property name="type">tab</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.GLWidget" id="glwidget2">
-                        <property name="MemberName" />
-                        <property name="SingleBuffer">False</property>
-                        <property name="ColorBPP">0</property>
-                        <property name="AccumulatorBPP">0</property>
-                        <property name="DepthBPP">0</property>
-                        <property name="StencilBPP">0</property>
-                        <property name="Samples">0</property>
-                        <property name="Stereo">False</property>
-                        <property name="GlVersionMajor">3</property>
-                        <property name="GlVersionMinor">2</property>
-                        <signal name="RenderFrame" handler="OnGlwidget2RenderFrame" />
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Label" id="label2">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">page2</property>
-                      </widget>
-                      <packing>
-                        <property name="type">tab</property>
-                      </packing>
-                    </child>
-                  </widget>
+                  <placeholder />
                 </child>
               </widget>
             </child>

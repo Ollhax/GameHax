@@ -44,7 +44,6 @@ void main()
 }
 ";
 		
-		private readonly GraphicsDevice graphicsDevice;
 		private ColorTextureEffect currentEffect;
 		private ColorTextureEffect defaultEffect;
 
@@ -52,15 +51,17 @@ void main()
 		private ushort[] indices;
 		private uint[] vertexBufferObjects = new uint[2];
 
-		public Matrix Projection;
+		/// <summary>
+		/// Override default projection.
+		/// </summary>
+		public Matrix? Projection;
 
-		public TextureFill(GraphicsDevice graphicsDevice)
+		internal RenderContext CurrentContext;
+
+		public TextureFill()
 		{
-			this.graphicsDevice = graphicsDevice;
 			defaultEffect = new ColorTextureEffect(defaultVs, defaultFs);
 			
-			Projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.BackBufferSize.X, graphicsDevice.BackBufferSize.Y, 0, -1024, 1024);
-
 			GL.GenBuffers(2, vertexBufferObjects);
 
 			indices = new ushort[6];
@@ -111,9 +112,9 @@ void main()
 			
 			GL.Disable(EnableCap.CullFace);
 			GL.Disable(EnableCap.DepthTest);
-			GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+			//GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 
-			currentEffect.Projection = Projection;
+			currentEffect.Projection = Projection ?? CurrentContext.DefaultProjection;
 			currentEffect.View = Matrix.Identity;
 			currentEffect.Enable();
 			

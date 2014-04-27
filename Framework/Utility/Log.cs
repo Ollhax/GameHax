@@ -39,7 +39,7 @@ namespace MG.Framework.Utility
 		/// <summary>
 		/// Initialize the log system.
 		/// </summary>
-		public static void Initialize(string logFilePath)
+		internal static void Initialize(string logFilePath)
 		{
 			var path = Path.Combine(logFilePath, "Logs");
 
@@ -78,7 +78,7 @@ namespace MG.Framework.Utility
 		/// <summary>
 		/// Deinitialize the log system.
 		/// </summary>
-		public static void Deinitialize()
+		internal static void Deinitialize()
 		{
 			Info("Stopping log. Time: " + DateTime.Now.ToString());
 			entries.CompleteAdding();

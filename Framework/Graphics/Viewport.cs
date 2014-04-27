@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using MG.Framework.Numerics;
 
@@ -25,6 +22,18 @@ namespace MG.Framework.Graphics
 			Y = y;
 			Width = width;
 			Height = height;
+		}
+
+		/// <summary>
+		/// Create a new viewport.
+		/// </summary>
+		/// <param name="rectangle">Viewport bounds.</param>
+		public Viewport(Rectangle rectangle)
+		{
+			X = rectangle.X;
+			Y = rectangle.Y;
+			Width = rectangle.Width;
+			Height = rectangle.Height;
 		}
 
 		/// <summary>

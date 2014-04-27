@@ -89,7 +89,6 @@ void main()
 		private Pool<Batch> batchPool = new Pool<Batch>(1);
 		private Batch currentBatch;
 		
-		private GraphicsDevice graphicsDevice;
 		private int capacity;
 		private Quad[] quads;
 		private ushort[] indices;
@@ -102,11 +101,15 @@ void main()
 		private Matrix transform;
 		private bool hasBegun;
 
-		public Matrix Projection; // TODO: Make more RenderQueue-friendly
+		/// <summary>
+		/// Override default projection.
+		/// </summary>
+		public Matrix? Projection;
 		
-		public QuadBatch(GraphicsDevice graphicsDevice, int defaultCapacity = 8192)
+		internal RenderContext CurrentContext;
+
+		public QuadBatch(int defaultCapacity = 8192)
 		{
-			this.graphicsDevice = graphicsDevice;
 			defaultEffect = new ColorTextureEffect(defaultVs, defaultFs);
 			currentEffect = defaultEffect;
 
@@ -116,8 +119,6 @@ void main()
 			quads = new Quad[capacity];
 			indices = new ushort[capacity * 6];
 			fontLayout = new FontLayout();
-
-			Projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.BackBufferSize.X, graphicsDevice.BackBufferSize.Y, 0, -1024, 1024);
 
 			InitIndices();
 
@@ -247,9 +248,9 @@ void main()
 				
 				GL.Disable(EnableCap.CullFace);
 				GL.Disable(EnableCap.DepthTest);
-				GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+				//GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 
-				currentEffect.Projection = Projection;
+				currentEffect.Projection = Projection ?? CurrentContext.DefaultProjection;
 				currentEffect.View = transform;
 
 				currentEffect.Enable();

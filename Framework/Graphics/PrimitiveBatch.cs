@@ -75,21 +75,22 @@ void main()
 
 		private ColorEffect defaultEffect;
 		private ColorEffect currentEffect;
-		private readonly GraphicsDevice graphicsDevice;
 		private uint[] vertexBufferObjects = new uint[1];
 		private Vertex2Color[] vertexStorage = new Vertex2Color[128];
 		private Matrix transform;
 		private bool hasBegun;
 
-		public Matrix Projection;
+		/// <summary>
+		/// Override default projection.
+		/// </summary>
+		public Matrix? Projection;
 
-		public PrimitiveBatch(GraphicsDevice graphicsDevice)
+		internal RenderContext CurrentContext;
+
+		public PrimitiveBatch()
 		{
-			this.graphicsDevice = graphicsDevice;
 			defaultEffect = new ColorEffect(defaultVs, defaultFs);
 			currentEffect = defaultEffect;
-
-			Projection = Matrix.CreateOrthographicOffCenter(0, graphicsDevice.BackBufferSize.X, graphicsDevice.BackBufferSize.Y, 0, -1024, 1024);
 
 			GL.GenBuffers(1, vertexBufferObjects);
 		}
@@ -113,9 +114,7 @@ void main()
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.CullFace);
 
-			GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
-				
-			currentEffect.Projection = Projection;
+			currentEffect.Projection = Projection ?? CurrentContext.DefaultProjection;
 			currentEffect.View = transform;
 			currentEffect.Enable();
 

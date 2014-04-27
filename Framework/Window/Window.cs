@@ -25,7 +25,7 @@ namespace MG.Framework.Window
 			Fullscreen
 		}
 		
-		public event Action Draw;
+		public event Action<RenderContext> Draw;
 		public event Action Load;
 		public event Action<Vector2I> Resize;
 		public event Action<WindowState> StateChanged;
@@ -39,11 +39,13 @@ namespace MG.Framework.Window
 		private readonly Stopwatch timeSinceLastFrame;
 		private readonly GameWindow window;
 		private VSyncMode vSyncMode = VSyncMode.Off;
+		private RenderContext renderContext = new RenderContext();
+		private Screen currentScreen = new Screen();
 
 		public string Name;
 		
 		public Vector2I ClientSize { get { return new Vector2I(window.ClientSize.Width, window.ClientSize.Height); } set { window.ClientSize = new Size(value.X, value.Y); } }
-
+		
 		public bool FixedWindow
 		{
 			get { return window.WindowBorder == WindowBorder.Fixed; }
@@ -71,8 +73,6 @@ namespace MG.Framework.Window
 			get { return (WindowState)window.WindowState; }
 		}
 
-		public GraphicsDevice GraphicsDevice { get; protected set; }
-
 		public InputHandler InputHandler { get; protected set; }
 
 		public bool Vsync
@@ -90,6 +90,19 @@ namespace MG.Framework.Window
 		}
 
 		public bool FixedUpdate { get; set; }
+
+		private RenderContext PreparedContext
+		{
+			get
+			{
+				var size = window.ClientSize;
+				currentScreen.Context = window.Context;
+				currentScreen.ScreenSize = new Vector2I(size.Width, size.Height);
+				currentScreen.WindowInfo = window.WindowInfo;
+				renderContext.Prepare(currentScreen);
+				return renderContext;
+			}
+		}
 
 		public Window(string name, Vector2I size, float framesPerSecond)
 		{
@@ -120,7 +133,6 @@ namespace MG.Framework.Window
 			window.VSync = vSyncMode;
 			window.Keyboard.KeyRepeat = false;
 
-			GraphicsDevice = new GraphicsDevice(window);
 			InputHandler = new InputHandler(window);
 
 			window.RenderFrame += WindowOnRenderFrame;
@@ -147,17 +159,15 @@ namespace MG.Framework.Window
 
 		public void Dispose()
 		{
-			GraphicsDevice.Dispose();
-
 			//window.Exit();
 			window.Dispose();
 		}
-
+		
 		private void WindowOnRenderFrame(object sender, FrameEventArgs frameEventArgs)
 		{
 			if (Draw != null)
 			{
-				Draw();
+				Draw(PreparedContext);
 			}
 		}
 		
@@ -191,7 +201,7 @@ namespace MG.Framework.Window
 				Resize.Invoke(v);
 			}
 
-			Draw(); // Not 100% sure this is a good idea, but leave it in for now.
+			Draw(PreparedContext); // Not 100% sure this is a good idea, but leave it in for now.
 			Update(new Time());
 		}
 

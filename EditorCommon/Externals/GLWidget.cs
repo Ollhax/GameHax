@@ -55,14 +55,17 @@ namespace Gtk
 
 		/// <summary>Indicates if steropic renderering is enabled</summary>
 		public bool Stereo { get; set; }
-
-		IWindowInfo windowInfo;
-
+		
 		/// <summary>The major version of OpenGL to use.</summary>
 		public int GlVersionMajor { get; set; }
 
 		/// <summary>The minor version of OpenGL to use.</summary>
 		public int GlVersionMinor { get; set; }
+
+		/// <summary>Get the OpenTK window info parameter for this widget.</summary>
+		public IWindowInfo WindowInfo { get { return windowInfo; } }
+		
+		IWindowInfo windowInfo;
 
 		public GraphicsContextFlags GraphicsContextFlags
 		{
