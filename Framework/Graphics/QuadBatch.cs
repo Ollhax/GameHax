@@ -49,8 +49,8 @@ namespace MG.Framework.Graphics
 		}
 
 		private const string defaultVs = @"
-#version 120
-		
+#version 110
+
 attribute vec4 a_position;
 attribute vec2 a_texCoord;
 attribute vec4 a_color;
@@ -60,7 +60,7 @@ uniform		mat4 u_PMatrix;
 		
 varying vec4 v_fragmentColor;
 varying vec2 v_texCoord;
-		
+
 void main()
 {
 	gl_Position = u_PMatrix * (u_MVMatrix * a_position);	
@@ -70,12 +70,12 @@ void main()
 ";
 
 		private const string defaultFs = @"
-#version 120
-		
+#version 110
+
 varying vec4 v_fragmentColor;
 varying vec2 v_texCoord;
 uniform sampler2D u_texture;
-		
+
 void main()
 {
 	gl_FragColor = v_fragmentColor * texture2D(u_texture, v_texCoord);

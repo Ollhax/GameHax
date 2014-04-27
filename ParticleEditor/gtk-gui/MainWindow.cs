@@ -14,7 +14,6 @@ public partial class MainWindow
 	private global::Gtk.VPaned vpaned5;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
 	private global::Gtk.TreeView treeview2;
-	private global::EditorCommon.HaxGLWidget haxglwidget1;
 	private global::Gtk.VPaned vpaned4;
 	private global::EditorCommon.HaxGLWidget MainGL;
 	private global::Gtk.Statusbar statusbar5;
@@ -47,8 +46,7 @@ public partial class MainWindow
 		this.vbox3.Name = "vbox3";
 		this.vbox3.Spacing = 6;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar7\'><menu name=\'FileAction2\' action=\'FileAction2\'/></men" +
-		"ubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar7'><menu name='FileAction2' action='FileAction2'/></menubar></ui>");
 		this.menubar7 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar7")));
 		this.menubar7.Name = "menubar7";
 		this.vbox3.Add (this.menubar7);
@@ -60,12 +58,12 @@ public partial class MainWindow
 		this.hpaned2 = new global::Gtk.HPaned ();
 		this.hpaned2.CanFocus = true;
 		this.hpaned2.Name = "hpaned2";
-		this.hpaned2.Position = 116;
+		this.hpaned2.Position = 121;
 		// Container child hpaned2.Gtk.Paned+PanedChild
 		this.vpaned5 = new global::Gtk.VPaned ();
 		this.vpaned5.CanFocus = true;
 		this.vpaned5.Name = "vpaned5";
-		this.vpaned5.Position = 225;
+		this.vpaned5.Position = 257;
 		// Container child vpaned5.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -78,27 +76,14 @@ public partial class MainWindow
 		this.vpaned5.Add (this.GtkScrolledWindow);
 		global::Gtk.Paned.PanedChild w4 = ((global::Gtk.Paned.PanedChild)(this.vpaned5 [this.GtkScrolledWindow]));
 		w4.Resize = false;
-		// Container child vpaned5.Gtk.Paned+PanedChild
-		this.haxglwidget1 = new global::EditorCommon.HaxGLWidget ();
-		this.haxglwidget1.Name = "haxglwidget1";
-		this.haxglwidget1.SingleBuffer = false;
-		this.haxglwidget1.ColorBPP = 0;
-		this.haxglwidget1.AccumulatorBPP = 0;
-		this.haxglwidget1.DepthBPP = 0;
-		this.haxglwidget1.StencilBPP = 0;
-		this.haxglwidget1.Samples = 0;
-		this.haxglwidget1.Stereo = false;
-		this.haxglwidget1.GlVersionMajor = 0;
-		this.haxglwidget1.GlVersionMinor = 0;
-		this.vpaned5.Add (this.haxglwidget1);
 		this.hpaned2.Add (this.vpaned5);
-		global::Gtk.Paned.PanedChild w6 = ((global::Gtk.Paned.PanedChild)(this.hpaned2 [this.vpaned5]));
-		w6.Resize = false;
+		global::Gtk.Paned.PanedChild w5 = ((global::Gtk.Paned.PanedChild)(this.hpaned2 [this.vpaned5]));
+		w5.Resize = false;
 		// Container child hpaned2.Gtk.Paned+PanedChild
 		this.vpaned4 = new global::Gtk.VPaned ();
 		this.vpaned4.CanFocus = true;
 		this.vpaned4.Name = "vpaned4";
-		this.vpaned4.Position = 361;
+		this.vpaned4.Position = 273;
 		// Container child vpaned4.Gtk.Paned+PanedChild
 		this.MainGL = new global::EditorCommon.HaxGLWidget ();
 		this.MainGL.Name = "MainGL";
@@ -109,24 +94,24 @@ public partial class MainWindow
 		this.MainGL.StencilBPP = 0;
 		this.MainGL.Samples = 0;
 		this.MainGL.Stereo = false;
-		this.MainGL.GlVersionMajor = 3;
-		this.MainGL.GlVersionMinor = 2;
+		this.MainGL.GlVersionMajor = 2;
+		this.MainGL.GlVersionMinor = 1;
 		this.vpaned4.Add (this.MainGL);
-		global::Gtk.Paned.PanedChild w7 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.MainGL]));
-		w7.Resize = false;
+		global::Gtk.Paned.PanedChild w6 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.MainGL]));
+		w6.Resize = false;
 		this.hpaned2.Add (this.vpaned4);
 		this.vbox3.Add (this.hpaned2);
-		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
-		w9.Position = 1;
+		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
+		w8.Position = 1;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.statusbar5 = new global::Gtk.Statusbar ();
 		this.statusbar5.Name = "statusbar5";
 		this.statusbar5.Spacing = 6;
 		this.vbox3.Add (this.statusbar5);
-		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
-		w10.Position = 2;
-		w10.Expand = false;
-		w10.Fill = false;
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
+		w9.Position = 2;
+		w9.Expand = false;
+		w9.Fill = false;
 		this.Add (this.vbox3);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

@@ -38,7 +38,7 @@ namespace MG.Framework.Graphics
 		};
 
 		private const string defaultVs = @"
-#version 120
+#version 110
 
 attribute vec4 a_position;
 attribute vec4 a_color;
@@ -56,7 +56,7 @@ void main()
 ";
 
 		private const string defaultFs = @"
-#version 120
+#version 110
 
 varying vec4 v_fragmentColor;
 void main()

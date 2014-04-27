@@ -11,7 +11,7 @@ namespace MG.Framework.Graphics
 	public class TextureFill : IDisposable
 	{
 		private const string defaultVs = @"
-#version 120
+#version 110
 
 attribute vec4 a_position;
 attribute vec2 a_texCoord;
@@ -32,7 +32,7 @@ void main()
 ";
 
 		private const string defaultFs = @"
-#version 120
+#version 110
 
 varying vec4 v_fragmentColor;
 varying vec2 v_texCoord;

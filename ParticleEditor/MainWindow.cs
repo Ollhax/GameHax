@@ -15,8 +15,8 @@ public partial class MainWindow: Gtk.Window
 		MainGL.Draw += MainGlOnDraw;
 		MainGL.Load += MainGlOnLoad;
 
-		haxglwidget1.Draw += MainGlOnDraw;
-		haxglwidget1.Load += MainGlOnLoad;
+//		haxglwidget1.Draw += MainGlOnDraw;
+//		haxglwidget1.Load += MainGlOnLoad;
 
 		statusbar5.Push(id, "Meep");
 		
@@ -40,9 +40,9 @@ public partial class MainWindow: Gtk.Window
 		renderContext.QuadBatch.Draw(texture, Vector2.Zero);
 		renderContext.QuadBatch.End();
 
-		//renderContext.PrimitiveBatch.Begin();
-		//renderContext.PrimitiveBatch.DrawFilled(new Circle(0, 0, 10000), Color.Red);
-		//renderContext.PrimitiveBatch.End();		
+//		renderContext.PrimitiveBatch.Begin();
+//		renderContext.PrimitiveBatch.DrawFilled(new Circle(0, 0, 10000), Color.Red);
+//		renderContext.PrimitiveBatch.End();		
 	}
 
 	private bool Refresh()

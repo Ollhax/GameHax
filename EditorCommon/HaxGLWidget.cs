@@ -28,7 +28,7 @@ namespace EditorCommon
 			}
 		}
 
-		public event Action<RenderContext> Draw;
+		public new event Action<RenderContext> Draw;
 		public event System.Action Load;
 		//public event Action<Time> Update;
 

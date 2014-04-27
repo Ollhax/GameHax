@@ -5,7 +5,6 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../../../Program Files (x86)/Xamarin Studio/bin/MonoDevelop.Ide.dll" />
     <widget-library name="../../EditorCommon/bin/Debug/EditorCommon.dll" />
     <widget-library name="../bin/Debug/ParticleEditor.exe" internal="true" />
   </import>
@@ -58,12 +57,12 @@
           <widget class="Gtk.HPaned" id="hpaned2">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Position">1</property>
+            <property name="Position">121</property>
             <child>
               <widget class="Gtk.VPaned" id="vpaned5">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">1</property>
+                <property name="Position">257</property>
                 <child>
                   <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
                     <property name="MemberName" />
@@ -81,18 +80,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="EditorCommon.HaxGLWidget" id="haxglwidget1">
-                    <property name="MemberName" />
-                    <property name="SingleBuffer">False</property>
-                    <property name="ColorBPP">0</property>
-                    <property name="AccumulatorBPP">0</property>
-                    <property name="DepthBPP">0</property>
-                    <property name="StencilBPP">0</property>
-                    <property name="Samples">0</property>
-                    <property name="Stereo">False</property>
-                    <property name="GlVersionMajor">0</property>
-                    <property name="GlVersionMinor">0</property>
-                  </widget>
+                  <placeholder />
                 </child>
               </widget>
               <packing>
@@ -103,7 +91,7 @@
               <widget class="Gtk.VPaned" id="vpaned4">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">1</property>
+                <property name="Position">273</property>
                 <child>
                   <widget class="EditorCommon.HaxGLWidget" id="MainGL">
                     <property name="MemberName" />
@@ -114,8 +102,8 @@
                     <property name="StencilBPP">0</property>
                     <property name="Samples">0</property>
                     <property name="Stereo">False</property>
-                    <property name="GlVersionMajor">3</property>
-                    <property name="GlVersionMinor">2</property>
+                    <property name="GlVersionMajor">2</property>
+                    <property name="GlVersionMinor">1</property>
                   </widget>
                   <packing>
                     <property name="Resize">False</property>
