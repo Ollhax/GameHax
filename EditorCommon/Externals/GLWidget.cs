@@ -280,7 +280,7 @@ namespace Gtk
 		}
 
 
-		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll")]
+		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
 
 		const string mac_libgdk_name = "libgdk-quartz-2.0.0.dylib";
