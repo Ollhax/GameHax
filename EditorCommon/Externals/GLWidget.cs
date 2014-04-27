@@ -73,6 +73,7 @@ namespace Gtk
 
 		static GLWidget()
 		{
+			// Initialize the toolkit if this isn't done already.
 			OpenTK.Toolkit.Init();
 		}
 
@@ -266,6 +267,7 @@ namespace Gtk
 			return result;
 		}
 
+		// The NSView is not resized automatically, so do it ourselves when needed.
 		private void UpdateNSView()
 		{
 			if (nsView == IntPtr.Zero)
@@ -278,7 +280,6 @@ namespace Gtk
 			lastRectangle = r;
 			SendVoid(nsView, sel_registerName("setFrame:"), new RectangleF(r.X, r.Y, r.Width, r.Height));
 		}
-
 
 		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
@@ -312,25 +313,12 @@ namespace Gtk
 			}
 		}
 
-//		[SuppressUnmanagedCodeSecurity, DllImport (mac_objc_name)]
-//		extern static IntPtr objc_getClass(string name);
-		
 		[SuppressUnmanagedCodeSecurity, DllImport (mac_objc_name)]
 		extern static IntPtr sel_registerName(string name);
 
-//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
-//		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector);
-//
-//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
-//		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector, RectangleF rectangle1);
-//		
-//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
-//		extern static void SendVoid(IntPtr receiver, IntPtr selector, IntPtr intPtr1);
-		
 		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
 		extern static void SendVoid(IntPtr receiver, IntPtr selector, RectangleF rectangle1);
-		
-		
+
 		public enum XVisualClass : int
 		{
 			StaticGray = 0,
