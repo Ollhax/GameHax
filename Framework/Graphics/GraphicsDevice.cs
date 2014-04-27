@@ -182,7 +182,7 @@ namespace MG.Framework.Graphics
 		/// <summary>
 		/// Clear the background using the current ClearColor.
 		/// </summary>
-		public void Clear()
+		static public void Clear()
 		{
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 		}

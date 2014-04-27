@@ -71,6 +71,11 @@ namespace Gtk
 		}
 		GraphicsContextFlags graphicsContextFlags;
 
+		static GLWidget()
+		{
+			OpenTK.Toolkit.Init();
+		}
+
 		/// <summary>Constructs a new GLWidget.</summary>
 		public GLWidget() : this(GraphicsMode.Default) { }
 
@@ -145,11 +150,12 @@ namespace Gtk
 		static bool sharedContextInitialized = false;
 		bool initialized = false;
 
+		IntPtr nsView;
+		Gdk.Rectangle lastRectangle;
+
 		// Called when the widget needs to be (fully or partially) redrawn.
 		protected override bool OnExposeEvent(Gdk.EventExpose eventExpose)
 		{
-			OpenTK.Toolkit.Init();
-
 			if (!initialized)
 			{
 				initialized = true;
@@ -179,9 +185,17 @@ namespace Gtk
 				}
 				else if (Configuration.RunningOnMacOS)
 				{
+					bool native = gdk_window_ensure_native(GdkWindow.Handle);
+					if (!native)
+					{
+						throw new PlatformNotSupportedException("Could not create native view.");
+					}
+
 					IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
-					
-					windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle);
+					nsView = gdk_quartz_window_get_nsview(GdkWindow.Handle);
+
+					windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle, nsView);
+					UpdateNSView();
 				}
 				else if (Configuration.RunningOnX11)
 				{
@@ -246,14 +260,77 @@ namespace Gtk
 		// Called on Resize
 		protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
 		{
+			UpdateNSView();
 			bool result = base.OnConfigureEvent(evnt);
 			if (graphicsContext != null) graphicsContext.Update(windowInfo);
 			return result;
 		}
 
+		private void UpdateNSView()
+		{
+			if (nsView == IntPtr.Zero)
+				return;
+
+			var r = Allocation;
+			if (r == lastRectangle)
+				return;
+
+			lastRectangle = r;
+			SendVoid(nsView, sel_registerName("setFrame:"), new RectangleF(r.X, r.Y, r.Width, r.Height));
+		}
+
+
 		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll")]
 		public static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
 
+		const string mac_libgdk_name = "libgdk-quartz-2.0.0.dylib";
+		const string mac_objc_name = "/usr/lib/libobjc.dylib";
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_libgdk_name)]
+		static extern IntPtr gdk_quartz_window_get_nswindow(IntPtr gdkDisplay);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_libgdk_name)]
+		static extern IntPtr gdk_quartz_window_get_nsview(IntPtr gdkDisplay);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_libgdk_name)]
+		static extern bool gdk_window_ensure_native(IntPtr handle);
+
+		[Serializable]
+		struct RectangleF
+		{
+			public float X;
+			public float Y;
+			public float Width;
+			public float Height;
+
+			public RectangleF(float x, float y, float width, float height)
+			{
+				X = x;
+				Y = y;
+				Width = width;
+				Height = height;
+			}
+		}
+
+//		[SuppressUnmanagedCodeSecurity, DllImport (mac_objc_name)]
+//		extern static IntPtr objc_getClass(string name);
+		
+		[SuppressUnmanagedCodeSecurity, DllImport (mac_objc_name)]
+		extern static IntPtr sel_registerName(string name);
+
+//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+//		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector);
+//
+//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+//		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector, RectangleF rectangle1);
+//		
+//		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+//		extern static void SendVoid(IntPtr receiver, IntPtr selector, IntPtr intPtr1);
+		
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static void SendVoid(IntPtr receiver, IntPtr selector, RectangleF rectangle1);
+		
+		
 		public enum XVisualClass : int
 		{
 			StaticGray = 0,
@@ -329,12 +406,6 @@ namespace Gtk
 		[SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name)]
 		static extern IntPtr gdk_x11_display_get_xdisplay(IntPtr gdkDisplay);
 
-		/// <summary> Returns the NSWindow of a GdkDisplay. </summary>
-		/// <param name="gdkDisplay"> The GdkDrawable. </param>
-		/// <returns> The NSWindow of the GdkDisplay. </returns>
-		[SuppressUnmanagedCodeSecurity, DllImport(linux_libgdk_x11_name)]
-		static extern IntPtr gdk_quartz_window_get_nswindow(IntPtr gdkDisplay);
-		
 		IntPtr GetVisualInfo(IntPtr display)
 		{
 			try
