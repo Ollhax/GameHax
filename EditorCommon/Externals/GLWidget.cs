@@ -156,6 +156,7 @@ namespace Gtk
 
 		IntPtr nsView;
 		Gdk.Rectangle lastRectangle;
+		bool lastVisible = true;
 
 		// Called when the widget needs to be (fully or partially) redrawn.
 		protected override bool OnExposeEvent(Gdk.EventExpose eventExpose)
@@ -189,14 +190,23 @@ namespace Gtk
 				}
 				else if (Configuration.RunningOnMacOS)
 				{
-					bool native = gdk_window_ensure_native(GdkWindow.Handle);
-					if (!native)
-					{
-						throw new PlatformNotSupportedException("Could not create native view.");
-					}
-
 					IntPtr windowHandle = gdk_quartz_window_get_nswindow(GdkWindow.Handle);
-					nsView = gdk_quartz_window_get_nsview(GdkWindow.Handle);
+					IntPtr contentView = gdk_quartz_window_get_nsview(GdkWindow.Handle);
+
+					// Problem: gdk_window_ensure_native() crashes when used more than once.
+					// For now, just create a NSView in place and use that instead. 
+					// Needs some care updating when resizing, hiding, etc, but seems to work.
+					// (I'd guess this is pretty much what gdk_window_ensure_native() does internally.)
+					nsView = SendIntPtr(SendIntPtr(objc_getClass("NSView"), sel_registerName("alloc")), sel_registerName("initWithFrame:"), new RectangleF(0, 0, 100, 100));
+					SendVoid(contentView, sel_registerName("addSubview:"), nsView);
+
+//					bool native = gdk_window_ensure_native(GdkWindow.Handle);
+//					if (!native)
+//					{
+//						throw new PlatformNotSupportedException("Could not create native view.");
+//					}
+//
+//					nsView = gdk_quartz_window_get_nsview(GdkWindow.Handle);
 
 					windowInfo = OpenTK.Platform.Utilities.CreateMacOSWindowInfo(windowHandle, nsView);
 					UpdateNSView();
@@ -264,24 +274,66 @@ namespace Gtk
 		// Called on Resize
 		protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
 		{
-			UpdateNSView();
 			bool result = base.OnConfigureEvent(evnt);
-			if (graphicsContext != null) graphicsContext.Update(windowInfo);
+
+			if (nsView != IntPtr.Zero)
+			{
+				UpdateNSView();
+			}
+			else if (graphicsContext != null)
+			{
+				graphicsContext.Update(windowInfo);
+			}
+
 			return result;
 		}
 
+		protected override void OnMapped()
+		{
+			base.OnMapped();
+			UpdateNSView();
+		}
+
+		protected override void OnUnmapped()
+		{
+			base.OnUnmapped();
+			UpdateNSView();
+		}
+
+		protected override void OnHidden()
+		{
+			base.OnHidden();
+			UpdateNSView();
+		}
+
+		protected override void OnShown()
+		{
+			base.OnShown();
+			UpdateNSView();
+		}
+
 		// The NSView is not resized automatically, so do it ourselves when needed.
-		private void UpdateNSView()
+		private bool UpdateNSView()
 		{
 			if (nsView == IntPtr.Zero)
-				return;
+				return false;
 
+			bool drawable = IsDrawable;
 			var r = Allocation;
-			if (r == lastRectangle)
-				return;
+			if (lastVisible == drawable && r == lastRectangle)
+				return false;
 
 			lastRectangle = r;
+			lastVisible = drawable;
+			SendVoid(nsView, sel_registerName("setHidden:"), !drawable);
 			SendVoid(nsView, sel_registerName("setFrame:"), new RectangleF(r.X, r.Y, r.Width, r.Height));
+
+			if (graphicsContext != null)
+			{
+				graphicsContext.Update(windowInfo);
+			}
+
+			return true;
 		}
 
 		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -298,6 +350,21 @@ namespace Gtk
 
 		[SuppressUnmanagedCodeSecurity, DllImport(mac_libgdk_name)]
 		static extern bool gdk_window_ensure_native(IntPtr handle);
+
+		[SuppressUnmanagedCodeSecurity, DllImport (mac_objc_name)]
+		extern static IntPtr objc_getClass(string name);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static IntPtr SendIntPtr(IntPtr receiver, IntPtr selector, RectangleF rectangle1);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static void SendVoid(IntPtr receiver, IntPtr selector, IntPtr intPtr1);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static void SendVoid(IntPtr receiver, IntPtr selector, bool bool1);
 
 		[Serializable]
 		struct RectangleF

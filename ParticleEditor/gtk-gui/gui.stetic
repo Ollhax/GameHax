@@ -110,7 +110,49 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder />
+                  <widget class="Gtk.Notebook" id="notebook1">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="CurrentPage">0</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label1">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">page1</property>
+                      </widget>
+                      <packing>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="EditorCommon.HaxGLWidget" id="haxglwidget1">
+                        <property name="MemberName" />
+                        <property name="SingleBuffer">False</property>
+                        <property name="ColorBPP">0</property>
+                        <property name="AccumulatorBPP">0</property>
+                        <property name="DepthBPP">0</property>
+                        <property name="StencilBPP">0</property>
+                        <property name="Samples">0</property>
+                        <property name="Stereo">False</property>
+                        <property name="GlVersionMajor">2</property>
+                        <property name="GlVersionMinor">1</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label2">
+                        <property name="MemberName" />
+                        <property name="LabelProp" translatable="yes">page2</property>
+                      </widget>
+                      <packing>
+                        <property name="type">tab</property>
+                      </packing>
+                    </child>
+                  </widget>
                 </child>
               </widget>
             </child>

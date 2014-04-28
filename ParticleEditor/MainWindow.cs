@@ -15,8 +15,8 @@ public partial class MainWindow: Gtk.Window
 		MainGL.Draw += MainGlOnDraw;
 		MainGL.Load += MainGlOnLoad;
 
-//		haxglwidget1.Draw += MainGlOnDraw;
-//		haxglwidget1.Load += MainGlOnLoad;
+		haxglwidget1.Draw += MainGlOnDraw;
+		haxglwidget1.Load += MainGlOnLoad;
 
 		statusbar5.Push(id, "Meep");
 		
@@ -48,9 +48,7 @@ public partial class MainWindow: Gtk.Window
 	private bool Refresh()
 	{
 		MainGL.QueueDraw();
-		//haxglwidget2.QueueDraw();
-
-
+		haxglwidget1.QueueDraw();
 
 		// again after the timeout period expires.   Returning false would
 		// terminate the timeout.
