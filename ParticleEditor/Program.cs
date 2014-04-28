@@ -9,7 +9,7 @@ namespace ParticleEditor
 	{
 		public static void Main(string[] args)
 		{
-			Framework.Initialize();
+			Framework.Initialize("Main", "");
 			Application.Init ();
 			MainWindow win = new MainWindow ();
 			win.Show ();

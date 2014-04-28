@@ -8,7 +8,8 @@ namespace MG.Framework.Graphics
 		public QuadBatch QuadBatch { get; private set; }
 		public PrimitiveBatch PrimitiveBatch { get; private set; }
 		public TextureFill TextureFill { get; private set; }
-		public Matrix DefaultProjection { get; private set; }
+		
+		public Matrix DefaultProjection;
 		
 		public RenderContext()
 		{

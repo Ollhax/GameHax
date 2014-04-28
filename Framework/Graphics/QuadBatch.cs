@@ -55,8 +55,8 @@ attribute vec4 a_position;
 attribute vec2 a_texCoord;
 attribute vec4 a_color;
 		
-uniform		mat4 u_MVMatrix;
-uniform		mat4 u_PMatrix;
+uniform mat4 u_MVMatrix;
+uniform mat4 u_PMatrix;
 		
 varying vec4 v_fragmentColor;
 varying vec2 v_texCoord;

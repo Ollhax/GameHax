@@ -1,4 +1,6 @@
-﻿using MG.Framework.Utility;
+﻿using System.Threading;
+
+using MG.Framework.Utility;
 
 namespace MG.Framework
 {
@@ -9,12 +11,17 @@ namespace MG.Framework
 		/// <summary>
 		/// Initialize the framework.
 		/// </summary>
-		public static void Initialize()
+		public static void Initialize(string mainThreadName, string logPath)
 		{
 			if (initialized) return;
 			initialized = true;
 
-			Log.Initialize("Logs");
+			if (Thread.CurrentThread.Name == null)
+			{
+				Thread.CurrentThread.Name = mainThreadName;
+			}
+
+			Log.Initialize(logPath);
 		}
 
 		/// <summary>

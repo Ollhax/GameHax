@@ -39,7 +39,7 @@ namespace MG.Framework.Window
 		private readonly Stopwatch timeSinceLastFrame;
 		private readonly GameWindow window;
 		private VSyncMode vSyncMode = VSyncMode.Off;
-		private RenderContext renderContext = new RenderContext();
+		private RenderContext renderContext;
 		private Screen currentScreen = new Screen();
 
 		public string Name;
@@ -215,6 +215,7 @@ namespace MG.Framework.Window
 
 		private void WindowOnLoad(object sender, EventArgs eventArgs)
 		{
+			renderContext = new RenderContext();
 			if (Load != null)
 			{
 				Load.Invoke();
