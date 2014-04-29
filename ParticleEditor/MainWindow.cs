@@ -32,9 +32,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		GraphicsDevice.ClearColor = Color.CornflowerBlue;
 		GraphicsDevice.Clear();
-
-		var screenSize = renderContext.ActiveScreen.ScreenSize;
-		GraphicsDevice.SetViewport(new MG.Framework.Graphics.Viewport(0, 0, screenSize.X, screenSize.Y), renderContext.ActiveScreen);
+		GraphicsDevice.SetViewport((Rectangle)renderContext.ActiveScreen.NormalizedScreenArea, renderContext.ActiveScreen);
 
 		renderContext.QuadBatch.Begin();
 		renderContext.QuadBatch.Draw(texture, Vector2.Zero);

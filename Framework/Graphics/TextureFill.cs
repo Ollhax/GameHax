@@ -114,7 +114,7 @@ void main()
 			GL.Disable(EnableCap.DepthTest);
 			//GL.Viewport(graphicsDevice.Viewport.X, graphicsDevice.BackBufferSize.Y - graphicsDevice.Viewport.Y - graphicsDevice.Viewport.Height, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 
-			currentEffect.Projection = Projection ?? CurrentContext.DefaultProjection;
+			currentEffect.Projection = Projection ?? CurrentContext.ActiveScreen.DefaultProjection;
 			currentEffect.View = Matrix.Identity;
 			currentEffect.Enable();
 			

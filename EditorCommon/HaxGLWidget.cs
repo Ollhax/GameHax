@@ -22,7 +22,10 @@ namespace EditorCommon
 			get
 			{
 				var area = Allocation;
-				currentScreen.ScreenSize = new Vector2I(area.Width, area.Height);
+				var size = new Vector2I(area.Width, area.Height);
+				currentScreen.VirtualScreenSize = (Vector2)size;
+				currentScreen.ScreenSize = size;
+
 				renderContext.Prepare(currentScreen);
 				return renderContext;
 			}

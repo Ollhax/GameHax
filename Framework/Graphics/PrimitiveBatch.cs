@@ -114,7 +114,7 @@ void main()
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.CullFace);
 
-			currentEffect.Projection = Projection ?? CurrentContext.DefaultProjection;
+			currentEffect.Projection = Projection ?? CurrentContext.ActiveScreen.DefaultProjection;
 			currentEffect.View = transform;
 			currentEffect.Enable();
 

@@ -32,16 +32,13 @@ namespace MG.Framework.Window
 		public event Action Unload;
 		public event Action Closed;
 		public event Action<Time> Update;
-		private float targetFps;
-		private float secondsPerFrame;
-		private double frameCounter;
 		private readonly Stopwatch timeSinceStart;
 		private readonly Stopwatch timeSinceLastFrame;
 		private readonly GameWindow window;
 		private VSyncMode vSyncMode = VSyncMode.Off;
 		private RenderContext renderContext;
-		private Screen currentScreen = new Screen();
-
+		private readonly Screen currentScreen;
+		
 		public string Name;
 		
 		public Vector2I ClientSize { get { return new Vector2I(window.ClientSize.Width, window.ClientSize.Height); } set { window.ClientSize = new Size(value.X, value.Y); } }
@@ -96,9 +93,7 @@ namespace MG.Framework.Window
 			get
 			{
 				var size = window.ClientSize;
-				currentScreen.Context = window.Context;
 				currentScreen.ScreenSize = new Vector2I(size.Width, size.Height);
-				currentScreen.WindowInfo = window.WindowInfo;
 				renderContext.Prepare(currentScreen);
 				return renderContext;
 			}
@@ -107,10 +102,7 @@ namespace MG.Framework.Window
 		public Window(string name, Vector2I size, float framesPerSecond)
 		{
 			Log.Info("Starting " + name + ". Window size: " + size);
-
-			targetFps = framesPerSecond;
-			secondsPerFrame = 1.0f / targetFps;
-
+			
 			Name = name;
 			timeSinceStart = new Stopwatch();
 			timeSinceStart.Start();
@@ -143,6 +135,13 @@ namespace MG.Framework.Window
 			window.Closed += WindowOnClosed;
 			window.WindowStateChanged += WindowOnStateChanged;
 			
+			// Setup screen
+			currentScreen = new Screen();
+			currentScreen.Context = window.Context;
+			currentScreen.WindowInfo = window.WindowInfo;
+			currentScreen.VirtualScreenSize = new MG.Framework.Numerics.Vector2(1920, 1080);
+			Screen.AddScreen(currentScreen);
+
 			Log.Info("Window created.");
 		}
 		
@@ -195,7 +194,10 @@ namespace MG.Framework.Window
 			
 			var v = new Vector2I(s.Width, s.Height);
 			Log.Frequent("Resize event. New size: " + v);
-			
+
+			currentScreen.ScreenSize = v;
+			InputHandler.UpdateScreenSize((MG.Framework.Numerics.Vector2)v, currentScreen.NormalizedScreenArea);
+
 			if (Resize != null)
 			{
 				Resize.Invoke(v);

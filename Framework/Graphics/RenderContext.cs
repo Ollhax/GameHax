@@ -9,22 +9,16 @@ namespace MG.Framework.Graphics
 		public PrimitiveBatch PrimitiveBatch { get; private set; }
 		public TextureFill TextureFill { get; private set; }
 		
-		public Matrix DefaultProjection;
-		
 		public RenderContext()
 		{
 			QuadBatch = new QuadBatch();
 			PrimitiveBatch = new PrimitiveBatch();
 			TextureFill = new TextureFill();
-			DefaultProjection = Matrix.Identity;
 		}
 
 		public void Prepare(Screen screen)
 		{
 			ActiveScreen = screen;
-
-			var size = screen.ScreenSize;
-			DefaultProjection = Matrix.CreateOrthographicOffCenter(0, size.X, size.Y, 0, -1024, 1024);
 
 			QuadBatch.CurrentContext = this;
 			PrimitiveBatch.CurrentContext = this;

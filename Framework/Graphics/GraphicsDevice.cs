@@ -14,7 +14,7 @@ namespace MG.Framework.Graphics
 	public static class GraphicsDevice
 	{
 		private static Color clearColor;
-		private static Viewport viewport;
+		private static Rectangle viewport;
 		private static Rectangle? scissorTestArea;
 		private static readonly int vertexArrayObject;
 		private static readonly Version apiVersion;
@@ -37,7 +37,7 @@ namespace MG.Framework.Graphics
 		/// Get the current viewport.
 		/// </summary>
 		/// <returns>The current viewport.</returns>
-		public static Viewport GetViewport()
+		public static Rectangle GetViewport()
 		{
 			return viewport;
 		}
@@ -48,7 +48,7 @@ namespace MG.Framework.Graphics
 		/// <param name="viewport"></param>
 		/// <param name="screen"></param>
 		/// <returns></returns>
-		public static void SetViewport(Viewport viewport, Screen screen)
+		public static void SetViewport(Rectangle viewport, Screen screen)
 		{
 			if (viewport.X < 0 || viewport.Y < 0 || viewport.Width <= 0 || viewport.Height <= 0)
 			{
@@ -62,6 +62,8 @@ namespace MG.Framework.Graphics
 
 			RenderQueue.Flush(); // Render batches should use the render settings at the start of the batch
 			GraphicsDevice.viewport = viewport;
+
+			viewport = (Rectangle)screen.VirtualToScreen((RectangleF)viewport);
 			GL.Viewport(viewport.X, screen.ScreenSize.Y - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
 		}
 
@@ -105,9 +107,9 @@ namespace MG.Framework.Graphics
 
 			if (scissorTestArea != null)
 			{
-				var r = scissorTestArea.Value;
+				var r = (Rectangle)screen.VirtualToScreen((RectangleF)scissorTestArea.Value);
 				GL.Enable(EnableCap.ScissorTest);
-				GL.Scissor(r.X, (int)screen.ScreenSize.Y -r.Y - r.Height, r.Width, r.Height);
+				GL.Scissor(r.X, screen.ScreenSize.Y -r.Y - r.Height, r.Width, r.Height);
 			}
 			else
 			{

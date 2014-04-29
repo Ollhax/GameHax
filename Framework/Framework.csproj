@@ -93,7 +93,6 @@
     <Compile Include="Graphics\TextureSetReference.cs" />
     <Compile Include="Graphics\Vertex2Color.cs" />
     <Compile Include="Graphics\Vertex2TexColor.cs" />
-    <Compile Include="Graphics\Viewport.cs" />
     <Compile Include="Graphics\GraphicsWindowInfo.cs" />
     <Compile Include="Input\Button.cs" />
     <Compile Include="Input\Input.cs" />
