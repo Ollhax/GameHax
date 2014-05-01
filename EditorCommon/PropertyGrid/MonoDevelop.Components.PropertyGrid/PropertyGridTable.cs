@@ -33,6 +33,8 @@ using System.Linq;
 
 using Mono.TextEditor;
 
+using WindowType = Gtk.WindowType;
+
 namespace MonoDevelop.Components.PropertyGrid
 {
 	class PropertyGridTable: Gtk.EventBox
@@ -553,6 +555,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		void ShowTooltip (EventMotion evnt)
 		{
 			HideTooltip ();
+			
 			tooltipTimeout = GLib.Timeout.Add (500, delegate {
 				ShowTooltipWindow ((int)evnt.X, (int)evnt.Y);
 				return false;
@@ -561,6 +564,7 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		void HideTooltip ()
 		{
+			TooltipText = "";
 			//if (tooltipTimeout != 0) {
 			//    GLib.Source.Remove (tooltipTimeout);
 			//    tooltipTimeout = 0;
@@ -571,33 +575,47 @@ namespace MonoDevelop.Components.PropertyGrid
 			//}
 		}
 
+		//class TooltipWindow : Gtk.Window
+		//{
+		//    TooltipWindow() : base(WindowType.Toplevel)
+		//    {
+				
+		//    }
+
+		//}
+
 		void ShowTooltipWindow (int x, int y)
 		{
-			//tooltipTimeout = 0;
-			//int dx = (int)((double)Allocation.Width * dividerPosition);
-			//if (x >= dx)
-			//    return;
-			//var row = GetAllRows (true).FirstOrDefault (r => !r.IsCategory && y >= r.EditorBounds.Y && y <= r.EditorBounds.Bottom);
-			//if (row != null) {
-			//    tooltipWindow = new TooltipPopoverWindow ();
-			//    tooltipWindow.ShowArrow = true;
-			//    var s = new System.Text.StringBuilder ("<b>" + row.Property.DisplayName + "</b>");
-			//    s.AppendLine ();
-			//    s.AppendLine ();
-			//    s.Append (GLib.Markup.EscapeText (row.Property.Description));
-			//    if (row.Property.Converter.CanConvertTo (typeof(string))) {
-			//        var value = Convert.ToString (row.Property.GetValue (row.Instace));
-			//        if (!string.IsNullOrEmpty (value)) {
-			//            const int chunkLength = 200;
-			//            var multiLineValue = string.Join (Environment.NewLine, Enumerable.Range (0, (int)Math.Ceiling ((double)value.Length / chunkLength)).Select (n => string.Concat (value.Skip (n * chunkLength).Take (chunkLength))));
-			//            s.AppendLine ();
-			//            s.AppendLine ();
-			//            s.Append ("Value: " + multiLineValue);
-			//        }
-			//    }
-			//    tooltipWindow.Markup = s.ToString ();
-			//    tooltipWindow.ShowPopup (this, new Gdk.Rectangle (0, row.EditorBounds.Y, Allocation.Width, row.EditorBounds.Height), PopupPosition.Right);
-			//}
+			tooltipTimeout = 0;
+			int dx = (int)((double)Allocation.Width * dividerPosition);
+			if (x >= dx)
+				return;
+			var row = GetAllRows(true).FirstOrDefault(r => !r.IsCategory && y >= r.EditorBounds.Y && y <= r.EditorBounds.Bottom);
+			if (row != null)
+			{
+				//tooltipWindow = new TooltipPopoverWindow();
+				//tooltipWindow.ShowArrow = true;
+				//var s = new System.Text.StringBuilder("<b>" + row.Property.DisplayName + "</b>");
+				//s.AppendLine();
+				//s.AppendLine();
+				//s.Append(GLib.Markup.EscapeText(row.Property.Description));
+				//if (row.Property.Converter.CanConvertTo(typeof(string)))
+				//{
+				//    var value = Convert.ToString(row.Property.GetValue(row.Instace));
+				//    if (!string.IsNullOrEmpty(value))
+				//    {
+				//        const int chunkLength = 200;
+				//        var multiLineValue = string.Join(Environment.NewLine, Enumerable.Range(0, (int)Math.Ceiling((double)value.Length / chunkLength)).Select(n => string.Concat(value.Skip(n * chunkLength).Take(chunkLength))));
+				//        s.AppendLine();
+				//        s.AppendLine();
+				//        s.Append("Value: " + multiLineValue);
+				//    }
+				//}
+				//tooltipWindow.Markup = s.ToString();
+				//tooltipWindow.ShowPopup(this, new Gdk.Rectangle(0, row.EditorBounds.Y, Allocation.Width, row.EditorBounds.Height), PopupPosition.Right);
+
+				TooltipText = row.Property.Description;
+			}
 		}
 
 		protected override void OnUnrealized ()

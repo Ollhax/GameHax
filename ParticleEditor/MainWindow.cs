@@ -40,6 +40,7 @@ public partial class MainWindow: Gtk.Window
 		[Description("Name of the file.")]
 		public int Value1 { get; set; }
 
+		[Description("Value of beeper.")]
 		public string Beeper { get; set; }
 
 		public Woopa Selector { get; set; }
