@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
@@ -36,9 +38,11 @@
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
+    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,15 +53,61 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Externals\GLWidget.cs" />
-    <Compile Include="HaxGLWidget.cs" />
+    <Compile Include="HaxGLWidget\GLWidget.cs" />
+    <Compile Include="HaxGLWidget\HaxGLWidget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyGrid\Mono.TextEditor\HelperMethods.cs" />
+    <Compile Include="PropertyGrid\Mono.TextEditor\Platform.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\BooleanEditorCell.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\CharPropertyEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\CollectionEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\ColorEditorCell.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\DateTimeEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\DefaultEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\EnumerationEditorCell.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\EventEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\ExpandableObjectEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FilePathEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FlagsEditorCell.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FlagsSelectorDialog.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FloatRange.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\IntRange.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TextEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TextEditorDialog.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TimeSpanEditor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\DefaultPropertyTab.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\EditorManager.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\EventPropertyTab.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyEditorCell.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyEditorTypeAttribute.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyGrid.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyGridTable.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyValueChangedEventArgs.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\PropertyValueChangedEventHandler.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid\SurrogateUITypeEditorAttribute.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components\CairoExtensions.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components\CompactScrolledWindow.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components\GtkUtil.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components\HslColor.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components\PangoCairoHelper.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
       <Project>{3F167F06-8D75-4111-882C-7239EA91F13B}</Project>
       <Name>Framework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PropertyGrid\Resources\disclose-arrow-down.png">
+      <LogicalName>disclose-arrow-down.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PropertyGrid\Resources\disclose-arrow-up.png">
+      <LogicalName>disclose-arrow-up.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PropertyGrid\Resources\MonoDevelop.Components.PropertyGrid.SortByCat.png">
+      <LogicalName>MonoDevelop.Components.PropertyGrid.SortByCat.png</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

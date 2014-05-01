@@ -14,12 +14,9 @@ public partial class MainWindow
 	private global::Gtk.VPaned vpaned5;
 	private global::Gtk.ScrolledWindow GtkScrolledWindow;
 	private global::Gtk.TreeView treeview2;
+	private global::MonoDevelop.Components.PropertyGrid.PropertyGrid propertygrid1;
 	private global::Gtk.VPaned vpaned4;
 	private global::EditorCommon.HaxGLWidget MainGL;
-	private global::Gtk.Notebook notebook1;
-	private global::Gtk.Label label1;
-	private global::EditorCommon.HaxGLWidget haxglwidget1;
-	private global::Gtk.Label label2;
 	private global::Gtk.Statusbar statusbar5;
 
 	protected virtual void Build ()
@@ -50,7 +47,8 @@ public partial class MainWindow
 		this.vbox3.Name = "vbox3";
 		this.vbox3.Spacing = 6;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar7'><menu name='FileAction2' action='FileAction2'/></menubar></ui>");
+		this.UIManager.AddUiFromString ("<ui><menubar name=\'menubar7\'><menu name=\'FileAction2\' action=\'FileAction2\'/></men" +
+		"ubar></ui>");
 		this.menubar7 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar7")));
 		this.menubar7.Name = "menubar7";
 		this.vbox3.Add (this.menubar7);
@@ -67,7 +65,7 @@ public partial class MainWindow
 		this.vpaned5 = new global::Gtk.VPaned ();
 		this.vpaned5.CanFocus = true;
 		this.vpaned5.Name = "vpaned5";
-		this.vpaned5.Position = 257;
+		this.vpaned5.Position = 230;
 		// Container child vpaned5.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -80,9 +78,15 @@ public partial class MainWindow
 		this.vpaned5.Add (this.GtkScrolledWindow);
 		global::Gtk.Paned.PanedChild w4 = ((global::Gtk.Paned.PanedChild)(this.vpaned5 [this.GtkScrolledWindow]));
 		w4.Resize = false;
+		// Container child vpaned5.Gtk.Paned+PanedChild
+		this.propertygrid1 = new global::MonoDevelop.Components.PropertyGrid.PropertyGrid ();
+		this.propertygrid1.Name = "propertygrid1";
+		this.propertygrid1.ShowToolbar = true;
+		this.propertygrid1.ShowHelp = true;
+		this.vpaned5.Add (this.propertygrid1);
 		this.hpaned2.Add (this.vpaned5);
-		global::Gtk.Paned.PanedChild w5 = ((global::Gtk.Paned.PanedChild)(this.hpaned2 [this.vpaned5]));
-		w5.Resize = false;
+		global::Gtk.Paned.PanedChild w6 = ((global::Gtk.Paned.PanedChild)(this.hpaned2 [this.vpaned5]));
+		w6.Resize = false;
 		// Container child hpaned2.Gtk.Paned+PanedChild
 		this.vpaned4 = new global::Gtk.VPaned ();
 		this.vpaned4.CanFocus = true;
@@ -101,57 +105,21 @@ public partial class MainWindow
 		this.MainGL.GlVersionMajor = 2;
 		this.MainGL.GlVersionMinor = 1;
 		this.vpaned4.Add (this.MainGL);
-		global::Gtk.Paned.PanedChild w6 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.MainGL]));
-		w6.Resize = false;
-		// Container child vpaned4.Gtk.Paned+PanedChild
-		this.notebook1 = new global::Gtk.Notebook ();
-		this.notebook1.CanFocus = true;
-		this.notebook1.Name = "notebook1";
-		this.notebook1.CurrentPage = 0;
-		// Notebook tab
-		global::Gtk.Label w7 = new global::Gtk.Label ();
-		w7.Visible = true;
-		this.notebook1.Add (w7);
-		this.label1 = new global::Gtk.Label ();
-		this.label1.Name = "label1";
-		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("page1");
-		this.notebook1.SetTabLabel (w7, this.label1);
-		this.label1.ShowAll ();
-		// Container child notebook1.Gtk.Notebook+NotebookChild
-		this.haxglwidget1 = new global::EditorCommon.HaxGLWidget ();
-		this.haxglwidget1.Name = "haxglwidget1";
-		this.haxglwidget1.SingleBuffer = false;
-		this.haxglwidget1.ColorBPP = 0;
-		this.haxglwidget1.AccumulatorBPP = 0;
-		this.haxglwidget1.DepthBPP = 0;
-		this.haxglwidget1.StencilBPP = 0;
-		this.haxglwidget1.Samples = 0;
-		this.haxglwidget1.Stereo = false;
-		this.haxglwidget1.GlVersionMajor = 2;
-		this.haxglwidget1.GlVersionMinor = 1;
-		this.notebook1.Add (this.haxglwidget1);
-		global::Gtk.Notebook.NotebookChild w8 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.haxglwidget1]));
-		w8.Position = 1;
-		// Notebook tab
-		this.label2 = new global::Gtk.Label ();
-		this.label2.Name = "label2";
-		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("page2");
-		this.notebook1.SetTabLabel (this.haxglwidget1, this.label2);
-		this.label2.ShowAll ();
-		this.vpaned4.Add (this.notebook1);
+		global::Gtk.Paned.PanedChild w7 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.MainGL]));
+		w7.Resize = false;
 		this.hpaned2.Add (this.vpaned4);
 		this.vbox3.Add (this.hpaned2);
-		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
-		w11.Position = 1;
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
+		w9.Position = 1;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.statusbar5 = new global::Gtk.Statusbar ();
 		this.statusbar5.Name = "statusbar5";
 		this.statusbar5.Spacing = 6;
 		this.vbox3.Add (this.statusbar5);
-		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
-		w12.Position = 2;
-		w12.Expand = false;
-		w12.Fill = false;
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
+		w10.Position = 2;
+		w10.Expand = false;
+		w10.Fill = false;
 		this.Add (this.vbox3);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
