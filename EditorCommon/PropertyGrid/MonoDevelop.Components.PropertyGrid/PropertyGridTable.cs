@@ -413,16 +413,46 @@ namespace MonoDevelop.Components.PropertyGrid
 					r.Enabled = !r.Property.IsReadOnly || cell.EditsReadOnlyObject;
 					var state = r.Enabled ? State : Gtk.StateType.Insensitive;
 					ctx.Save ();
-					ctx.Rectangle (0, y, dividerX, h + PropertyTopBottomPadding*2);
+					
+					if (r == currentEditorRow)
+					{
+						ctx.Rectangle(0, y, dividerX, h + PropertyTopBottomPadding * 2);
+						ctx.SetSourceColor(new Cairo.Color(0.8, 0.9, 1.0, 1));
+						ctx.Fill();
+
+
+						//int dividerX = (int)((double)Allocation.Width * dividerPosition);
+						//var cell = GetCell(r);
+						//cell.GetSize(Allocation.Width - dividerX, out w, out eh);
+						//eh = Math.Max(h + PropertyTopBottomPadding * 2, eh);
+						//r.EditorBounds = new Gdk.Rectangle(dividerX + PropertyContentLeftPadding, y, Allocation.Width - dividerX - PropertyContentLeftPadding, eh);
+
+						//var bounds = new Gdk.Rectangle(dividerX + 1, r.EditorBounds.Y, Allocation.Width - dividerX - 1, r.EditorBounds.Height);
+						
+						//ctx.MoveTo(bounds.Right, bounds.Y+1);
+						//ctx.LineTo(bounds.X, bounds.Y+1);
+						//ctx.MoveTo(bounds.Right, bounds.Bottom);
+						//ctx.LineTo(bounds.X, bounds.Bottom);
+
+						//ctx.Stroke();
+						
+						//ctx.Rectangle(dividerX + 1, r.EditorBounds.Y, Allocation.Width - dividerX - 1, r.EditorBounds.Height);
+						//ctx.SetSourceColor(new Cairo.Color(0.8, 0.9, 1.0, 1));
+						//ctx.Fill();
+					}
+
+					ctx.Rectangle(0, y, dividerX, h + PropertyTopBottomPadding * 2);
 					ctx.Clip ();
 					ctx.MoveTo (x, y + PropertyTopBottomPadding);
 					ctx.SetSourceColor (Style.Text (state).ToCairoColor ());
 					Pango.CairoHelper.ShowLayout (ctx, layout);
 					ctx.Restore ();
-
+					
 					if (r != currentEditorRow)
-						cell.Render (GdkWindow, ctx, r.EditorBounds, state);
-
+					{
+						cell.Render(GdkWindow, ctx, r.EditorBounds, state);
+					}
+					
 					y += r.EditorBounds.Height;
 					indent = PropertyIndent;
 				}
