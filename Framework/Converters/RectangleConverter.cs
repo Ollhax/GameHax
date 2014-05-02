@@ -22,15 +22,30 @@ namespace MG.Framework.Converters
 							new FieldPropertyDescriptor(type.GetField("Width")), new FieldPropertyDescriptor(type.GetField("Height"))
 						});
 			base.propertyDescriptions = descriptors;
-			base.supportStringConvert = false;
+			//base.supportStringConvert = false;
 		}
 
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			int[] numArray = MathTypeConverter.ConvertToValues<int>(context, culture, value, 4, new[] { "X", "Y", "Width", "Height" });
+			if (numArray != null)
+			{
+				return new Rectangle(numArray[0], numArray[1], numArray[2], numArray[3]);
+			}
+			return base.ConvertFrom(context, culture, value);
+		}
+		
 		public override object ConvertTo(
 			ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			if (destinationType == null)
 			{
 				throw new ArgumentNullException("destinationType");
+			}
+			if ((destinationType == typeof(string)) && (value is Rectangle))
+			{
+				var rect = (Rectangle)value;
+				return MathTypeConverter.ConvertFromValues<int>(context, culture, new[] { rect.X, rect.Y, rect.Width, rect.Height });
 			}
 			if ((destinationType == typeof(InstanceDescriptor)) && (value is Rectangle))
 			{

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using Gtk;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
-
+using MG.Framework.Utility;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -40,11 +40,23 @@ public partial class MainWindow: Gtk.Window
 		[Description("Name of the file.")]
 		public int Value1 { get; set; }
 
+		public float Value2 { get; set; }
+
 		[Description("Value of beeper.")]
+
 		public string Beeper { get; set; }
 
 		public Woopa Selector { get; set; }
 
+		public Rectangle Rectangle { get; set; }
+
+		public RectangleF RectangleF { get; set; }
+
+		public Vector2 Vector2 { get; set; }
+
+		public Vector2I Vector2I { get; set; }
+
+		public FilePath File { get; set; }
 		
 		AttributeCollection ICustomTypeDescriptor.GetAttributes() { return TypeDescriptor.GetAttributes(this, true); }
 		string ICustomTypeDescriptor.GetClassName() { return TypeDescriptor.GetClassName(this, true); }
@@ -86,9 +98,9 @@ public partial class MainWindow: Gtk.Window
 
 	private void Propertygrid1OnChanged(object sender, EventArgs eventArgs)
 	{
-		Console.WriteLine(m.Beeper);
-		Console.WriteLine(m.Selector);
-		Console.WriteLine(m.Value1);
+		//Console.WriteLine(m.Beeper);
+		//Console.WriteLine(m.Selector);
+		//Console.WriteLine(m.Value1);
 	}
 	
 	private void SetupTree()

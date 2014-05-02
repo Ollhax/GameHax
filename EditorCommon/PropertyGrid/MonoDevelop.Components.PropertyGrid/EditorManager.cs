@@ -39,6 +39,8 @@ using System.ComponentModel;
 
 using MonoDevelop.Components.PropertyGrid.PropertyEditors;
 
+using Stetic.Editor;
+
 namespace MonoDevelop.Components.PropertyGrid
 {
 	internal class EditorManager
@@ -73,6 +75,18 @@ namespace MonoDevelop.Components.PropertyGrid
 					}
 				}
 			}
+
+			// OLLE: Added some editors
+			editors[typeof(byte)] = typeof(IntRange);
+			editors[typeof(sbyte)] = typeof(IntRange);
+			editors[typeof(short)] = typeof(IntRange);
+			editors[typeof(ushort)] = typeof(IntRange);
+			editors[typeof(int)] = typeof(IntRange);
+			editors[typeof(uint)] = typeof(IntRange);
+			editors[typeof(long)] = typeof(IntRange);
+			editors[typeof(ulong)] = typeof(IntRange);
+			editors[typeof(float)] = typeof(FloatRange);
+			editors[typeof(double)] = typeof(FloatRange);
 		}
 
 		public PropertyEditorCell GetEditor (PropertyDescriptor pd)

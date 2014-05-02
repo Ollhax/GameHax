@@ -72,6 +72,7 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FlagsSelectorDialog.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FloatRange.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\IntRange.cs" />
+    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\OptIntRange.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TextEditor.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TextEditorDialog.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\TimeSpanEditor.cs" />

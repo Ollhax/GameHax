@@ -8,7 +8,7 @@
     <widget-library name="../../EditorCommon/bin/Debug/EditorCommon.dll" />
     <widget-library name="../bin/Debug/ParticleEditor.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="937 526">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1187 716">
     <action-group name="Default">
       <action id="FileAction">
         <property name="Type">Action</property>
@@ -57,12 +57,12 @@
           <widget class="Gtk.HPaned" id="hpaned2">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Position">121</property>
+            <property name="Position">160</property>
             <child>
               <widget class="Gtk.VPaned" id="vpaned5">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">230</property>
+                <property name="Position">282</property>
                 <child>
                   <widget class="Gtk.ScrolledWindow" id="GtkScrolledWindow">
                     <property name="MemberName" />
@@ -95,7 +95,7 @@
               <widget class="Gtk.VPaned" id="vpaned4">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">273</property>
+                <property name="Position">499</property>
                 <child>
                   <widget class="EditorCommon.HaxGLWidget" id="MainGL">
                     <property name="MemberName" />

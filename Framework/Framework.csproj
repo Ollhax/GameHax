@@ -60,6 +60,7 @@
     <Compile Include="Audio\OggStream.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\FieldPropertyDescriptor.cs" />
+    <Compile Include="Converters\FilePathConverter.cs" />
     <Compile Include="Converters\MathTypeConverter.cs" />
     <Compile Include="Converters\MemberPropertyDescriptor.cs" />
     <Compile Include="Converters\PropertyPropertyDescriptor.cs" />
@@ -127,9 +128,11 @@
     <Compile Include="Numerics\Vector3I.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
+    <Compile Include="Utility\FilePath.cs" />
     <Compile Include="Utility\Log.cs" />
     <Compile Include="Utility\PathHelper.cs" />
     <Compile Include="Utility\PathHelper.Test.cs" />
+    <Compile Include="Utility\Platform.cs" />
     <Compile Include="Utility\Pool.cs" />
     <Compile Include="Utility\TestTools.cs" />
     <Compile Include="Utility\Time.cs" />

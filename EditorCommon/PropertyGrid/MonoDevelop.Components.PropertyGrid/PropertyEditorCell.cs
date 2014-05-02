@@ -138,6 +138,8 @@ namespace MonoDevelop.Components.PropertyGrid
 			int dy = (bounds.Height - h) / 2;
 
 			ctx.Save ();
+
+			ctx.SetSourceColor(container.Style.Black.ToCairoColor());
 			ctx.SetSourceColor (container.Style.Text (state).ToCairoColor ());
 			ctx.MoveTo (bounds.X, dy + bounds.Y);
 			Pango.CairoHelper.ShowLayout (ctx, layout);
@@ -348,6 +350,10 @@ namespace MonoDevelop.Components.PropertyGrid
 			
 			Gdk.Rectangle rect = Allocation;
 			rect.Inflate (-3, 0);// Add some margin
+			
+			// OLLE: Don't double-offset the drawing
+			rect.X = 0;
+			rect.Y = 0;
 
 			using (Cairo.Context ctx = Gdk.CairoHelper.Create (this.GdkWindow)) {
 				cell.Render (this.GdkWindow, ctx, rect, StateType.Normal);
@@ -361,7 +367,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		PropertyEditorCell cell;
 		
 		public PropertyDialogueEditor (PropertyEditorCell cell)
-		{
+		{			
 			this.cell = cell;
 			Spacing = 3;
 			PackStart (new CellRendererWidget (cell), true, true, 0);
@@ -375,7 +381,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			this.ModifyBg (Gtk.StateType.Normal, this.Style.White);
 			ShowAll ();
 		}
-		
+
 		void DialogueButtonClicked (object s, EventArgs args)
 		{
 			cell.LaunchDialogue ();

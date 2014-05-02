@@ -29,6 +29,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 using Gtk;
 using Gdk;
@@ -131,13 +132,31 @@ namespace MonoDevelop.Components.PropertyGrid.PropertyEditors
 			}
 		}
 
+		bool IsValid(TypeConverter typeConverter, ITypeDescriptorContext context, object value)
+		{
+			if (!typeConverter.CanConvertFrom(context, value.GetType())) return false;
+
+			try
+			{
+				typeConverter.ConvertFrom(context, CultureInfo.CurrentCulture, value);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			
+			return true;
+		}
+
 		void TextChanged(object s, EventArgs a)
 		{
 			if (initialText == entry.Text)
 				return;
 
 			bool valid = false;
-			if (session.Property.Converter.IsValid(session, entry.Text))
+
+			//if (session.Property.Converter.IsValid(session, entry.Text))
+			if (IsValid(session.Property.Converter, session, entry.Text)) // Replaced converter.IsValid, it used the wrong culture info.
 			{
 				try
 				{

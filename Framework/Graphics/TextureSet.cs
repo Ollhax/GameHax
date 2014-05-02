@@ -32,7 +32,7 @@ namespace MG.Framework.Graphics
 		/// Create a texture set as an atlas.
 		/// </summary>
 		/// <param name="in_pairs">A list of image-map pairs.</param>
-		public TextureSet(List<Tuple<string, string>> imageMapPairs)
+		public TextureSet(List<Tuple<FilePath, FilePath>> imageMapPairs)
 		{
 			foreach (var pair in imageMapPairs)
 			{
@@ -87,7 +87,7 @@ namespace MG.Framework.Graphics
 		/// Create a set from a group of images
 		/// </summary>
 		/// <param name="images">Images to create a set from.</param>
-		public TextureSet(IEnumerable<string> images)
+		public TextureSet(IEnumerable<FilePath> images)
 		{
 			float divisor = 1.0f; //; Globals::GetCurrentContentScale();
 
@@ -132,42 +132,42 @@ namespace MG.Framework.Graphics
 			}
 		}
 
-		public static TextureSet CreateFromDirectory(string directory)
+		public static TextureSet CreateFromDirectory(FilePath directory)
 		{
 			string[] files = Directory.GetFiles(directory, "*.txt");
 			
 			// Atlases
-			var atlasPairs = new List<Tuple<string, string>>();
+			var atlasPairs = new List<Tuple<FilePath, FilePath>>();
 
 			foreach (var file in files)
 			{
-				string atlasPath = Path.GetFullPath(file);
-				string texPath = PathHelper.GetFileNameWithoutExtension(atlasPath) + ".png";
+				var atlasPath = new FilePath(file);
+				var texPath = atlasPath.ChangeExtension("png");
 
-				atlasPairs.Add(new Tuple<string, string>(texPath, atlasPath));
+				atlasPairs.Add(new Tuple<FilePath, FilePath>(texPath, atlasPath));
 			}
 
 			// Load atlas
 			return new TextureSet(atlasPairs);
 		}
 
-		public static TextureSet CreateFromListFile(string in_atlasListFile)
+		public static TextureSet CreateFromListFile(FilePath atlasListFile)
 		{
-			string spriteSetFolder = Path.GetDirectoryName(in_atlasListFile);
+			string spriteSetFolder = Path.GetDirectoryName(atlasListFile);
 
-			string[] fileList = File.ReadAllLines(in_atlasListFile);
+			string[] fileList = File.ReadAllLines(atlasListFile);
 
 			if (fileList[0] == "atlases:")
 			{
 				// Atlases
-				var atlasPairs = new List<Tuple<string, string>>();
+				var atlasPairs = new List<Tuple<FilePath, FilePath>>();
 
 				for (uint i = 1; i < fileList.Length; ++i)
 				{
-					string atlasPath = Path.Combine(spriteSetFolder, fileList[i]);
-					string texPath = Path.Combine(spriteSetFolder, Path.GetFileNameWithoutExtension(atlasPath)) + ".png";
+					FilePath atlasPath = Path.Combine(spriteSetFolder, fileList[i]);
+					FilePath texPath = atlasPath.ChangeExtension("png");
 
-					atlasPairs.Add(new Tuple<string, string>(texPath, atlasPath));
+					atlasPairs.Add(new Tuple<FilePath, FilePath>(texPath, atlasPath));
 				}
 
 				// Load atlas
@@ -181,7 +181,13 @@ namespace MG.Framework.Graphics
 				//    texPath = Path.Combine(spriteSetFolder, texPath);
 				//}
 
-				return new TextureSet(fileList);
+				var paths = new FilePath[fileList.Length];
+				for (int i = 0; i < fileList.Length; i++)
+				{
+					paths[i] = fileList[i];
+				}
+
+				return new TextureSet(paths);
 			}
 		}
 	};

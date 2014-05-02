@@ -60,12 +60,12 @@ public partial class MainWindow
 		this.hpaned2 = new global::Gtk.HPaned ();
 		this.hpaned2.CanFocus = true;
 		this.hpaned2.Name = "hpaned2";
-		this.hpaned2.Position = 121;
+		this.hpaned2.Position = 160;
 		// Container child hpaned2.Gtk.Paned+PanedChild
 		this.vpaned5 = new global::Gtk.VPaned ();
 		this.vpaned5.CanFocus = true;
 		this.vpaned5.Name = "vpaned5";
-		this.vpaned5.Position = 230;
+		this.vpaned5.Position = 282;
 		// Container child vpaned5.Gtk.Paned+PanedChild
 		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -91,7 +91,7 @@ public partial class MainWindow
 		this.vpaned4 = new global::Gtk.VPaned ();
 		this.vpaned4.CanFocus = true;
 		this.vpaned4.Name = "vpaned4";
-		this.vpaned4.Position = 273;
+		this.vpaned4.Position = 499;
 		// Container child vpaned4.Gtk.Paned+PanedChild
 		this.MainGL = new global::EditorCommon.HaxGLWidget ();
 		this.MainGL.Name = "MainGL";
@@ -124,8 +124,8 @@ public partial class MainWindow
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 937;
-		this.DefaultHeight = 526;
+		this.DefaultWidth = 1187;
+		this.DefaultHeight = 716;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 	}
