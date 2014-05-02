@@ -95,7 +95,7 @@
               <widget class="Gtk.VPaned" id="vpaned4">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Position">499</property>
+                <property name="Position">493</property>
                 <child>
                   <widget class="EditorCommon.HaxGLWidget" id="MainGL">
                     <property name="MemberName" />
@@ -114,7 +114,12 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder />
+                  <widget class="EditorCommon.HaxGraph" id="haxgraph">
+                    <property name="MemberName" />
+                  </widget>
+                  <packing>
+                    <property name="Resize">False</property>
+                  </packing>
                 </child>
               </widget>
             </child>

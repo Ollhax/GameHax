@@ -17,6 +17,7 @@ public partial class MainWindow
 	private global::MonoDevelop.Components.PropertyGrid.PropertyGrid propertygrid1;
 	private global::Gtk.VPaned vpaned4;
 	private global::EditorCommon.HaxGLWidget MainGL;
+	private global::EditorCommon.HaxGraph haxgraph;
 	private global::Gtk.Statusbar statusbar5;
 
 	protected virtual void Build ()
@@ -91,7 +92,7 @@ public partial class MainWindow
 		this.vpaned4 = new global::Gtk.VPaned ();
 		this.vpaned4.CanFocus = true;
 		this.vpaned4.Name = "vpaned4";
-		this.vpaned4.Position = 499;
+		this.vpaned4.Position = 493;
 		// Container child vpaned4.Gtk.Paned+PanedChild
 		this.MainGL = new global::EditorCommon.HaxGLWidget ();
 		this.MainGL.Name = "MainGL";
@@ -107,19 +108,25 @@ public partial class MainWindow
 		this.vpaned4.Add (this.MainGL);
 		global::Gtk.Paned.PanedChild w7 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.MainGL]));
 		w7.Resize = false;
+		// Container child vpaned4.Gtk.Paned+PanedChild
+		this.haxgraph = new global::EditorCommon.HaxGraph ();
+		this.haxgraph.Name = "haxgraph";
+		this.vpaned4.Add (this.haxgraph);
+		global::Gtk.Paned.PanedChild w8 = ((global::Gtk.Paned.PanedChild)(this.vpaned4 [this.haxgraph]));
+		w8.Resize = false;
 		this.hpaned2.Add (this.vpaned4);
 		this.vbox3.Add (this.hpaned2);
-		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
-		w9.Position = 1;
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hpaned2]));
+		w10.Position = 1;
 		// Container child vbox3.Gtk.Box+BoxChild
 		this.statusbar5 = new global::Gtk.Statusbar ();
 		this.statusbar5.Name = "statusbar5";
 		this.statusbar5.Spacing = 6;
 		this.vbox3.Add (this.statusbar5);
-		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
-		w10.Position = 2;
-		w10.Expand = false;
-		w10.Fill = false;
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.statusbar5]));
+		w11.Position = 2;
+		w11.Expand = false;
+		w11.Fill = false;
 		this.Add (this.vbox3);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
