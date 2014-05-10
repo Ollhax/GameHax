@@ -598,8 +598,11 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			HideTooltip ();
 			
+			int x = (int)evnt.X;
+			int y = (int)evnt.Y;
+
 			tooltipTimeout = GLib.Timeout.Add (500, delegate {
-				ShowTooltipWindow ((int)evnt.X, (int)evnt.Y);
+				ShowTooltipWindow (x, y);
 				return false;
 			});
 		}
@@ -607,10 +610,12 @@ namespace MonoDevelop.Components.PropertyGrid
 		void HideTooltip ()
 		{
 			TooltipText = "";
-			//if (tooltipTimeout != 0) {
-			//    GLib.Source.Remove (tooltipTimeout);
-			//    tooltipTimeout = 0;
-			//}
+			if (tooltipTimeout != 0)
+			{
+				GLib.Source.Remove(tooltipTimeout);
+				tooltipTimeout = 0;
+			}
+
 			//if (tooltipWindow != null) {
 			//    tooltipWindow.Destroy ();
 			//    tooltipWindow = null;
@@ -629,9 +634,9 @@ namespace MonoDevelop.Components.PropertyGrid
 		void ShowTooltipWindow (int x, int y)
 		{
 			tooltipTimeout = 0;
-			int dx = (int)((double)Allocation.Width * dividerPosition);
-			if (x >= dx)
-				return;
+			//int dx = (int)((double)Allocation.Width * dividerPosition);
+			//if (x >= dx)
+			//    return;
 			var row = GetAllRows(true).FirstOrDefault(r => !r.IsCategory && y >= r.EditorBounds.Y && y <= r.EditorBounds.Bottom);
 			if (row != null)
 			{
@@ -657,6 +662,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				//tooltipWindow.ShowPopup(this, new Gdk.Rectangle(0, row.EditorBounds.Y, Allocation.Width, row.EditorBounds.Height), PopupPosition.Right);
 
 				TooltipText = row.Property.Description;
+				//TooltipText = row.Property.DisplayName;
 			}
 		}
 
