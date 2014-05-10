@@ -8,6 +8,6 @@
 		BlendmodeOpaque, // Override pixels without using alpha
 		BlendmodeAlpha, // Standard premultiplied alpha mode
 		BlendmodeNonPremultiplied, // Multiply color values using alpha values
-		BLendmodeAdditive // Add color values without using alpha
+		BlendmodeAdditive // Add color values without using alpha
 	};
 }

@@ -50,6 +50,16 @@ namespace MG.Framework.Utility
 			return node.Attributes[attribute] != null;
 		}
 
+		public static bool HasElement(XmlNode node, string element)
+		{
+			var child = node[element];
+			if (child == null)
+			{
+				return false;
+			}
+			return true;
+		}
+
 		public static string ReadString(XmlNode node, string element, string defaultValue = null)
 		{
 			var child = node[element];

@@ -92,7 +92,7 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components\GtkUtil.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components\HslColor.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components\PangoCairoHelper.cs" />
-    <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />    
+    <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />
     <Compile Include="HaxGraph\HaxGraph.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -110,11 +110,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PropertyGrid\Resources\MonoDevelop.Components.PropertyGrid.SortByCat.png">
       <LogicalName>MonoDevelop.Components.PropertyGrid.SortByCat.png</LogicalName>
-    </EmbeddedResource>    
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="HaxGraph\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

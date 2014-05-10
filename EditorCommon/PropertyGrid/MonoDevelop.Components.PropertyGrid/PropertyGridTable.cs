@@ -173,10 +173,22 @@ namespace MonoDevelop.Components.PropertyGrid
 					AppendProperty (rows, pd, instance);
 			}
 			else {
-				sorted.Sort ((a,b) => {
-					var c = a.Category.CompareTo (b.Category);
-					return c != 0 ? c : a.DisplayName.CompareTo (b.DisplayName);
-				});
+				//sorted.Sort ((a,b) => {
+				//    var c = a.Category.CompareTo (b.Category);
+				//    return c != 0 ? c : a.DisplayName.CompareTo (b.DisplayName);
+				//});
+
+				var categoryOrder = new Dictionary<string, int>();
+				foreach (var e in sorted)
+				{
+					if (!categoryOrder.ContainsKey(e.Category))
+					{
+						categoryOrder.Add(e.Category, categoryOrder.Count);
+					}
+				}
+
+				sorted = sorted.OrderBy(x => categoryOrder[x.Category]).ToList();
+				
 				TableRow lastCat = null;
 				List<TableRow> rowList = rows;
 

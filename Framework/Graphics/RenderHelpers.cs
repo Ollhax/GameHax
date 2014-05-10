@@ -27,7 +27,7 @@ namespace MG.Framework.Graphics
 					GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 					break;
 
-				case BlendMode.BLendmodeAdditive:
+				case BlendMode.BlendmodeAdditive:
 					GL.Enable(EnableCap.Blend);
 					GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.One);
 					break;

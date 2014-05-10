@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ParticleSystemTable>
+	<ParticleSystem>
+		<Name>meep</Name>
+		<Emitter>point</Emitter>
+		<Parameters>
+			<Parameter>
+				<Name>SpawnRate</Name>
+				<Type>Single</Type>
+				<Value>10</Value>
+				<Random>0</Random>
+				<Graph>
+					<Value X="0" Y="0.5"/>
+					<Value X="1" Y="1.0"/>
+				</Graph>
+			</Parameter>
+			<Parameter>
+				<Name>Life</Name>
+				<Type>Single</Type>
+				<Value>1</Value>
+				<Random>0</Random>
+			</Parameter>
+			<Parameter>
+				<Name>SortMode</Name>
+				<Type>Int32</Type>
+				<Value>1</Value>
+			</Parameter>
+		</Parameters>
+		<!--<SubSystems>
+			<ParticleSystem>
+			  ...
+			</ParticleSystem>
+		</SubSystems>-->
+	</ParticleSystem>
+	<ParticleSystem>
+		<Name>beep</Name>
+		<Emitter>point</Emitter>
+		<Parameters>
+			<Parameter>
+				<Name>SpawnRate</Name>
+				<Type>Single</Type>
+				<Value>1</Value>
+				<Random>5</Random>
+				<Graph>
+					<Value X="0" Y="0.5"/>
+					<Value X="1" Y="1.0"/>
+				</Graph>
+			</Parameter>
+		</Parameters>
+	</ParticleSystem>
+</ParticleSystemTable>
