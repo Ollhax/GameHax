@@ -26,17 +26,42 @@ public partial class MainWindow: Gtk.Window
 	private ParticleDefinitionTable particleDefinitionTable;
 	private ParticleDeclarationTable particleDeclarationTable;
 
+	ParticleDefinition CreateParticle(string name)
+	{
+	    ParticleDeclaration declaration;
+	    if (!particleDeclarationTable.Declarations.TryGetValue(name, out declaration)) return null;
+
+	    var definition = new ParticleDefinition();
+	    definition.Name = declaration.Name;
+		definition.Declaration = name;
+
+	    foreach (var declarationParameterPair in declaration.Parameters)
+	    {
+	    	var declarationParameter = declarationParameterPair.Value;
+	    	var definitionParameter = new ParticleDefinition.Parameter();
+
+	    	definitionParameter.Name = declarationParameter.Name;
+	    	definitionParameter.Value = declarationParameter.DefaultValue;
+			definitionParameter.Random = declarationParameter.DefaultValueRandom;
+
+			definition.Parameters.Add(definitionParameter.Name, definitionParameter);
+	    }
+
+		return definition;
+	}
+
 	public MainWindow() : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-
-		particleDefinitionTable = new ParticleDefinitionTable();
-		particleDefinitionTable.Load("definitions.xml");
-
+		
 		particleDeclarationTable = new ParticleDeclarationTable();
 		particleDeclarationTable.Load("ParticleDeclarations.xml");
 
-		particleDefinition = particleDefinitionTable.Definitions["meep"];
+		particleDefinitionTable = new ParticleDefinitionTable();
+		//particleDefinitionTable.Load("definitions.xml");
+
+		particleDefinition = CreateParticle("Basic");
+		particleDefinitionTable.Definitions.Add(particleDefinition.Name, particleDefinition);
 
 		//MainGL.DoubleBuffered = false;
 		MainGL.Draw += MainGlOnDraw;
