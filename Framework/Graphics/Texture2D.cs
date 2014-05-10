@@ -97,7 +97,7 @@ namespace MG.Framework.Graphics
 			Width = width;
 			Height = height;
 		}
-
+		
 		/// <summary>
 		/// Retrieve all the bits of this texture.
 		/// </summary>

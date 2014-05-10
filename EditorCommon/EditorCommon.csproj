@@ -68,7 +68,6 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\EnumerationEditorCell.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\EventEditor.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\ExpandableObjectEditor.cs" />
-    <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FilePathEditor.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FlagsEditorCell.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FlagsSelectorDialog.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components.PropertyGrid.Editors\FloatRange.cs" />

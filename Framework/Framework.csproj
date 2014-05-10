@@ -53,6 +53,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AssetHandler.cs" />
+    <Compile Include="Assets\AssetLoadException.cs" />
     <Compile Include="Audio\AudioDevice.cs" />
     <Compile Include="Audio\MusicStream.cs" />
     <Compile Include="Audio\Logging.cs" />

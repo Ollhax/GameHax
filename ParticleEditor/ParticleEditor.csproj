@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Property\AnyPropertyDescriptor.cs" />
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Property\FilePathEditor.cs" />
     <Compile Include="Property\FloatEditor.cs" />
     <Compile Include="Property\IntEditor.cs" />
     <Compile Include="MainWindow.cs" />

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+using MG.Framework.Assets;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Utility;
@@ -116,7 +117,8 @@ namespace MG.Framework.Particle
 		public float Angle;
 		
 		public int ActiveParticles { get { return particleData.ActiveParticles; } }
-		
+
+		private AssetHandler assetHandler;
 		private Texture2D particleTexture;
 		private List<float> particleAge;
 		private List<int> particleSortIndex;
@@ -140,18 +142,19 @@ namespace MG.Framework.Particle
 				return ParticleAge[x].CompareTo(ParticleAge[y]);
 			}
 		}
-
+		
 		private CompareLeastAgeFirst compareLeastAgeFirst;
 		private ComparisonMostAgeFirst comparisonMostAgeFirst;
 		private ParticleData particleData = new ParticleData(64);
 		private ParticleEmitter emitter;
 
+		private ParticleDefinition.Parameter paramTexture;
 		private ParticleDefinition.Parameter paramSortMode;
 		private ParticleDefinition.Parameter paramBlendMode;
-		
-		public ParticleSystem(ParticleDefinition particleDefinition)
+
+		public ParticleSystem(AssetHandler assetHandler, ParticleDefinition particleDefinition)
 		{
-			particleTexture = new Texture2D("weapon_laser_red.png");
+			this.assetHandler = assetHandler;
 			
 			particleData.Register<Vector2>("Position");
 			particleData.Register<Vector2>("Velocity");
@@ -159,13 +162,22 @@ namespace MG.Framework.Particle
 			particleSortIndex = particleData.Register<int>("SortIndex");
 			particleAge = particleData.Register<float>("Age");
 
+			paramTexture = particleDefinition.Parameters["Texture"];
 			paramSortMode = particleDefinition.Parameters["SortMode"];
 			paramBlendMode = particleDefinition.Parameters["BlendMode"];
-
+			
 			compareLeastAgeFirst = new CompareLeastAgeFirst { ParticleAge = particleAge };
 			comparisonMostAgeFirst = new ComparisonMostAgeFirst { ParticleAge = particleAge };
 
 			emitter = new PointEmitter(particleData, particleDefinition);
+
+			Reload();
+		}
+
+		public void Reload()
+		{
+			var texture = paramTexture.Value.Get<FilePath>();
+			particleTexture = assetHandler.Load<Texture2D>(texture);
 		}
 		
 		public void Update(Time time)

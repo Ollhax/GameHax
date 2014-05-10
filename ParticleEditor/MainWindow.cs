@@ -7,6 +7,8 @@ using System.Globalization;
 using System.Threading;
 
 using Gtk;
+
+using MG.Framework.Assets;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Particle;
@@ -21,6 +23,7 @@ public partial class MainWindow: Gtk.Window
 	const int id = 1;
 	private Texture2D texture;
 
+	private AssetHandler assetHandler;
 	private ParticleSystem particleSystem;
 	private ParticleDefinition particleDefinition;
 	private ParticleDefinitionTable particleDefinitionTable;
@@ -150,6 +153,7 @@ public partial class MainWindow: Gtk.Window
 
 	private void Propertygrid1OnChanged(object sender, EventArgs eventArgs)
 	{
+		particleSystem.Reload();
 		//Console.WriteLine(m.Beeper);
 		//Console.WriteLine(m.Selector);
 		//Console.WriteLine(m.Value1);
@@ -206,8 +210,10 @@ public partial class MainWindow: Gtk.Window
 
 	private void MainGlOnLoad()
 	{
-		texture = new Texture2D("weapon_laser_red.png");
-		particleSystem = new ParticleSystem(particleDefinition);
+		assetHandler = new AssetHandler("");
+
+		//texture = new Texture2D("weapon_laser_red.png");
+		particleSystem = new ParticleSystem(assetHandler, particleDefinition);
 		
 		//GLib.Idle.Add(Refresh);
 		GLib.Timeout.Add(33, Refresh);

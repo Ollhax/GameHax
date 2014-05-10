@@ -4,16 +4,12 @@
 		<Name>Basic</Name>
 		<Parameters>
 			<Parameter>
-				<Name>SpawnRate</Name>
-				<PrettyName>Spawn Rate</PrettyName>
-				<Description>How many particles are spawned per second.</Description>
-				<Category>Emitter</Category>
-				<Type>Single</Type>
-				<DefaultValue>10.0</DefaultValue>
-				<DefaultValueRandom>10.0</DefaultValueRandom>
-				<ValueStep>0.1</ValueStep>				
-				<MinValue>0.0</MinValue>
-				<MaxValue>1000.0</MaxValue>
+				<Name>Texture</Name>
+				<Description>The texture used for this particle effect.</Description>
+				<Category>General</Category>
+				<Type>FilePath</Type>
+				<DefaultValue>weapon_laser_red.png</DefaultValue>
+				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
 			</Parameter>
 			<Parameter>
 				<Name>Life</Name>
@@ -26,6 +22,18 @@
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>
 			</Parameter>
+			<Parameter>
+				<Name>SpawnRate</Name>
+				<PrettyName>Spawn Rate</PrettyName>
+				<Description>How many particles are spawned per second.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>10.0</DefaultValue>
+				<DefaultValueRandom>10.0</DefaultValueRandom>
+				<ValueStep>0.1</ValueStep>				
+				<MinValue>0.0</MinValue>
+				<MaxValue>1000.0</MaxValue>
+			</Parameter>			
 			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>

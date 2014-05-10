@@ -21,6 +21,7 @@ namespace MG.ParticleEditor
 			public Any MinValue;
 			public Any MaxValue;
 			public uint ValueDigits;
+			public string FilePathFilter; 
 			public List<KeyValuePair<string, Any>> ValueList;
 		}
 
@@ -40,11 +41,12 @@ namespace MG.ParticleEditor
 					var type = XmlHelper.ReadString(parameterNode, "Type");
 
 					parameter.Name = XmlHelper.ReadString(parameterNode, "Name");
-					parameter.PrettyName = XmlHelper.ReadString(parameterNode, "PrettyName", "");
+					parameter.PrettyName = XmlHelper.ReadString(parameterNode, "PrettyName", parameter.Name);
 					parameter.Description = XmlHelper.ReadString(parameterNode, "Description", "");
 					parameter.Category = XmlHelper.ReadString(parameterNode, "Category", "");
 					parameter.DefaultValue = new Any(XmlHelper.ReadString(parameterNode, "DefaultValue"), type);
 					parameter.ValueDigits = XmlHelper.ReadUInt(parameterNode, "ValueDigits", 1);
+					parameter.FilePathFilter = XmlHelper.ReadString(parameterNode, "FilePathFilter", "");
 
 					if (XmlHelper.HasElement(parameterNode, "DefaultValueRandom"))
 					{

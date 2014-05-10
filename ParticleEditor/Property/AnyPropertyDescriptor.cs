@@ -52,11 +52,9 @@ namespace MG.ParticleEditor
 
 		public override object GetEditor(Type editorBaseType)
 		{
-			if (any.IsInt())
-				return new IntEditor();
-
-			if (any.IsFloat())
-				return new FloatEditor();
+			if (any.IsInt()) return new IntEditor();
+			if (any.IsFloat()) return new FloatEditor();
+			if (any.IsFilePath()) return new FilePathEditor();
 
 			return base.GetEditor(editorBaseType);
 		}
