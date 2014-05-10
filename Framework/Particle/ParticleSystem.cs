@@ -147,6 +147,7 @@ namespace MG.Framework.Particle
 		private ParticleEmitter emitter;
 
 		private ParticleDefinition.Parameter paramSortMode;
+		private ParticleDefinition.Parameter paramBlendMode;
 		
 		public ParticleSystem(ParticleDefinition particleDefinition)
 		{
@@ -159,6 +160,7 @@ namespace MG.Framework.Particle
 			particleAge = particleData.Register<float>("Age");
 
 			paramSortMode = particleDefinition.Parameters["SortMode"];
+			paramBlendMode = particleDefinition.Parameters["BlendMode"];
 
 			compareLeastAgeFirst = new CompareLeastAgeFirst { ParticleAge = particleAge };
 			comparisonMostAgeFirst = new ComparisonMostAgeFirst { ParticleAge = particleAge };
@@ -198,14 +200,15 @@ namespace MG.Framework.Particle
 		public void Draw(RenderContext renderContext)
 		{
 			var quadBatch = renderContext.QuadBatch;
-			quadBatch.Begin(Matrix.Identity, BlendMode.BlendmodeAlpha);
+			var blendMode = (BlendMode)paramBlendMode.Value.Get<int>();
+			quadBatch.Begin(Matrix.Identity, blendMode);
 			
 			for (int i = 0; i < particleSortIndex.Count; i++)
 			{
 				particleSortIndex[i] = i;
 			}
 
-			var sortMode = (ParticleSortMode)paramSortMode.Value.Get<int>();
+			var sortMode = blendMode == BlendMode.BlendmodeAdditive ? ParticleSortMode.Unsorted : (ParticleSortMode)paramSortMode.Value.Get<int>();
 			if (sortMode == ParticleSortMode.NewestOnTop)
 			{
 				particleSortIndex.Sort(0, ActiveParticles, compareLeastAgeFirst);

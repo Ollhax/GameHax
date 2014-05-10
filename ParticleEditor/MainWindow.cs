@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 
 using Gtk;
@@ -9,6 +11,8 @@ using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
+using MG.ParticleEditor;
+using MG.ParticleEditor.Property;
 
 using MonoDevelop.Components.PropertyGrid;
 
@@ -20,21 +24,19 @@ public partial class MainWindow: Gtk.Window
 	private ParticleSystem particleSystem;
 	private ParticleDefinition particleDefinition;
 	private ParticleDefinitionTable particleDefinitionTable;
+	private ParticleDeclarationTable particleDeclarationTable;
 
 	public MainWindow() : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
 
 		particleDefinitionTable = new ParticleDefinitionTable();
-		particleDefinitionTable.Load("test.xml");
+		particleDefinitionTable.Load("definitions.xml");
+
+		particleDeclarationTable = new ParticleDeclarationTable();
+		particleDeclarationTable.Load("ParticleDeclarations.xml");
 
 		particleDefinition = particleDefinitionTable.Definitions["meep"];
-		//particleDefinition = new ParticleDefinition();
-		//particleDefinition.Name = "Test";
-		//particleDefinition.Emitter = "Point";
-		//particleDefinition.Parameters.Add("SpawnRate", new ParticleDefinition.Parameter() { Name = "SpawnRate", Value = new Any(10.0f) });
-		//particleDefinition.Parameters.Add("Life", new ParticleDefinition.Parameter() { Name = "Life", Value = new Any(1.0f), Random = new Any(1.0f) });
-		//particleDefinition.Parameters.Add("SortMode", new ParticleDefinition.Parameter() { Name = "SortMode", Value = new Any((int)ParticleSortMode.NewestOnTop) });
 
 		//MainGL.DoubleBuffered = false;
 		MainGL.Draw += MainGlOnDraw;
@@ -45,173 +47,7 @@ public partial class MainWindow: Gtk.Window
 		SetupTree();
 		SetupPropertyGrid();
 	}
-
-
-	public class AnyPropertyDescriptor : PropertyDescriptor
-	{
-		private Any any;
-		private string category;
-		//private UITypeEditor overrideEditor;
-
-		public AnyPropertyDescriptor(string name, Any any, string category, Attribute[] attributes)
-			: base(name, attributes)
-		{
-			this.any = any;
-			this.category = category;
-		}
-
-		public override bool CanResetValue(object component) { return false; }
-		public override Type ComponentType { get { return null; } }
-		public override object GetValue(object component) { return any.GetAsObject(); }
-		public override string Description { get { return ""; } }
-		public override string Category { get { return category; } }
-		public override bool IsReadOnly { get { return false; } }
-		public override void ResetValue(object component) { }
-		public override bool ShouldSerializeValue(object component) { return false; }
-
-		public override void SetValue(object component, object value)
-		{
-			any.Set(value);
-		}
-
-		public override Type PropertyType
-		{
-			get { return any.GetTypeOfValue(); }
-		}
-
-		public override object GetEditor(Type editorBaseType)
-		{
-			//if (overrideEditor != null) return overrideEditor;
-			//if (any.IsVector2()) return new Vector2UITypeEditor();
-			//if (any.IsColor()) return new ColorUITypeEditor();
-
-			return base.GetEditor(editorBaseType);
-		}
-	}
-
-
-	class ParticlePropertyProxy :  ICustomTypeDescriptor
-	{
-		[Category("General")]
-		[ReadOnly(true)]
-		public string Name { get { return particleDefinition.Name; } set { particleDefinition.Name = value; } }
-
-		[Category("General")]
-		public string Emitter { get { return particleDefinition.Emitter; } set { particleDefinition.Emitter = value; } }
-		
-		//[Category("General")]
-		//public string AssetName { get { return currentLevelEntity.AssetName; } set { currentLevelEntity.AssetName = changedLevelEntity.AssetName = value; } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public Vector2 Position { get { return currentLevelEntity.Position; } set { currentLevelEntity.Position = changedLevelEntity.Position = value; } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public Vector2 Scale { get { return currentLevelEntity.Scale; } set { currentLevelEntity.Scale = changedLevelEntity.Scale = value; } }
-
-		//[Category("General")]
-		//public float Rotation { get { return MathHelper.ToDegrees(currentLevelEntity.Rotation); } set { currentLevelEntity.Rotation = changedLevelEntity.Rotation = MathHelper.ToRadians(value); } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public RelativePosition2 Origin { get { return currentLevelEntity.Origin; } set { currentLevelEntity.Origin = changedLevelEntity.Origin = value; } }
-		
-		//private CustomLevelEntity currentLevelEntity;
-		//private CustomLevelEntity changedLevelEntity;
-		//private CustomLevelEntity originalLevelEntity;
-		//private CustomEntityDefinition customEntityDefinition;
-
-		private ParticleDefinition particleDefinition;
-
-		public ParticlePropertyProxy(ParticleDefinition particleDefinition)
-		{
-			this.particleDefinition = particleDefinition;
-			//this.customEntityDefinition = customEntityDefinition;
-			//this.currentLevelEntity = levelEntity;
-			//this.changedLevelEntity = new CustomLevelEntity(levelEntity);
-			//this.originalLevelEntity = new CustomLevelEntity(levelEntity);
-		}
-
-		//protected override bool CallExecute()
-		//{
-		//    currentLevelEntity.CopyFrom(changedLevelEntity);
-		//    return true;
-		//}
-
-		//protected override void CallUndo()
-		//{
-		//    currentLevelEntity.CopyFrom(originalLevelEntity);
-		//}
-
-		//--------------------------------------
-		// ICustomTypeDescriptor
-		//--------------------------------------
-		AttributeCollection ICustomTypeDescriptor.GetAttributes() { return TypeDescriptor.GetAttributes(this, true); }
-		string ICustomTypeDescriptor.GetClassName() { return TypeDescriptor.GetClassName(this, true); }
-		string ICustomTypeDescriptor.GetComponentName() { return TypeDescriptor.GetComponentName(this, true); }
-		TypeConverter ICustomTypeDescriptor.GetConverter() { return TypeDescriptor.GetConverter(this, true); }
-		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() { return TypeDescriptor.GetDefaultEvent(this, true); }
-		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() { return TypeDescriptor.GetDefaultProperty(this, true); }
-		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) { return TypeDescriptor.GetEditor(this, editorBaseType, true); }
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) { return TypeDescriptor.GetEvents(this, attributes, true); }
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents() { return TypeDescriptor.GetEvents(this, true); }
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() { return GetProperties(null); } 
-		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) { return this; }
-		
-		public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-		{
-			//var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
-			//var typeProperties = TypeDescriptor.GetProperties(this);
-			//foreach (PropertyDescriptor pd in typeProperties)
-			//{
-			//    AnyProperty property;
-			//    if (customEntityDefinition.Properties.TryGetValue(pd.Name, out property))
-			//    {
-			//        pdc.Add(new AnyPropertyDefaultDescriptor(pd, property, pd.Name, attributes));
-			//    }
-			//}
-
-			//foreach (var changedEntityProperty in changedLevelEntity.Properties)
-			//{
-			//    // Don't add default properties
-			//    if (typeProperties.Find(changedEntityProperty.Key, false) != null)
-			//    {
-			//        continue;
-			//    }
-
-			//    AnyProperty property;
-			//    if (customEntityDefinition.Properties.TryGetValue(changedEntityProperty.Key, out property))
-			//    {
-			//        pdc.Add(new AnyPropertyDescriptor(changedEntityProperty.Value, property, "Special Properties", attributes, null));
-			//    }
-			//}
-
-			var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
-			var typeProperties = TypeDescriptor.GetProperties(this.GetType(), attributes);
-			foreach (PropertyDescriptor pd in typeProperties)
-			{
-				pdc.Add(pd);
-				//AnyProperty property;
-				//if (customEntityDefinition.Properties.TryGetValue(pd.Name, out property))
-				//{
-				//    pdc.Add(new AnyPropertyDefaultDescriptor(pd, property, pd.Name, attributes));
-				//}
-			}
-
-			foreach (var param in particleDefinition.Parameters)
-			{
-				var value = param.Value.Value;
-				pdc.Add(new AnyPropertyDescriptor(param.Value.Name, value, "Props", null));
-				//param.Key
-				//param.Value.Value
-				//pdc.Add(TypeDescriptor.GetProperties(param.Value.Value) )
-			}
-
-			return pdc;
-		}
-	}
-
+	
 	//private class Meeper : ICustomTypeDescriptor
 	//{
 	//    public enum Woopa
@@ -277,9 +113,14 @@ public partial class MainWindow: Gtk.Window
 
 	private void SetupPropertyGrid()
 	{
-		propertygrid1.PropertySort = PropertySort.Categorized;
-		propertygrid1.CurrentObject = new ParticlePropertyProxy(particleDefinition);
-		propertygrid1.Changed += Propertygrid1OnChanged;
+		ParticleDeclaration particleDeclaration;
+		if (particleDeclarationTable.Declarations.TryGetValue(particleDefinition.Declaration, out particleDeclaration))
+		{
+			propertygrid1.CurrentObject = new ParticlePropertyProxy(particleDeclaration, particleDefinition);
+			propertygrid1.Changed += Propertygrid1OnChanged;
+		}
+
+		//propertygrid1.CurrentObject = m;
 	}
 
 	private void Propertygrid1OnChanged(object sender, EventArgs eventArgs)
@@ -342,8 +183,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		texture = new Texture2D("weapon_laser_red.png");
 		particleSystem = new ParticleSystem(particleDefinition);
-		particleSystem.Position = new Vector2(200, 200);
-
+		
 		//GLib.Idle.Add(Refresh);
 		GLib.Timeout.Add(33, Refresh);
 
@@ -351,13 +191,13 @@ public partial class MainWindow: Gtk.Window
 		//drawThread.Start();
 	}
 
-	private void DrawThreadUpdate()
-	{
-		while (true)
-		{
-			Refresh();
-		}
-	}
+	//private void DrawThreadUpdate()
+	//{
+	//    while (true)
+	//    {
+	//        Refresh();
+	//    }
+	//}
 
 	private void MainGlOnDraw(RenderContext renderContext)
 	{
@@ -365,11 +205,8 @@ public partial class MainWindow: Gtk.Window
 		GraphicsDevice.Clear();
 		GraphicsDevice.SetViewport((Rectangle)renderContext.ActiveScreen.NormalizedScreenArea, renderContext.ActiveScreen);
 
+		particleSystem.Position = new Vector2(renderContext.ActiveScreen.NormalizedScreenArea.Center);
 		particleSystem.Draw(renderContext);
-		
-//		renderContext.PrimitiveBatch.Begin();
-//		renderContext.PrimitiveBatch.DrawFilled(new Circle(0, 0, 10000), Color.Red);
-//		renderContext.PrimitiveBatch.End();		
 	}
 
 	private Stopwatch stopwatch = new Stopwatch();

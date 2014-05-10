@@ -18,12 +18,14 @@ namespace MG.Framework.Particle
 		
 		public string Name;
 		public string Emitter;
+		public string Declaration;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
 
 		public void Load(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
 			Emitter = XmlHelper.ReadString(node, "Emitter");
+			Declaration = XmlHelper.ReadString(node, "Declaration");
 
 			var parametersNode = node.SelectSingleNode("Parameters");
 			if (parametersNode != null)

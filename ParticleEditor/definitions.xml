@@ -3,6 +3,7 @@
 	<ParticleSystem>
 		<Name>meep</Name>
 		<Emitter>point</Emitter>
+		<Declaration>Basic</Declaration>
 		<Parameters>
 			<Parameter>
 				<Name>SpawnRate</Name>
@@ -23,6 +24,11 @@
 			<Parameter>
 				<Name>SortMode</Name>
 				<Type>Int32</Type>
+				<Value>0</Value>
+			</Parameter>
+			<Parameter>
+				<Name>BlendMode</Name>
+				<Type>Int32</Type>
 				<Value>1</Value>
 			</Parameter>
 		</Parameters>
@@ -35,6 +41,7 @@
 	<ParticleSystem>
 		<Name>beep</Name>
 		<Emitter>point</Emitter>
+		<Declaration>Basic</Declaration>
 		<Parameters>
 			<Parameter>
 				<Name>SpawnRate</Name>

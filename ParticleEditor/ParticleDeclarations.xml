@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ParticleDeclarationTable>
+	<ParticleDeclaration>
+		<Name>Basic</Name>
+		<Parameters>
+			<Parameter>
+				<Name>SpawnRate</Name>
+				<PrettyName>Spawn Rate</PrettyName>
+				<Description>How many particles are spawned per second.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>10.0</DefaultValue>
+				<DefaultValueRandom>10.0</DefaultValueRandom>
+				<ValueStep>0.1</ValueStep>				
+				<MinValue>0.0</MinValue>
+				<MaxValue>1000.0</MaxValue>
+			</Parameter>
+			<Parameter>
+				<Name>Life</Name>
+				<PrettyName>Life</PrettyName>
+				<Description>How long a particle will last, in seconds.</Description>
+				<Category>General</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<ValueStep>0.1</ValueStep>				
+				<MinValue>0.0</MinValue>
+			</Parameter>
+			<Parameter>
+				<Name>SortMode</Name>
+				<PrettyName>Sort Mode</PrettyName>
+				<Description>How particles will be sorted before being drawn.</Description>
+				<Category>Drawing</Category>
+				<Type>Int32</Type>
+				<DefaultValue>0</DefaultValue>
+				<ValueList>
+					<Value Name="Unsorted" Value="0"/>
+					<Value Name="Sorted Top" Value="1"/>
+					<Value Name="Sorted Bottom" Value="2"/>
+				</ValueList>
+			</Parameter>
+			<Parameter>
+				<Name>BlendMode</Name>
+				<PrettyName>Blend Mode</PrettyName>
+				<Description>Which blending mode to use when rendering this effect.</Description>
+				<Category>Drawing</Category>
+				<Type>Int32</Type>
+				<DefaultValue>1</DefaultValue>
+				<ValueList>
+					<Value Name="Opaque" Value="0"/>
+					<Value Name="Alpha" Value="1"/>
+					<Value Name="Additive" Value="3"/>
+				</ValueList>
+			</Parameter>
+		</Parameters>
+	</ParticleDeclaration>
+</ParticleDeclarationTable>
