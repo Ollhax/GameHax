@@ -210,8 +210,8 @@ public partial class MainWindow: Gtk.Window
 
 	private void MainGlOnLoad()
 	{
-		assetHandler = new AssetHandler("");
-
+		assetHandler = new AssetHandler(".");
+		
 		//texture = new Texture2D("weapon_laser_red.png");
 		particleSystem = new ParticleSystem(assetHandler, particleDefinition);
 		
@@ -221,6 +221,7 @@ public partial class MainWindow: Gtk.Window
 		//drawThread = new Thread(DrawThreadUpdate);
 		//drawThread.Start();
 	}
+
 
 	//private void DrawThreadUpdate()
 	//{
@@ -256,6 +257,7 @@ public partial class MainWindow: Gtk.Window
 			stopwatch.Restart();
 		}
 
+		assetHandler.Update();
 		particleSystem.Update(new Time(elapsedTime, 0));
 
 		//Gtk.Application.Invoke(

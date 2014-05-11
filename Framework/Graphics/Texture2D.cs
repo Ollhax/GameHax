@@ -58,20 +58,12 @@ namespace MG.Framework.Graphics
 		/// </summary>
 		/// <remarks>This is the same as the constructor that takes a file. It's here only for XNA compatibility.</remarks>
 		/// <param name="file">File to open. Format should be BMP, GIF, EXIF, JPG, PNG or TIFF.</param>
-		public Texture2D(string file)
-		{
-			using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
-			{
-				try
-				{
-					LoadFromStream(fs, true);
-				}
-				catch (ArgumentException)
-				{
-					throw new ArgumentException("Could not load file \"" + file + "\", probably not in a correct format (BMP, GIF, EXIF, JPG, PNG or TIFF).");
-				}
-			}
-		}
+		public Texture2D(string file) { LoadFromFile(file, true); }
+
+		/// <summary>
+		/// Create a Texture2D object that should be initialized later on.
+		/// </summary>
+		internal Texture2D() { }
 
 		/// <summary>
 		/// Create an empty texture of the specified size.
@@ -211,15 +203,30 @@ namespace MG.Framework.Graphics
 				GL.DeleteTexture(textureId);
 			}
 		}
+		
+		internal void LoadFromFile(string file, bool premultiplyAlpha)
+		{
+			using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				try
+				{
+					LoadFromStream(fs, premultiplyAlpha);
+				}
+				catch (ArgumentException)
+				{
+					throw new ArgumentException("Could not load file \"" + file + "\", probably not in a correct format (BMP, GIF, EXIF, JPG, PNG or TIFF).");
+				}
+			}
+		}
 
-		private unsafe void LoadFromStream(Stream stream, bool premultiplyAlpha)
+		internal unsafe void LoadFromStream(Stream stream, bool premultiplyAlpha)
 		{
 			if (stream == null)
 			{
 				throw new ArgumentException("Null stream not allowed.");
 			}
 
-			Bitmap bmp = Image.FromStream(stream) as Bitmap;
+			var bmp = Image.FromStream(stream) as Bitmap;
 			
 			if (bmp == null)
 			{
@@ -227,11 +234,21 @@ namespace MG.Framework.Graphics
 					"Input stream type not a valid bitmap. Format should be BMP, GIF, EXIF, JPG, PNG or TIFF.");
 			}
 
+			LoadFromBitmap(bmp, premultiplyAlpha);
+		}
+
+		internal unsafe void LoadFromBitmap(Bitmap bitmap, bool premultiplyAlpha)
+		{
+			if (textureId != 0)
+			{
+				GL.DeleteTexture(textureId);
+			}
+
 			textureId = GL.GenTexture();
 			GL.BindTexture(TextureTarget.Texture2D, textureId);
 
-			BitmapData bmp_data = bmp.LockBits(
-				new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+			BitmapData bmp_data = bitmap.LockBits(
+				new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
 			if (premultiplyAlpha)
 			{
@@ -250,7 +267,7 @@ namespace MG.Framework.Graphics
 					}
 				}
 			}
-			
+
 			GL.TexImage2D(
 				TextureTarget.Texture2D,
 				0,
@@ -262,10 +279,10 @@ namespace MG.Framework.Graphics
 				PixelType.UnsignedByte,
 				bmp_data.Scan0);
 
-			bmp.UnlockBits(bmp_data);
+			bitmap.UnlockBits(bmp_data);
 
-			Width = bmp.Width;
-			Height = bmp.Height;
+			Width = bitmap.Width;
+			Height = bitmap.Height;
 		}
 	}
 }

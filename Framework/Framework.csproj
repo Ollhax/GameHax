@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="Assets\AssetHandler.cs" />
     <Compile Include="Assets\AssetLoadException.cs" />
+    <Compile Include="Assets\AssetWatcher.cs" />
+    <Compile Include="Assets\Texture2DLoader.cs" />
     <Compile Include="Audio\AudioDevice.cs" />
     <Compile Include="Audio\MusicStream.cs" />
     <Compile Include="Audio\Logging.cs" />
@@ -148,6 +150,9 @@
     <Compile Include="Utility\Time.cs" />
     <Compile Include="Utility\XmlHelper.cs" />
     <Compile Include="Window\Window.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\IAssetLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

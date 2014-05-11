@@ -347,11 +347,6 @@ namespace MG.Framework.Utility
 			return result.ToString();
 		}
 
-
-
-
-
-
 		AttributeCollection ICustomTypeDescriptor.GetAttributes() { return TypeDescriptor.GetAttributes(this, true); }
 		string ICustomTypeDescriptor.GetClassName() { return TypeDescriptor.GetClassName(this, true); }
 		string ICustomTypeDescriptor.GetComponentName() { return TypeDescriptor.GetComponentName(this, true); }
