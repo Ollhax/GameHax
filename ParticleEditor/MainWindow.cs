@@ -66,14 +66,18 @@ public partial class MainWindow: Gtk.Window
 		particleDefinition = CreateParticle("Basic");
 		particleDefinitionTable.Definitions.Add(particleDefinition.Name, particleDefinition);
 
+		var p2 = CreateParticle("Basic");
+		p2.Name = "Abra";
+		particleDefinitionTable.Definitions.Add(p2.Name, p2);
+
 		//MainGL.DoubleBuffered = false;
 		MainGL.Draw += MainGlOnDraw;
 		MainGL.Load += MainGlOnLoad;
 
 		statusbar5.Push(id, "Meep");
 		
-		SetupTree();
 		SetupPropertyGrid();
+		SetupTree();
 	}
 	
 	//private class Meeper : ICustomTypeDescriptor
@@ -161,45 +165,71 @@ public partial class MainWindow: Gtk.Window
 	
 	private void SetupTree()
 	{
-		// Create a column for the artist name
-		Gtk.TreeViewColumn artistColumn = new Gtk.TreeViewColumn();
-		artistColumn.Title = "Artist";
+		Gtk.TreeViewColumn effectColumn = new Gtk.TreeViewColumn();
+		effectColumn.Title = "Particle Effect";
 
-		// Create a column for the song title
-		Gtk.TreeViewColumn songColumn = new Gtk.TreeViewColumn();
-		songColumn.Title = "Song Title";
+		treeview2.AppendColumn(effectColumn);
+		
+		Gtk.TreeStore listStore = new Gtk.TreeStore(typeof(string));
+		//Gtk.TreeIter iter = listStore.AppendValues("Moop");
+		//Gtk.TreeIter iter = listStore.AppendValues("Moop");
+		//listStore.AppendValues(iter, "Garbage", "Dog New Tricks");
+		//listStore.AppendValues(iter, "Google", "Schmoogle");
 
-		// Add the columns to the TreeView
-		treeview2.AppendColumn(artistColumn);
-		treeview2.AppendColumn(songColumn);
+		//iter = listStore.AppendValues("Doop");
+		//listStore.AppendValues(iter, "Wooga", "Googa");
 
-		// Create a model that will hold two strings - Artist Name and Song Title
-		Gtk.TreeStore musicListStore = new Gtk.TreeStore(typeof(string), typeof(string));
-		Gtk.TreeIter iter = musicListStore.AppendValues("Moop");
-		musicListStore.AppendValues(iter, "Garbage", "Dog New Tricks");
-		musicListStore.AppendValues(iter, "Google", "Schmoogle");
+		foreach (var particleDefinitionPair in particleDefinitionTable.Definitions)
+		{
+			var def = particleDefinitionPair.Value;
+			listStore.AppendValues(def.Name);
+		}
+		
+		treeview2.Model = listStore;
+		
+		Gtk.CellRendererText artistNameCell = new CellRendererText();
+		effectColumn.PackStart(artistNameCell, true);
+		effectColumn.AddAttribute(artistNameCell, "text", 0);
+		
+		//// Create a column for the artist name
+		//Gtk.TreeViewColumn artistColumn = new Gtk.TreeViewColumn();
+		//artistColumn.Title = "Artist";
 
-		iter = musicListStore.AppendValues("Doop");
-		musicListStore.AppendValues(iter, "Wooga", "Googa");
+		//// Create a column for the song title
+		//Gtk.TreeViewColumn songColumn = new Gtk.TreeViewColumn();
+		//songColumn.Title = "Song Title";
 
-		// Assign the model to the TreeView
-		treeview2.Model = musicListStore;
+		//// Add the columns to the TreeView
+		//treeview2.AppendColumn(artistColumn);
+		//treeview2.AppendColumn(songColumn);
+
+		//// Create a model that will hold two strings - Artist Name and Song Title
+		//Gtk.TreeStore musicListStore = new Gtk.TreeStore(typeof(string), typeof(string));
+		//Gtk.TreeIter iter = musicListStore.AppendValues("Moop");
+		//musicListStore.AppendValues(iter, "Garbage", "Dog New Tricks");
+		//musicListStore.AppendValues(iter, "Google", "Schmoogle");
+
+		//iter = musicListStore.AppendValues("Doop");
+		//musicListStore.AppendValues(iter, "Wooga", "Googa");
+
+		//// Assign the model to the TreeView
+		//treeview2.Model = musicListStore;
 
 
-		// Create the text cell that will display the artist name
-		Gtk.CellRendererText artistNameCell = new Gtk.CellRendererText();
+		//// Create the text cell that will display the artist name
+		//Gtk.CellRendererText artistNameCell = new Gtk.CellRendererText();
 
-		// Add the cell to the column
-		artistColumn.PackStart(artistNameCell, true);
+		//// Add the cell to the column
+		//artistColumn.PackStart(artistNameCell, true);
 
-		// Do the same for the song title column
-		Gtk.CellRendererText songTitleCell = new Gtk.CellRendererText();
-		songColumn.PackStart(songTitleCell, true);
+		//// Do the same for the song title column
+		//Gtk.CellRendererText songTitleCell = new Gtk.CellRendererText();
+		//songColumn.PackStart(songTitleCell, true);
 
 
-		// Tell the Cell Renderers which items in the model to display
-		artistColumn.AddAttribute(artistNameCell, "text", 0);
-		songColumn.AddAttribute(songTitleCell, "text", 1);
+		//// Tell the Cell Renderers which items in the model to display
+		//artistColumn.AddAttribute(artistNameCell, "text", 0);
+		//songColumn.AddAttribute(songTitleCell, "text", 1);
 	}
 
 	protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
