@@ -66,7 +66,6 @@ namespace MG.ParticleEditor.Controllers
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem != null)
 			{
-				particleSystem.Update(new Time(0.016f, 0));
 				particleSystem.Position = new Vector2(renderContext.ActiveScreen.NormalizedScreenArea.Center);
 				particleSystem.Draw(renderContext);
 			}
