@@ -104,7 +104,7 @@ namespace MG.ParticleEditorWindow
 			set
 			{
 				statusbar.Pop(0);
-				statusbar.Push(0, value);
+				statusbar.Push(0, value ?? "");
 			}
 		}
 		

@@ -3,6 +3,7 @@ using System.ComponentModel;
 
 using MG.EditorCommon;
 using MG.Framework.Particle;
+using MG.EditorCommon.Editors;
 
 namespace MG.ParticleEditor
 {

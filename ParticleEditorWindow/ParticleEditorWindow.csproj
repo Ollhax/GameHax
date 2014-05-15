@@ -37,8 +37,6 @@
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="gtk-dotnet, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
-    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
-    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,19 +45,16 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Mono.Cairo" />
+    <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyView\AnyPropertyDescriptor.cs" />
-    <Compile Include="PropertyView\FilePathEditor.cs" />
-    <Compile Include="PropertyView\FloatEditor.cs" />
-    <Compile Include="PropertyView\IntEditor.cs" />
-    <Compile Include="PropertyView\PropertyView.cs" />
-    <Compile Include="PropertyView\ValueListConverter.cs" />
     <Compile Include="RenderView.cs" />
     <Compile Include="TreeView.cs" />
+    <Compile Include="PropertyView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EditorCommon\EditorCommon.csproj">

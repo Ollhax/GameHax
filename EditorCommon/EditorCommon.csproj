@@ -38,7 +38,6 @@
     <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
-    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,7 +50,8 @@
     <Reference Include="OpenTK">
       <HintPath>..\Framework\Externals\OpenTK\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="Mono.Cairo" />
+    <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HaxGLWidget\GLWidget.cs" />
@@ -94,6 +94,11 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components\PangoCairoHelper.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />
     <Compile Include="HaxGraph\HaxGraph.cs" />
+    <Compile Include="Editors\AnyPropertyDescriptor.cs" />
+    <Compile Include="Editors\FilePathEditor.cs" />
+    <Compile Include="Editors\FloatEditor.cs" />
+    <Compile Include="Editors\IntEditor.cs" />
+    <Compile Include="Editors\ValueListConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
@@ -121,4 +126,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Editors\" />
+  </ItemGroup>
 </Project>
