@@ -1,20 +1,21 @@
-﻿using System;
-using Gtk;
+﻿using MG.ParticleEditor.Controllers;
+using MG.ParticleEditorWindow;
 
-using MG.Framework;
-
-namespace ParticleEditor
+namespace MG.ParticleEditor
 {
 	class MainClass
 	{
 		public static void Main(string[] args)
 		{
-			Framework.Initialize("Main", "");
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
-			Framework.Deinitialize();
+			Framework.Framework.Initialize("Main", "");
+			Application.Init("Particle Editor", args);
+			
+			using (var mainController = new MainController())
+			{
+				Application.Run();
+			}
+
+			Framework.Framework.Deinitialize();
 		}
 	}
 }

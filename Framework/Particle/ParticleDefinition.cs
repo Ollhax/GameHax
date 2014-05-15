@@ -20,6 +20,9 @@ namespace MG.Framework.Particle
 		public string Emitter;
 		public string Declaration;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
+		
+		// Extra data used by editor, stored here for convenience.
+		public int InternalId;
 
 		public void Load(XmlNode node)
 		{

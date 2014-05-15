@@ -5,7 +5,7 @@ using System.Xml;
 
 using MG.Framework.Utility;
 
-namespace MG.ParticleEditor
+namespace MG.EditorCommon
 {
 	public class ParticleDeclaration
 	{
@@ -90,6 +90,7 @@ namespace MG.ParticleEditor
 	public class ParticleDeclarationTable
 	{
 		public Dictionary<string, ParticleDeclaration> Declarations = new Dictionary<string, ParticleDeclaration>();
+		public List<ParticleDeclaration> DeclarationsList = new List<ParticleDeclaration>();
 
 		public void Load(string file)
 		{
@@ -122,9 +123,10 @@ namespace MG.ParticleEditor
 			{
 				if (child.Name == "ParticleDeclaration")
 				{
-					var definition = new ParticleDeclaration();
-					definition.Load(child);
-					Declarations.Add(definition.Name, definition);
+					var declaration = new ParticleDeclaration();
+					declaration.Load(child);
+					Declarations.Add(declaration.Name, declaration);
+					DeclarationsList.Add(declaration);
 				}
 			}
 		}

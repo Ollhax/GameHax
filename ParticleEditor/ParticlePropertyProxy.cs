@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 
+using MG.EditorCommon;
 using MG.Framework.Particle;
 
-namespace MG.ParticleEditor.Property
+namespace MG.ParticleEditor
 {
 	class ParticlePropertyProxy : ICustomTypeDescriptor
 	{

@@ -117,6 +117,7 @@ namespace MG.Framework.Particle
 		public float Angle;
 		
 		public int ActiveParticles { get { return particleData.ActiveParticles; } }
+		public readonly ParticleDefinition Definition;
 
 		private AssetHandler assetHandler;
 		private Texture2D particleTexture;
@@ -155,6 +156,7 @@ namespace MG.Framework.Particle
 		public ParticleSystem(AssetHandler assetHandler, ParticleDefinition particleDefinition)
 		{
 			this.assetHandler = assetHandler;
+			this.Definition = Definition;
 			
 			particleData.Register<Vector2>("Position");
 			particleData.Register<Vector2>("Velocity");

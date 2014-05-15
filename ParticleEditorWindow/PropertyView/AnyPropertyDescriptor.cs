@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
+using MG.EditorCommon;
 using MG.Framework.Utility;
 
 namespace MG.ParticleEditor
