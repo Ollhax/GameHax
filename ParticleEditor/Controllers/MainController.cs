@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Gtk;
 
 using MG.EditorCommon;
+using MG.EditorCommon.Undo;
 using MG.Framework.Assets;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
@@ -31,6 +32,7 @@ namespace MG.ParticleEditor.Controllers
 			window.Closed += WindowOnClosed;
 
 			model = new Model();
+			model.UndoHandler = new UndoHandler(1000);
 			model.Declaration = new ParticleDeclarationTable();
 			model.Declaration.Load("ParticleDeclarations.xml");
 			

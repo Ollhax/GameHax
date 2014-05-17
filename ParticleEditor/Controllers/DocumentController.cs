@@ -16,6 +16,9 @@ namespace MG.ParticleEditor.Controllers
 			this.model = model;
 			window.FileNew += New;
 			window.FileOpen += Open;
+
+			window.EditUndo += Undo;
+			window.EditRedo += Redo;
 		}
 
 		public void New()
@@ -27,6 +30,16 @@ namespace MG.ParticleEditor.Controllers
 		public void Open()
 		{
 			
+		}
+
+		public void Undo()
+		{
+			model.UndoHandler.Undo();
+		}
+
+		public void Redo()
+		{
+			model.UndoHandler.Redo();
 		}
 
 		//public void Close()

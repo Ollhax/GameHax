@@ -20,6 +20,7 @@ namespace MG.Framework.Particle
 
 		public abstract void Update(Time time);
 		public abstract int Emit();
+		public abstract void Reload();
 	}
 
 	public abstract class BasicParticleEmitter : ParticleEmitter
@@ -37,13 +38,18 @@ namespace MG.Framework.Particle
 		public BasicParticleEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
 		{
-			paramLife = particleDefinition.Parameters["Life"];
-			paramSpawnRate = particleDefinition.Parameters["SpawnRate"];
-
 			particlePosition = particleData.Get<Vector2>("Position");
 			particleVelocity = particleData.Get<Vector2>("Velocity");
 			particleLife = particleData.Get<float>("Life");
 			particleAge = particleData.Get<float>("Age");
+
+			Reload();
+		}
+
+		public override void Reload()
+		{
+			paramLife = particleDefinition.Parameters["Life"];
+			paramSpawnRate = particleDefinition.Parameters["SpawnRate"];
 		}
 
 		public override void Update(Time time)
@@ -156,17 +162,13 @@ namespace MG.Framework.Particle
 		public ParticleSystem(AssetHandler assetHandler, ParticleDefinition particleDefinition)
 		{
 			this.assetHandler = assetHandler;
-			this.Definition = Definition;
+			this.Definition = particleDefinition;
 			
 			particleData.Register<Vector2>("Position");
 			particleData.Register<Vector2>("Velocity");
 			particleData.Register<float>("Life");
 			particleSortIndex = particleData.Register<int>("SortIndex");
 			particleAge = particleData.Register<float>("Age");
-
-			paramTexture = particleDefinition.Parameters["Texture"];
-			paramSortMode = particleDefinition.Parameters["SortMode"];
-			paramBlendMode = particleDefinition.Parameters["BlendMode"];
 			
 			compareLeastAgeFirst = new CompareLeastAgeFirst { ParticleAge = particleAge };
 			comparisonMostAgeFirst = new ComparisonMostAgeFirst { ParticleAge = particleAge };
@@ -178,8 +180,14 @@ namespace MG.Framework.Particle
 
 		public void Reload()
 		{
+			paramTexture = Definition.Parameters["Texture"];
+			paramSortMode = Definition.Parameters["SortMode"];
+			paramBlendMode = Definition.Parameters["BlendMode"];
+
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
+
+			emitter.Reload();
 		}
 		
 		public void Update(Time time)

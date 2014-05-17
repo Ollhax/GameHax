@@ -1,6 +1,10 @@
 ﻿using System;
 
+using Gtk;
+
 using MonoDevelop.Components.PropertyGrid;
+
+using Action = System.Action;
 
 namespace MG.ParticleEditorWindow
 {
@@ -9,6 +13,7 @@ namespace MG.ParticleEditorWindow
 		internal PropertyGrid Widget;
 
 		public event Action PropertyChanged = delegate { };
+		public event Action Deselected = delegate { };
 
 		public PropertyView()
 		{
@@ -17,6 +22,12 @@ namespace MG.ParticleEditorWindow
 			Widget.ShowToolbar = true;
 			Widget.ShowHelp = true;
 			Widget.Changed += OnChanged;
+			Widget.Deselected += OnDeselected;
+		}
+
+		public void CommitChanges()
+		{
+			Widget.CommitPendingChanges();
 		}
 		
 		public void SetCurrentObject(object o)
@@ -27,6 +38,11 @@ namespace MG.ParticleEditorWindow
 		private void OnChanged(object sender, EventArgs eventArgs)
 		{
 			PropertyChanged.Invoke();
+		}
+
+		private void OnDeselected(object o, EventArgs args)
+		{
+			Deselected.Invoke();
 		}
 
 		//ParticleDeclaration particleDeclaration;

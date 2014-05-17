@@ -167,6 +167,12 @@ namespace MonoDevelop.Components.PropertyGrid
 			add { tree.Changed += value; }
 			remove { tree.Changed -= value; }
 		}
+
+		public event EventHandler Deselected
+		{
+			add { tree.Deselected += value; }
+			remove { tree.Deselected -= value; }
+		}
 			
 		internal EditorManager EditorManager {
 			get { return editorManager; }

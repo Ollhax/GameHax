@@ -40,6 +40,7 @@ namespace MG.ParticleEditor.Controllers
 		private void OnItemSelected(int id)
 		{
 			var def = model.GetDefinitionById(id);
+			model.CurrentDefinition = def;
 			ItemSelected(def);
 		}
 
@@ -59,12 +60,12 @@ namespace MG.ParticleEditor.Controllers
 		{
 			ParticleDeclaration declaration;
 			if (!model.Declaration.Declarations.TryGetValue(name, out declaration)) return null;
-
+			
 			var definition = new ParticleDefinition();
 			definition.InternalId = model.DefinitionIdCounter++;
 			definition.Name = declaration.Name + definition.InternalId;
 			definition.Declaration = name;
-			
+
 			foreach (var declarationParameterPair in declaration.Parameters)
 			{
 				var declarationParameter = declarationParameterPair.Value;
@@ -76,7 +77,7 @@ namespace MG.ParticleEditor.Controllers
 
 				definition.Parameters.Add(definitionParameter.Name, definitionParameter);
 			}
-
+			
 			return definition;
 		}
 	}

@@ -8,7 +8,7 @@
     <ProjectGuid>{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EditorCommon</RootNamespace>
+    <RootNamespace>MG.EditorCommon</RootNamespace>
     <AssemblyName>EditorCommon</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -99,6 +99,11 @@
     <Compile Include="Editors\FloatEditor.cs" />
     <Compile Include="Editors\IntEditor.cs" />
     <Compile Include="Editors\ValueListConverter.cs" />
+    <Compile Include="Undo\GenericUndoableAction.cs" />
+    <Compile Include="Undo\IUndoableAction.cs" />
+    <Compile Include="Undo\UndoableAction.cs" />
+    <Compile Include="Undo\UndoableActionGroup.cs" />
+    <Compile Include="Undo\UndoHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
@@ -126,7 +131,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="Editors\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

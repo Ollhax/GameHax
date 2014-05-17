@@ -1,5 +1,8 @@
 ﻿using System;
 using EditorCommon;
+
+using Gdk;
+
 using Gtk;
 
 namespace MG.ParticleEditorWindow
@@ -15,6 +18,8 @@ namespace MG.ParticleEditorWindow
 
 		public event System.Action FileNew = delegate { };
 		public event System.Action FileOpen = delegate { };
+		public event System.Action EditUndo = delegate { };
+		public event System.Action EditRedo = delegate { };
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
 		
@@ -119,8 +124,10 @@ namespace MG.ParticleEditorWindow
 		private MenuBar CreateMenu()
 		{
 			var menuBar = new MenuBar();
-			var fileMenu = new Menu();
+			
+			// File menu
 			var fileMenuItem = new MenuItem("_File");
+			var fileMenu = new Menu();
 			fileMenuItem.Submenu = fileMenu;
 			menuBar.Append(fileMenuItem);
 			
@@ -137,6 +144,22 @@ namespace MG.ParticleEditorWindow
 			var fileExit = new ImageMenuItem(Stock.Quit, accelerators);
 			fileExit.Activated += (sender, args) => window.ProcessEvent(Gdk.EventHelper.New(Gdk.EventType.Delete));
 			fileMenu.Append(fileExit);
+
+			// Edit menu
+			var editMenuItem = new MenuItem("_Edit");
+			var editMenu = new Menu();
+			editMenuItem.Submenu = editMenu;
+			menuBar.Append(editMenuItem);
+
+			var editUndo = new ImageMenuItem(Stock.Undo, accelerators);
+			editUndo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.z, ModifierType.ControlMask, AccelFlags.Visible));
+			editUndo.Activated += (sender, args) => EditUndo.Invoke();
+			editMenu.Append(editUndo);
+
+			var editRedo = new ImageMenuItem(Stock.Redo, accelerators);
+			editRedo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.y, ModifierType.ControlMask, AccelFlags.Visible));
+			editRedo.Activated += (sender, args) => EditRedo.Invoke();
+			editMenu.Append(editRedo);
 
 			return menuBar;
 		}

@@ -109,6 +109,8 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public event EventHandler Changed;
 
+		public event EventHandler Deselected;
+
 		public PropertySort PropertySort { get; set; }
 
 		public ShadowType ShadowType { get; set; }
@@ -536,6 +538,16 @@ namespace MonoDevelop.Components.PropertyGrid
 				return true;
 			}
 
+			// HACK: Want end event to be able to change the active object. This recreates the rows, which is fine, but
+			// the actual row resizing is not done by the time we want to check them for size. So, force update the sizes
+			// here by performing all pending events.
+			EndEditing();
+			while (Application.EventsPending())
+			{
+				Application.RunIteration(false);
+			}
+			// ~HACK
+
 			TableRow clickedEditor = null;
 			foreach (var r in GetAllRows (true).Where (r => !r.IsCategory)) {
 				if (r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y)) {
@@ -546,7 +558,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			if (clickedEditor != null && clickedEditor.Enabled)
 				StartEditing (clickedEditor);
 			else {
-				EndEditing ();
+				//EndEditing ();
 				GrabFocus ();
 			}
 
@@ -741,10 +753,20 @@ namespace MonoDevelop.Components.PropertyGrid
 				Remove (currentEditor);
 				currentEditor.Destroy ();
 				currentEditor = null;
-				editSession.Dispose ();
+
+				if (editSession != null)
+				{
+					editSession.Dispose();
+				}
+				
 				editSession = null;
 				currentEditorRow = null;
 				QueueDraw ();
+
+				if (Deselected != null)
+				{
+					Deselected.Invoke(this, EventArgs.Empty);
+				}
 			}
 		}
 

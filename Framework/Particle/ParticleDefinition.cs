@@ -7,13 +7,38 @@ using MG.Framework.Utility;
 
 namespace MG.Framework.Particle
 {
-	public class ParticleDefinition
+	public class ParticleDefinition : IEquatable<ParticleDefinition>
 	{
-		public class Parameter
+		public class Parameter : IEquatable<Parameter>
 		{
 			public string Name;
 			public Any Value;
 			public Any Random;
+
+			public Parameter()
+			{
+				
+			}
+
+			public Parameter(Parameter other)
+			{
+				Name = other.Name;
+				Value = new Any(other.Value);
+
+				if (other.Random != null)
+				{
+					Random = new Any(other.Random);
+				}
+			}
+
+			public bool Equals(Parameter other)
+			{
+				if (Name != other.Name) return false;
+				if (!Value.Equals(other.Value)) return false;
+				if ((Random == null) != (other.Random == null)) return false;
+				if (Random != null && !Random.Equals(other.Random)) return false;
+				return true;
+			}
 		}
 		
 		public string Name;
@@ -23,8 +48,58 @@ namespace MG.Framework.Particle
 		
 		// Extra data used by editor, stored here for convenience.
 		public int InternalId;
+		
+		public void CopyFrom(ParticleDefinition other)
+		{
+			Name = other.Name;
+			Emitter = other.Emitter;
+			Declaration = other.Declaration;
 
-		public void Load(XmlNode node)
+			//if (Parameters.Count != other.Parameters.Count)
+			//{
+				Parameters.Clear();
+				foreach (var p in other.Parameters)
+				{
+					Parameters.Add(p.Key, new Parameter(p.Value));
+				}
+			//}
+			//else
+			//{
+			//    foreach (var p in other.Parameters)
+			//    {
+			//        Parameters[p.Key].Value. = p.Value.Value;
+			//    }
+			//}
+		}
+
+		public bool Equals(ParticleDefinition other)
+		{
+			if (Name != other.Name) return false;
+			if (Emitter != other.Emitter) return false;
+			if (Declaration != other.Declaration) return false;
+			if (Parameters.Count != other.Parameters.Count) return false;
+
+			foreach (var param in Parameters)
+			{
+				Parameter otherParam;
+				if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
+				if (!param.Value.Equals(otherParam)) return false;
+			}
+
+			return true;
+		}
+
+		public ParticleDefinition()
+		{
+
+		}
+
+		public ParticleDefinition(ParticleDefinition other)
+		{
+			CopyFrom(other);
+		}
+		
+		public ParticleDefinition(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
 			Emitter = XmlHelper.ReadString(node, "Emitter");
@@ -87,8 +162,8 @@ namespace MG.Framework.Particle
 			{
 				if (child.Name == "ParticleSystem")
 				{
-					var definition = new ParticleDefinition();
-					definition.Load(child);
+					var definition = new ParticleDefinition(child);
+					//definition.Load(child);
 					Definitions.Add(definition.Name, definition);
 				}
 			}

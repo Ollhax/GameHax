@@ -2,66 +2,51 @@
 using System.ComponentModel;
 
 using MG.EditorCommon;
+using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.EditorCommon.Editors;
 
 namespace MG.ParticleEditor
 {
-	class ParticlePropertyProxy : ICustomTypeDescriptor
+	class ParticlePropertyProxy : UndoableAction, ICustomTypeDescriptor
 	{
 		[Category("General")]
 		[ReadOnly(true)]
-		public string Name { get { return particleDefinition.Name; } set { particleDefinition.Name = value; } }
-
-		[Category("General")]
-		public string Emitter { get { return particleDefinition.Emitter; } set { particleDefinition.Emitter = value; } }
-
-		//[Category("General")]
-		//public string AssetName { get { return currentLevelEntity.AssetName; } set { currentLevelEntity.AssetName = changedLevelEntity.AssetName = value; } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public Vector2 Position { get { return currentLevelEntity.Position; } set { currentLevelEntity.Position = changedLevelEntity.Position = value; } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public Vector2 Scale { get { return currentLevelEntity.Scale; } set { currentLevelEntity.Scale = changedLevelEntity.Scale = value; } }
-
-		//[Category("General")]
-		//public float Rotation { get { return MathHelper.ToDegrees(currentLevelEntity.Rotation); } set { currentLevelEntity.Rotation = changedLevelEntity.Rotation = MathHelper.ToRadians(value); } }
-
-		//[EditorAttribute(typeof(Vector2UITypeEditor), typeof(System.Drawing.Design.UITypeEditor))]
-		//[Category("General")]
-		//public RelativePosition2 Origin { get { return currentLevelEntity.Origin; } set { currentLevelEntity.Origin = changedLevelEntity.Origin = value; } }
-
-		//private CustomLevelEntity currentLevelEntity;
-		//private CustomLevelEntity changedLevelEntity;
-		//private CustomLevelEntity originalLevelEntity;
-		//private CustomEntityDefinition customEntityDefinition;
-
+		public string Name { get { return changedDefinition.Name; } set { changedDefinition.Name = value; } }
+		
 		private ParticleDeclaration particleDeclaration;
-		private ParticleDefinition particleDefinition;
+		private ParticleDefinition currentDefinition;
+		private ParticleDefinition changedDefinition;
+		private ParticleDefinition originalDefinition;
 
 		public ParticlePropertyProxy(ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
 			this.particleDeclaration = particleDeclaration;
-			this.particleDefinition = particleDefinition;
-			//this.customEntityDefinition = customEntityDefinition;
-			//this.currentLevelEntity = levelEntity;
-			//this.changedLevelEntity = new CustomLevelEntity(levelEntity);
-			//this.originalLevelEntity = new CustomLevelEntity(levelEntity);
+			currentDefinition = particleDefinition;
+			changedDefinition = new ParticleDefinition(particleDefinition);
+			originalDefinition = new ParticleDefinition(particleDefinition);
 		}
 
-		//protected override bool CallExecute()
-		//{
-		//    currentLevelEntity.CopyFrom(changedLevelEntity);
-		//    return true;
-		//}
+		protected override bool CallExecute()
+		{
+			if (changedDefinition.Equals(originalDefinition))
+			{
+				return false;
+			}
 
-		//protected override void CallUndo()
-		//{
-		//    currentLevelEntity.CopyFrom(originalLevelEntity);
-		//}
+			currentDefinition.CopyFrom(changedDefinition);
+			return true;
+		}
+
+		protected override void CallUndo()
+		{
+			currentDefinition.CopyFrom(originalDefinition);
+		}
+
+		public override int GetUndoGroup()
+		{
+			return 965168485;
+		}
 
 		//--------------------------------------
 		// ICustomTypeDescriptor
@@ -80,32 +65,6 @@ namespace MG.ParticleEditor
 
 		public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
 		{
-			//var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
-			//var typeProperties = TypeDescriptor.GetProperties(this);
-			//foreach (PropertyDescriptor pd in typeProperties)
-			//{
-			//    AnyProperty property;
-			//    if (customEntityDefinition.Properties.TryGetValue(pd.Name, out property))
-			//    {
-			//        pdc.Add(new AnyPropertyDefaultDescriptor(pd, property, pd.Name, attributes));
-			//    }
-			//}
-
-			//foreach (var changedEntityProperty in changedLevelEntity.Properties)
-			//{
-			//    // Don't add default properties
-			//    if (typeProperties.Find(changedEntityProperty.Key, false) != null)
-			//    {
-			//        continue;
-			//    }
-
-			//    AnyProperty property;
-			//    if (customEntityDefinition.Properties.TryGetValue(changedEntityProperty.Key, out property))
-			//    {
-			//        pdc.Add(new AnyPropertyDescriptor(changedEntityProperty.Value, property, "Special Properties", attributes, null));
-			//    }
-			//}
-
 			var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
 			var typeProperties = TypeDescriptor.GetProperties(this.GetType(), attributes);
 			foreach (PropertyDescriptor pd in typeProperties)
@@ -113,7 +72,7 @@ namespace MG.ParticleEditor
 				pdc.Add(pd);
 			}
 
-			foreach (var param in particleDefinition.Parameters)
+			foreach (var param in changedDefinition.Parameters)
 			{
 				var value = param.Value.Value;
 
