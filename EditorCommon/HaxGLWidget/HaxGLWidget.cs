@@ -46,6 +46,8 @@ namespace EditorCommon
 			currentScreen = new Screen();
 			currentScreen.Context = GraphicsContext.CurrentContext;
 			currentScreen.WindowInfo = WindowInfo;
+
+			MG.Framework.Graphics.Screen.AddScreen(currentScreen);
 			
 #if DEBUG
 			currentScreen.Context.ErrorChecking = true;

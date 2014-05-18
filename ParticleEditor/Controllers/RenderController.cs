@@ -54,6 +54,7 @@ namespace MG.ParticleEditor.Controllers
 			if (model.ParticleSystem == null || definition != model.ParticleSystem.Definition)
 			{
 				model.ParticleSystem = new ParticleSystem(assetHandler, definition);
+				UpdateParticleSystemPosition();
 			}
 		}
 
@@ -66,9 +67,17 @@ namespace MG.ParticleEditor.Controllers
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem != null)
 			{
-				particleSystem.Position = new Vector2(renderContext.ActiveScreen.NormalizedScreenArea.Center);
+				UpdateParticleSystemPosition();
 				particleSystem.Draw(renderContext);
 			}
+		}
+
+		private void UpdateParticleSystemPosition()
+		{
+			var particleSystem = model.ParticleSystem;
+			if (particleSystem == null) return;
+			
+			particleSystem.Position = new Vector2(Screen.PrimaryScreen.NormalizedScreenArea.Center);
 		}
 	}
 }
