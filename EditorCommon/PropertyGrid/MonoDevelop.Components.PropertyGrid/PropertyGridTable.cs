@@ -121,9 +121,13 @@ namespace MonoDevelop.Components.PropertyGrid
 		}
 
 		HashSet<string> expandedStatus;
+		int currentSelection;
 
 		public void SaveStatus ()
 		{
+			// Olle: Save current selection as well as the expanded state. (Need to save scoll amount too?)
+			currentSelection = GetAllRows(false).ToList().IndexOf(currentEditorRow);
+
 			expandedStatus = new HashSet<string> ();
 			foreach (var r in rows.Where (r => r.IsCategory))
 				if (!r.Expanded)
@@ -134,11 +138,20 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			if (expandedStatus == null)
 				return;
-
+			
 			foreach (var row in rows.Where (r => r.IsCategory))
 				row.Expanded = !expandedStatus.Contains (row.Label);
 
 			expandedStatus = null;
+
+			if (currentSelection >= 0)
+			{
+				var current = GetAllRows(false).ElementAtOrDefault(currentSelection);
+				if (current != null)
+				{
+					StartEditing(current);
+				}
+			}
 
 			QueueDraw ();
 			QueueResize ();
@@ -538,15 +551,15 @@ namespace MonoDevelop.Components.PropertyGrid
 				return true;
 			}
 
-			// HACK: Want end event to be able to change the active object. This recreates the rows, which is fine, but
-			// the actual row resizing is not done by the time we want to check them for size. So, force update the sizes
-			// here by performing all pending events.
-			EndEditing();
-			while (Application.EventsPending())
-			{
-				Application.RunIteration(false);
-			}
-			// ~HACK
+			//// HACK: Want end event to be able to change the active object. This recreates the rows, which is fine, but
+			//// the actual row resizing is not done by the time we want to check them for size. So, force update the sizes
+			//// here by performing all pending events.
+			//EndEditing();
+			//while (Application.EventsPending())
+			//{
+			//    Application.RunIteration(false);
+			//}
+			//// ~HACK
 
 			TableRow clickedEditor = null;
 			foreach (var r in GetAllRows (true).Where (r => !r.IsCategory)) {
@@ -558,7 +571,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			if (clickedEditor != null && clickedEditor.Enabled)
 				StartEditing (clickedEditor);
 			else {
-				//EndEditing ();
+				EndEditing ();
 				GrabFocus ();
 			}
 

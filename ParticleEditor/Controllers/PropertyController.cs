@@ -10,6 +10,7 @@ namespace MG.ParticleEditor.Controllers
 		private Model model;
 		private PropertyView propertyView;
 		private UndoableAction currentProxy;
+		private bool shouldUpdateProxy;
 
 		public PropertyController(Model model, PropertyView propertyView)
 		{
@@ -17,10 +18,19 @@ namespace MG.ParticleEditor.Controllers
 			this.propertyView = propertyView;
 			propertyView.PropertyChanged += OnPropertyChanged;
 			propertyView.Deselected += OnPropertyDeselected;
-			model.UndoHandler.BeforeStateChanged += OnBeforeStateChanged;
 			model.UndoHandler.AfterStateChanged += OnAfterStateChanged;
 		}
 		
+		public void Update()
+		{
+			if (shouldUpdateProxy)
+			{
+				shouldUpdateProxy = false;
+				UpdateParticleSystem();
+				ReloadProxy();
+			}
+		}
+
 		public void OnItemSelected(ParticleDefinition definition)
 		{
 			ReloadProxy();
@@ -68,16 +78,10 @@ namespace MG.ParticleEditor.Controllers
 				model.UndoHandler.EndUndoGroup(currentProxy.GetUndoGroup());
 			}
 		}
-
-		private void OnBeforeStateChanged()
-		{
-			propertyView.CommitChanges();
-		}
-
+		
 		private void OnAfterStateChanged()
 		{
-			UpdateParticleSystem();
-			ReloadProxy();
+			shouldUpdateProxy = true;
 		}
 	}
 }

@@ -27,6 +27,12 @@ namespace MG.ParticleEditorWindow
 		public readonly TreeView TreeView;
 		public readonly PropertyView PropertyView;
 
+		private MenuItem editUndo;
+		private MenuItem editRedo;
+
+		public bool UndoEnabled { get { return editUndo.Sensitive; } set { editUndo.Sensitive = value; } }
+		public bool RedoEnabled { get { return editRedo.Sensitive; } set { editRedo.Sensitive = value; } }
+
 		private class GtkWindow : Gtk.Window
 		{
 			public GtkWindow(string title)
@@ -151,16 +157,16 @@ namespace MG.ParticleEditorWindow
 			editMenuItem.Submenu = editMenu;
 			menuBar.Append(editMenuItem);
 
-			var editUndo = new ImageMenuItem(Stock.Undo, accelerators);
+			editUndo = new ImageMenuItem(Stock.Undo, accelerators);
 			editUndo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.z, ModifierType.ControlMask, AccelFlags.Visible));
 			editUndo.Activated += (sender, args) => EditUndo.Invoke();
 			editMenu.Append(editUndo);
 
-			var editRedo = new ImageMenuItem(Stock.Redo, accelerators);
+			editRedo = new ImageMenuItem(Stock.Redo, accelerators);
 			editRedo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.y, ModifierType.ControlMask, AccelFlags.Visible));
 			editRedo.Activated += (sender, args) => EditRedo.Invoke();
 			editMenu.Append(editRedo);
-
+			
 			return menuBar;
 		}
 		

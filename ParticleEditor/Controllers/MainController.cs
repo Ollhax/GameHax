@@ -33,6 +33,7 @@ namespace MG.ParticleEditor.Controllers
 
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
+			model.UndoHandler.AfterStateChanged += AfterUndo;
 			model.Declaration = new ParticleDeclarationTable();
 			model.Declaration.Load("ParticleDeclarations.xml");
 			
@@ -51,10 +52,12 @@ namespace MG.ParticleEditor.Controllers
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.New();
 
+			AfterUndo();
+
 			Application.Update += Update;
 			startStopwatch.Start();
 		}
-
+		
 		private void Update()
 		{
 			float elapsedSeconds = 0;
@@ -69,6 +72,7 @@ namespace MG.ParticleEditor.Controllers
 			}
 
 			assetHandler.Update();
+			propertyController.Update();
 
 			renderController.Update(new Time(elapsedSeconds, startStopwatch.Elapsed.TotalSeconds));
 
@@ -92,7 +96,7 @@ namespace MG.ParticleEditor.Controllers
 			// terminate the timeout.
 
 			window.StatusText = model.StatusText;
-			window.RenderView.Refresh();			
+			window.RenderView.Refresh();
 		}
 
 		private void WindowOnClosed()
@@ -103,6 +107,12 @@ namespace MG.ParticleEditor.Controllers
 		private void WindowOnClosing(MainWindow.ClosingEventArgs closingEventArgs)
 		{
 			closingEventArgs.Cancel = false;
+		}
+
+		private void AfterUndo()
+		{
+			window.UndoEnabled = model.UndoHandler.UndoSteps > 0;
+			window.RedoEnabled = model.UndoHandler.RedoSteps > 0;
 		}
 
 		public void Dispose()
