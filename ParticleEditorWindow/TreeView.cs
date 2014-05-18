@@ -3,30 +3,44 @@ using System.Collections.Generic;
 
 using Gtk;
 
+using Action = System.Action;
+
 namespace MG.ParticleEditorWindow
 {
 	public class TreeView
 	{
-		internal Gtk.TreeView Widget;
-		
+		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
+		private Gtk.TreeView treeView;
 
-		public event System.Action<int> ItemSelected = delegate { };
+		internal Widget Widget { get { return scrolledWindow; } }
+		
+		public class ContextMenu
+		{
+			public int ItemId;
+			public List<KeyValuePair<string, System.Action>> Entries;
+		}
+
+		public event Action<int> ItemSelected = delegate { };
+		public event Action<ContextMenu> CreateContextMenu = delegate { };
 
 		public TreeView()
 		{
-			Widget = new Gtk.TreeView();
-			Widget.CanFocus = true;
-			Widget.Name = "treeview";
-			Widget.EnableSearch = true;
-			Widget.SearchColumn = 1;
-			//Widget.EnableGridLines = TreeViewGridLines.Horizontal;
-			//Widget.EnableTreeLines = true;
+			treeView = new Gtk.TreeView();
+			scrolledWindow = new ScrolledWindow();
+			
+			scrolledWindow.Add(treeView);
+			treeView.CanFocus = true;
+			treeView.Name = "treeview";
+			treeView.EnableSearch = true;
+			treeView.SearchColumn = 1;
+			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
+			//treeView.EnableTreeLines = true;
 			
 			var effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
 
-			Widget.AppendColumn(effectColumn);
+			treeView.AppendColumn(effectColumn);
 
 			storage = new Gtk.TreeStore(typeof(int), typeof(string));
 			//Gtk.TreeIter iter = listStore.AppendValues("Moop");
@@ -43,52 +57,48 @@ namespace MG.ParticleEditorWindow
 			//    listStore.AppendValues(def.Name);
 			//}
 
-			Widget.Model = storage;
-			Widget.Selection.Changed += OnSelectionChanged;
-			//Widget.CursorChanged += (sender, args) => ItemSelected(Widget.Selection.);
-			//Widget.CursorChanged += OnCursorChanged;
-			//Widget.RowActivated += WidgetOnRowActivated;
-
+			treeView.Model = storage;
+			treeView.Selection.Changed += OnSelectionChanged;
+			//treeView.CursorChanged += (sender, args) => ItemSelected(treeView.Selection.);
+			//treeView.CursorChanged += OnCursorChanged;
+			//treeView.RowActivated += WidgetOnRowActivated;
+			treeView.ButtonPressEvent += OnButtonPress;
+			
 			var artistNameCell = new CellRendererText();
 			effectColumn.PackStart(artistNameCell, true);
 			effectColumn.AddAttribute(artistNameCell, "text", 1);
 		}
-
+		
 		public void SelectItem(int id)
 		{
 			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
 				{
 					if ((int)model.GetValue(treeIter, 0) == id)
 					{
-						Widget.Selection.SelectIter(treeIter);
+						treeView.Selection.SelectIter(treeIter);
+						treeView.ScrollToCell(path, null, false, 0, 0);
 						return true;
 					}
 					return false;
 				});
-
-			//storage.IterChildren(out )
-			//TreeIter child;
-			//if (!IterChildren (out child, iter))
-			//    return;
-			//do {
-			//    GrayOut (child);
-			//} while (IterNext (out child));
-
-			//storage.GetValue()
-			//Widget.Selection.sel
+		}
+		
+		private void OnSelectionChanged(object sender, EventArgs eventArgs)
+		{
+			ItemSelected.Invoke(GetSelectedItemId());
 		}
 
-		
-
-		private void OnSelectionChanged(object sender, EventArgs eventArgs)
+		private int GetSelectedItemId()
 		{
 			TreeModel model;
 			TreeIter iter;
-			if (Widget.Selection.GetSelected(out model, out iter))
+			if (treeView.Selection.GetSelected(out model, out iter))
 			{
 				int id = (int)model.GetValue(iter, 0);
-				ItemSelected.Invoke(id);
+				return id;
 			}
+
+			return 0;
 		}
 
 		//private void OnCursorChanged(object sender, EventArgs eventArgs)
@@ -109,6 +119,38 @@ namespace MG.ParticleEditorWindow
 			}
 
 			//storage.AppendValues(id, value);
+		}
+
+		[GLib.ConnectBefore]
+		private void OnButtonPress(object o, ButtonPressEventArgs args)
+		{
+			if (args.Event.Button == 3) // Right click
+			{
+				TreePath selectedItemPath;
+				treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath);
+				treeView.Selection.SelectPath(selectedItemPath);
+				
+				var menu = new ContextMenu();
+				menu.ItemId = GetSelectedItemId();
+				menu.Entries = new List<KeyValuePair<string, Action>>();
+				CreateContextMenu(menu);
+
+				if (menu.Entries.Count > 0)
+				{
+					var m = new Menu();
+
+					foreach (var entry in menu.Entries)
+					{
+						var item = new MenuItem(entry.Key);
+						var e = entry;
+						item.ButtonPressEvent += delegate { e.Value(); };
+						m.Add(item);
+					}
+
+					m.ShowAll();
+					m.Popup();
+				}
+			}
 		}
 	}
 }

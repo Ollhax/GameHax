@@ -16,17 +16,18 @@ namespace MG.ParticleEditor.Controllers
 		private TreeView treeView;
 
 		public event Action<ParticleDefinition> ItemSelected = delegate { };
-
+		
 		public TreeController(Model model, TreeView treeView)
 		{
 			this.model = model;
 			this.treeView = treeView;
 			
 			treeView.ItemSelected += OnItemSelected;
+			treeView.CreateContextMenu += OnCreateContextMenu;
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
-
+		
 		public void CreateEntry(string declarationName)
 		{
 			var particleDefinition = CreateParticle(declarationName);
@@ -40,14 +41,7 @@ namespace MG.ParticleEditor.Controllers
 
 			treeView.SetValues(items);
 		}
-
-		private void OnItemSelected(int id)
-		{
-			var def = model.GetDefinitionById(id);
-			model.CurrentDefinition = def;
-			ItemSelected(def);
-		}
-
+		
 		private void OnUndoRedoEvent(IUndoableAction undoableAction)
 		{
 			var action = undoableAction;
@@ -71,8 +65,11 @@ namespace MG.ParticleEditor.Controllers
 			if (model.Declaration.DeclarationsList.Count > 0)
 			{
 				var decl = model.Declaration.DeclarationsList[0];
-				CreateEntry(decl.Name);
-				CreateEntry(decl.Name);
+
+				for (int i = 0; i < 20; i++)
+				{
+					CreateEntry(decl.Name);
+				}
 			}
 		}
 
@@ -99,6 +96,34 @@ namespace MG.ParticleEditor.Controllers
 			}
 			
 			return definition;
+		}
+
+		private void OnItemSelected(int id)
+		{
+			var def = model.GetDefinitionById(id);
+			model.CurrentDefinition = def;
+			ItemSelected(def);
+		}
+
+		private void OnCreateContextMenu(TreeView.ContextMenu contextMenu)
+		{
+			var def = model.GetDefinitionById(contextMenu.ItemId);
+			
+			contextMenu.Entries.Add(new KeyValuePair<string, Action>("Add", OnContextMenuAdd));
+			if (def != null)
+			{
+				contextMenu.Entries.Add(new KeyValuePair<string, Action>("Remove", () => OnContextMenuRemove(def.InternalId)));
+			}
+		}
+
+		private void OnContextMenuAdd()
+		{
+			Log.P("Add");
+		}
+
+		private void OnContextMenuRemove(int id)
+		{
+			Log.P("Remove " + id);
 		}
 	}
 }
