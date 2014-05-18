@@ -20,11 +20,11 @@ namespace MG.ParticleEditor.Controllers
 			this.propertyView = propertyView;
 			propertyView.PropertyChanged += OnPropertyChanged;
 			propertyView.Deselected += OnPropertyDeselected;
-			model.UndoHandler.UndoEvent += UndoRedoEvent;
-			model.UndoHandler.RedoEvent += UndoRedoEvent;
+			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
+			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
 
-		public void OnItemSelected(ParticleDefinition definition)
+		public void OnChangeDefinition(ParticleDefinition definition)
 		{
 			propertyView.CommitChanges();
 			ReloadProxy();
@@ -47,6 +47,15 @@ namespace MG.ParticleEditor.Controllers
 			propertyView.SetCurrentObject(particlePropertyProxy);
 		}
 
+		private void OnPropertyDeselected()
+		{
+			if (particlePropertyProxy != null)
+			{
+				model.UndoHandler.ExecuteAction(particlePropertyProxy.CommitAction());
+				model.UndoHandler.EndUndoGroup(ParticlePropertyProxy.UndoGroup);
+			}
+		}
+
 		private void OnPropertyChanged()
 		{
 			if (particlePropertyProxy != null)
@@ -65,19 +74,10 @@ namespace MG.ParticleEditor.Controllers
 			}
 		}
 		
-		private void OnPropertyDeselected()
-		{
-			if (particlePropertyProxy != null)
-			{
-				model.UndoHandler.EndUndoGroup(ParticlePropertyProxy.UndoGroup);
-			}
-		}
-
-		private void UndoRedoEvent()
+		private void OnUndoRedoEvent(IUndoableAction action)
 		{
 			propertyView.CancelChanges();
 			ReloadProxy();
-			UpdateParticleSystem();
 		}
 	}
 }

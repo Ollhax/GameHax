@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 
 using MG.EditorCommon;
+using MG.EditorCommon.Undo;
 using MG.Framework.Assets;
 using MG.Framework.Particle;
+using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 
 namespace MG.ParticleEditor.Controllers
@@ -21,8 +23,10 @@ namespace MG.ParticleEditor.Controllers
 			this.treeView = treeView;
 			
 			treeView.ItemSelected += OnItemSelected;
+			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
+			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
-		
+
 		public void CreateEntry(string declarationName)
 		{
 			var particleDefinition = CreateParticle(declarationName);
@@ -42,6 +46,22 @@ namespace MG.ParticleEditor.Controllers
 			var def = model.GetDefinitionById(id);
 			model.CurrentDefinition = def;
 			ItemSelected(def);
+		}
+
+		private void OnUndoRedoEvent(IUndoableAction undoableAction)
+		{
+			var action = undoableAction;
+			var undoableActionGroup = undoableAction as UndoableActionGroup;
+			if (undoableActionGroup != null && undoableActionGroup.Actions.Count > 0)
+			{
+				action = undoableActionGroup.Actions[undoableActionGroup.Actions.Count - 1];
+			}
+
+			var particleAction = action as UndoableParticleAction;
+			if (particleAction != null)
+			{
+				treeView.SelectItem(particleAction.CurrentDefinitionId);
+			}
 		}
 
 		public void OnNewDocument()
@@ -72,8 +92,8 @@ namespace MG.ParticleEditor.Controllers
 				var definitionParameter = new ParticleDefinition.Parameter();
 
 				definitionParameter.Name = declarationParameter.Name;
-				definitionParameter.Value = declarationParameter.DefaultValue;
-				definitionParameter.Random = declarationParameter.DefaultValueRandom;
+				definitionParameter.Value = new Any(declarationParameter.DefaultValue);
+				definitionParameter.Random = new Any(declarationParameter.DefaultValueRandom);
 
 				definition.Parameters.Add(definitionParameter.Name, definitionParameter);
 			}

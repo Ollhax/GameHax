@@ -37,12 +37,12 @@ namespace MG.EditorCommon.Undo
 		/// <summary>
 		/// Event called when actions are undone.
 		/// </summary>
-		public event Action UndoEvent;
+		public event Action<IUndoableAction> UndoEvent;
 
 		/// <summary>
 		/// Event called when actions are redone.
 		/// </summary>
-		public event Action RedoEvent;
+		public event Action<IUndoableAction> RedoEvent;
 		
 		public UndoHandler(int maxUndoSteps)
 		{
@@ -158,8 +158,8 @@ namespace MG.EditorCommon.Undo
 				
 				action.Undo();
 				redoStack.Add(action);
-				
-				OnUndoEvent();
+
+				OnUndoEvent(action);
 				OnAfterStateChanged();
 			}
 		}
@@ -177,7 +177,7 @@ namespace MG.EditorCommon.Undo
 				redoStack.RemoveAt(redoStack.Count - 1);
 				
 				ExecuteActionInternal(action, false);
-				OnRedoEvent();
+				OnRedoEvent(action);
 			}
 		}
 		
@@ -197,19 +197,19 @@ namespace MG.EditorCommon.Undo
 			}
 		}
 
-		protected void OnUndoEvent()
+		protected void OnUndoEvent(IUndoableAction action)
 		{
 			if (UndoEvent != null)
 			{
-				UndoEvent();
+				UndoEvent(action);
 			}
 		}
 
-		protected void OnRedoEvent()
+		protected void OnRedoEvent(IUndoableAction action)
 		{
 			if (RedoEvent != null)
 			{
-				RedoEvent();
+				RedoEvent(action);
 			}
 		}
 	}

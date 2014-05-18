@@ -48,7 +48,7 @@ namespace MG.ParticleEditor.Controllers
 			propertyController = new PropertyController(model, window.PropertyView);
 			
 			treeController.ItemSelected += renderController.OnItemSelected;
-			treeController.ItemSelected += propertyController.OnItemSelected;
+			treeController.ItemSelected += propertyController.OnChangeDefinition;
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.New();
 

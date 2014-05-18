@@ -28,6 +28,16 @@ namespace MG.EditorCommon
 		public string Name;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
 
+		private object GetDefaultValue(Type t)
+		{
+			if (t.IsValueType)
+			{
+				return Activator.CreateInstance(t);
+			}
+
+			return null;
+		}
+
 		public void Load(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
@@ -51,6 +61,10 @@ namespace MG.EditorCommon
 					if (XmlHelper.HasElement(parameterNode, "DefaultValueRandom"))
 					{
 						parameter.DefaultValueRandom = new Any(XmlHelper.ReadString(parameterNode, "DefaultValueRandom"), type);
+					}
+					else
+					{
+						parameter.DefaultValueRandom = new Any(GetDefaultValue(parameter.DefaultValue.GetTypeOfValue()).ToString(), type);
 					}
 
 					if (XmlHelper.HasElement(parameterNode, "ValueStep"))

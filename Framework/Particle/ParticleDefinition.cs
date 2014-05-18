@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
@@ -24,19 +25,21 @@ namespace MG.Framework.Particle
 			{
 				Name = other.Name;
 				Value = new Any(other.Value);
+				Random = new Any(other.Random);
+			}
 
-				if (other.Random != null)
-				{
-					Random = new Any(other.Random);
-				}
+			public void CopyFrom(Parameter other)
+			{
+				Name = other.Name;
+				Value.CopyFrom(other.Value);
+				Random.CopyFrom(other.Random);
 			}
 
 			public bool Equals(Parameter other)
 			{
 				if (Name != other.Name) return false;
 				if (!Value.Equals(other.Value)) return false;
-				if ((Random == null) != (other.Random == null)) return false;
-				if (Random != null && !Random.Equals(other.Random)) return false;
+				if (!Random.Equals(other.Random)) return false;
 				return true;
 			}
 		}
@@ -54,6 +57,7 @@ namespace MG.Framework.Particle
 			Name = other.Name;
 			Emitter = other.Emitter;
 			Declaration = other.Declaration;
+			InternalId = other.InternalId;
 			
 			if (Parameters.Count != other.Parameters.Count)
 			{
@@ -63,12 +67,10 @@ namespace MG.Framework.Particle
 					Parameters.Add(p.Key, new Parameter(p.Value));
 				}
 			}
-			else
+			
+			foreach (var p in other.Parameters)
 			{
-			    foreach (var p in other.Parameters)
-			    {
-			        Parameters[p.Key].Value.Set(p.Value.Value.GetAsObject());
-			    }
+			    Parameters[p.Key].CopyFrom(p.Value);
 			}
 		}
 
@@ -77,8 +79,9 @@ namespace MG.Framework.Particle
 			if (Name != other.Name) return false;
 			if (Emitter != other.Emitter) return false;
 			if (Declaration != other.Declaration) return false;
+			if (InternalId != other.InternalId) return false;
 			if (Parameters.Count != other.Parameters.Count) return false;
-
+			
 			foreach (var param in Parameters)
 			{
 				Parameter otherParam;

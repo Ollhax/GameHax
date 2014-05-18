@@ -12,7 +12,7 @@ namespace MG.ParticleEditor
 	{
 		public static int UndoGroup = 965168485;
 
-		class ParticlePropertyChangeset : UndoableAction
+		class ParticlePropertyChangeset : UndoableParticleAction
 		{
 			public ParticleDefinition CurrentDefinition;
 			public ParticleDefinition ChangedDefinition;
@@ -20,16 +20,20 @@ namespace MG.ParticleEditor
 
 			public ParticlePropertyChangeset(ParticleDefinition particleDefinition)
 			{
+				CurrentDefinitionId = particleDefinition.InternalId;
 				CurrentDefinition = particleDefinition;
 				ChangedDefinition = new ParticleDefinition(particleDefinition);
 				OriginalDefinition = new ParticleDefinition(particleDefinition);
 			}
 
-			public void CommitCurrentChanges()
+			public ParticlePropertyChangeset(ParticlePropertyChangeset changeset)
 			{
-				ChangedDefinition.CopyFrom(CurrentDefinition);
+				CurrentDefinitionId = changeset.CurrentDefinitionId;
+				CurrentDefinition = changeset.CurrentDefinition;
+				ChangedDefinition = new ParticleDefinition(changeset.ChangedDefinition);
+				OriginalDefinition = new ParticleDefinition(changeset.OriginalDefinition);
 			}
-
+			
 			protected override bool CallExecute()
 			{
 				if (ChangedDefinition.Equals(OriginalDefinition))
@@ -45,7 +49,7 @@ namespace MG.ParticleEditor
 			{
 				CurrentDefinition.CopyFrom(OriginalDefinition);
 			}
-			
+
 			public override int GetUndoGroup()
 			{
 				return UndoGroup;
@@ -61,14 +65,18 @@ namespace MG.ParticleEditor
 		
 		public UndoableAction CommitAction()
 		{
-			var oldChangeset = changeset;
-			changeset = new ParticlePropertyChangeset(changeset.CurrentDefinition);
+			// Move all changes (which are done in the CURRENT definition) to the CHANGED definition.
+			changeset.ChangedDefinition.CopyFrom(changeset.CurrentDefinition);
 
-			oldChangeset.CommitCurrentChanges();
-			return oldChangeset;
+			// Copy the changeset that is about to be committed.
+			var copy = new ParticlePropertyChangeset(changeset);
+
+			// Rebase the ORIGINAL definition so that we save changes from now -> next commit.
+			changeset.OriginalDefinition.CopyFrom(changeset.CurrentDefinition);
+
+			return copy;
 		}
 		
-
 		public ParticlePropertyProxy(ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
 			this.particleDeclaration = particleDeclaration;

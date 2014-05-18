@@ -23,18 +23,7 @@ namespace MG.Framework.Utility
 		public Any(RelativePosition2 value) { boxedValue = value; }
 		public Any(Any other)
 		{
-			if (other.boxedValue is int) boxedValue = (int)(other.boxedValue);
-			else if (other.boxedValue is bool) boxedValue = (bool) (other.boxedValue);
-			else if (other.boxedValue is float) boxedValue = (float)(other.boxedValue);
-			else if (other.boxedValue is Tween) boxedValue = (Tween)(other.boxedValue);
-			else if (other.boxedValue is Color) boxedValue = (Color)(other.boxedValue);
-			else if (other.boxedValue is string) boxedValue = ((string)other.boxedValue).Clone();
-			else if (other.boxedValue is Vector2) boxedValue = (Vector2)(other.boxedValue);
-			else if (other.boxedValue is Vector2I) boxedValue = (Vector2I)(other.boxedValue);
-			else if (other.boxedValue is FilePath) boxedValue = (FilePath)(other.boxedValue);
-			else if (other.boxedValue is RectangleF) boxedValue = (RectangleF)(other.boxedValue);
-			else if (other.boxedValue is RelativePosition2) boxedValue = (RelativePosition2)(other.boxedValue);
-			else throw new Exception("Type unrecognized: " + other.GetTypeOfValue() + " (value: " + other.ToString() + ")");
+			CopyFrom(other);
 		}
 		
 		public Any(string valueAsString, string nameOfType)
@@ -51,6 +40,22 @@ namespace MG.Framework.Utility
 			else if (nameOfType == typeof(RectangleF).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(RectangleF)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(RelativePosition2).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(RelativePosition2)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else throw new Exception("Type unrecognized: " + nameOfType + " (value: " + valueAsString + ")");
+		}
+
+		public void CopyFrom(Any other)
+		{
+			if (other.boxedValue is int) boxedValue = (int)(other.boxedValue);
+			else if (other.boxedValue is bool) boxedValue = (bool)(other.boxedValue);
+			else if (other.boxedValue is float) boxedValue = (float)(other.boxedValue);
+			else if (other.boxedValue is Tween) boxedValue = (Tween)(other.boxedValue);
+			else if (other.boxedValue is Color) boxedValue = (Color)(other.boxedValue);
+			else if (other.boxedValue is string) boxedValue = ((string)other.boxedValue).Clone();
+			else if (other.boxedValue is Vector2) boxedValue = (Vector2)(other.boxedValue);
+			else if (other.boxedValue is Vector2I) boxedValue = (Vector2I)(other.boxedValue);
+			else if (other.boxedValue is FilePath) boxedValue = (FilePath)(other.boxedValue);
+			else if (other.boxedValue is RectangleF) boxedValue = (RectangleF)(other.boxedValue);
+			else if (other.boxedValue is RelativePosition2) boxedValue = (RelativePosition2)(other.boxedValue);
+			else throw new Exception("Type unrecognized: " + other.GetTypeOfValue() + " (value: " + other.ToString() + ")");
 		}
 
 		public bool Equals(Any other)

@@ -54,6 +54,32 @@ namespace MG.ParticleEditorWindow
 			effectColumn.AddAttribute(artistNameCell, "text", 1);
 		}
 
+		public void SelectItem(int id)
+		{
+			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
+				{
+					if ((int)model.GetValue(treeIter, 0) == id)
+					{
+						Widget.Selection.SelectIter(treeIter);
+						return true;
+					}
+					return false;
+				});
+
+			//storage.IterChildren(out )
+			//TreeIter child;
+			//if (!IterChildren (out child, iter))
+			//    return;
+			//do {
+			//    GrayOut (child);
+			//} while (IterNext (out child));
+
+			//storage.GetValue()
+			//Widget.Selection.sel
+		}
+
+		
+
 		private void OnSelectionChanged(object sender, EventArgs eventArgs)
 		{
 			TreeModel model;
