@@ -29,7 +29,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>10.0</DefaultValue>
-				<DefaultValueRandom>10.0</DefaultValueRandom>
+				<DefaultValueRandom>0.0</DefaultValueRandom>
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>

@@ -33,6 +33,7 @@ namespace MG.ParticleEditor.Controllers
 
 		public void OnItemSelected(ParticleDefinition definition)
 		{
+			propertyView.CommitChanges();
 			ReloadProxy();
 		}
 
