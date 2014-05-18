@@ -34,6 +34,16 @@ namespace MG.EditorCommon.Undo
 		/// </summary>
 		public event Action BeforeStateChanged;
 		
+		/// <summary>
+		/// Event called when actions are undone.
+		/// </summary>
+		public event Action UndoEvent;
+
+		/// <summary>
+		/// Event called when actions are redone.
+		/// </summary>
+		public event Action RedoEvent;
+		
 		public UndoHandler(int maxUndoSteps)
 		{
 			if (maxUndoSteps < 0)
@@ -51,6 +61,7 @@ namespace MG.EditorCommon.Undo
 		/// </summary>
 		public void Clear()
 		{
+			OnBeforeStateChanged();
 			currentGroup = null;
 			undoStack.Clear();
 			redoStack.Clear();
@@ -148,6 +159,7 @@ namespace MG.EditorCommon.Undo
 				action.Undo();
 				redoStack.Add(action);
 				
+				OnUndoEvent();
 				OnAfterStateChanged();
 			}
 		}
@@ -163,8 +175,9 @@ namespace MG.EditorCommon.Undo
 			{
 				var action = redoStack[redoStack.Count - 1];
 				redoStack.RemoveAt(redoStack.Count - 1);
-
+				
 				ExecuteActionInternal(action, false);
+				OnRedoEvent();
 			}
 		}
 		
@@ -181,6 +194,22 @@ namespace MG.EditorCommon.Undo
 			if (BeforeStateChanged != null)
 			{
 				BeforeStateChanged();
+			}
+		}
+
+		protected void OnUndoEvent()
+		{
+			if (UndoEvent != null)
+			{
+				UndoEvent();
+			}
+		}
+
+		protected void OnRedoEvent()
+		{
+			if (RedoEvent != null)
+			{
+				RedoEvent();
 			}
 		}
 	}

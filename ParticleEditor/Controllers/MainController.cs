@@ -72,29 +72,8 @@ namespace MG.ParticleEditor.Controllers
 			}
 
 			assetHandler.Update();
-			propertyController.Update();
-
 			renderController.Update(new Time(elapsedSeconds, startStopwatch.Elapsed.TotalSeconds));
-
-			//particleSystem.Update(new Time(elapsedTime, 0));
-
-			//Gtk.Application.Invoke(
-			//    (sender, args) =>
-			//        {
-			//            MainGL.QueueDraw();
-			//            statusbar5.Pop(0);
-			//            statusbar5.Push(0, "Particles: " + particleSystem.ActiveParticles.ToString());
-			//        });
-
-			//Thread.Sleep(10);
-
-			//statusbar5.Pop(0);
-			//statusbar5.Push(0, "Particles: " + particleSystem.ActiveParticles.ToString());
-
-			//MainGL.QueueDraw();
-			// again after the timeout period expires.   Returning false would
-			// terminate the timeout.
-
+			
 			window.StatusText = model.StatusText;
 			window.RenderView.Refresh();
 		}

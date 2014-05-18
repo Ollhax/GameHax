@@ -29,6 +29,16 @@ namespace MG.ParticleEditorWindow
 		{
 			Widget.CommitPendingChanges();
 		}
+
+		public void CancelChanges()
+		{
+			Widget.CancelPendingChanges();
+		}
+
+		public void Refresh()
+		{
+			Widget.Refresh();
+		}
 		
 		public void SetCurrentObject(object o)
 		{

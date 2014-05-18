@@ -228,6 +228,8 @@ namespace MonoDevelop.Components.PropertyGrid
 		bool syncing;
 		
 		public event EventHandler Changed;
+
+		public bool CancelChanges;
 		
 		public EditSession (Gtk.Widget container, object instance, PropertyDescriptor property, IPropertyEditor currentEditor)
 		{
@@ -272,7 +274,8 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			if (!syncing) {
 				syncing = true;
-				if (!property.IsReadOnly) {
+				if (!property.IsReadOnly && !CancelChanges)
+				{
 					property.SetValue (obj, currentEditor.Value);
 					if (Changed != null)
 						Changed (s, a);

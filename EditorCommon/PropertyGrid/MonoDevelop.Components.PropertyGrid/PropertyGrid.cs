@@ -269,6 +269,11 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			tree.CommitChanges ();
 		}
+
+		public void CancelPendingChanges()
+		{
+			tree.CancelChanges();
+		}
 		
 		void UpdateTabs ()
 		{

@@ -120,13 +120,22 @@ namespace MonoDevelop.Components.PropertyGrid
 			EndEditing ();
 		}
 
+		public void CancelChanges ()
+		{
+			if (editSession != null)
+			{
+				editSession.CancelChanges = true;
+				EndEditing();
+			}
+		}
+
 		HashSet<string> expandedStatus;
 		int currentSelection;
 
 		public void SaveStatus ()
 		{
-			// Olle: Save current selection as well as the expanded state. (Need to save scoll amount too?)
-			currentSelection = GetAllRows(false).ToList().IndexOf(currentEditorRow);
+			//// Olle: Save current selection as well as the expanded state. (Need to save scoll amount too?)
+			//currentSelection = GetAllRows(false).ToList().IndexOf(currentEditorRow);
 
 			expandedStatus = new HashSet<string> ();
 			foreach (var r in rows.Where (r => r.IsCategory))
@@ -144,14 +153,14 @@ namespace MonoDevelop.Components.PropertyGrid
 
 			expandedStatus = null;
 
-			if (currentSelection >= 0)
-			{
-				var current = GetAllRows(false).ElementAtOrDefault(currentSelection);
-				if (current != null)
-				{
-					StartEditing(current);
-				}
-			}
+			//if (currentSelection >= 0)
+			//{
+			//    var current = GetAllRows(false).ElementAtOrDefault(currentSelection);
+			//    if (current != null)
+			//    {
+			//        StartEditing(current);
+			//    }
+			//}
 
 			QueueDraw ();
 			QueueResize ();
@@ -762,7 +771,8 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		void EndEditing ()
 		{
-			if (editSession != null) {
+			if (editSession != null)
+			{
 				Remove (currentEditor);
 				currentEditor.Destroy ();
 				currentEditor = null;

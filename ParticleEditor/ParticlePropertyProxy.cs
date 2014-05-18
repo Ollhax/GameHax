@@ -8,46 +8,73 @@ using MG.EditorCommon.Editors;
 
 namespace MG.ParticleEditor
 {
-	class ParticlePropertyProxy : UndoableAction, ICustomTypeDescriptor
+	class ParticlePropertyProxy : ICustomTypeDescriptor
 	{
+		public static int UndoGroup = 965168485;
+
+		class ParticlePropertyChangeset : UndoableAction
+		{
+			public ParticleDefinition CurrentDefinition;
+			public ParticleDefinition ChangedDefinition;
+			public ParticleDefinition OriginalDefinition;
+
+			public ParticlePropertyChangeset(ParticleDefinition particleDefinition)
+			{
+				CurrentDefinition = particleDefinition;
+				ChangedDefinition = new ParticleDefinition(particleDefinition);
+				OriginalDefinition = new ParticleDefinition(particleDefinition);
+			}
+
+			public void CommitCurrentChanges()
+			{
+				ChangedDefinition.CopyFrom(CurrentDefinition);
+			}
+
+			protected override bool CallExecute()
+			{
+				if (ChangedDefinition.Equals(OriginalDefinition))
+				{
+					return false;
+				}
+
+				CurrentDefinition.CopyFrom(ChangedDefinition);
+				return true;
+			}
+
+			protected override void CallUndo()
+			{
+				CurrentDefinition.CopyFrom(OriginalDefinition);
+			}
+			
+			public override int GetUndoGroup()
+			{
+				return UndoGroup;
+			}
+		}
+
 		[Category("General")]
 		[ReadOnly(true)]
-		public string Name { get { return changedDefinition.Name; } set { changedDefinition.Name = value; } }
+		public string Name { get { return changeset.CurrentDefinition.Name; } set { changeset.CurrentDefinition.Name = value; } }
 		
 		private ParticleDeclaration particleDeclaration;
-		private ParticleDefinition currentDefinition;
-		private ParticleDefinition changedDefinition;
-		private ParticleDefinition originalDefinition;
+		private ParticlePropertyChangeset changeset;
+		
+		public UndoableAction CommitAction()
+		{
+			var oldChangeset = changeset;
+			changeset = new ParticlePropertyChangeset(changeset.CurrentDefinition);
+
+			oldChangeset.CommitCurrentChanges();
+			return oldChangeset;
+		}
+		
 
 		public ParticlePropertyProxy(ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
 			this.particleDeclaration = particleDeclaration;
-			currentDefinition = particleDefinition;
-			changedDefinition = new ParticleDefinition(particleDefinition);
-			originalDefinition = new ParticleDefinition(particleDefinition);
+			changeset = new ParticlePropertyChangeset(particleDefinition);
 		}
-
-		protected override bool CallExecute()
-		{
-			if (changedDefinition.Equals(originalDefinition))
-			{
-				return false;
-			}
-
-			currentDefinition.CopyFrom(changedDefinition);
-			return true;
-		}
-
-		protected override void CallUndo()
-		{
-			currentDefinition.CopyFrom(originalDefinition);
-		}
-
-		public override int GetUndoGroup()
-		{
-			return 965168485;
-		}
-
+		
 		//--------------------------------------
 		// ICustomTypeDescriptor
 		//--------------------------------------
@@ -72,7 +99,7 @@ namespace MG.ParticleEditor
 				pdc.Add(pd);
 			}
 
-			foreach (var param in changedDefinition.Parameters)
+			foreach (var param in changeset.CurrentDefinition.Parameters)
 			{
 				var value = param.Value.Value;
 

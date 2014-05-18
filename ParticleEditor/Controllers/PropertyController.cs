@@ -1,6 +1,9 @@
-﻿using MG.EditorCommon;
+﻿using System;
+
+using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
+using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 
 namespace MG.ParticleEditor.Controllers
@@ -9,26 +12,16 @@ namespace MG.ParticleEditor.Controllers
 	{
 		private Model model;
 		private PropertyView propertyView;
-		private UndoableAction currentProxy;
-		private bool shouldUpdateProxy;
-
+		private ParticlePropertyProxy particlePropertyProxy;
+		
 		public PropertyController(Model model, PropertyView propertyView)
 		{
 			this.model = model;
 			this.propertyView = propertyView;
 			propertyView.PropertyChanged += OnPropertyChanged;
 			propertyView.Deselected += OnPropertyDeselected;
-			model.UndoHandler.AfterStateChanged += OnAfterStateChanged;
-		}
-		
-		public void Update()
-		{
-			if (shouldUpdateProxy)
-			{
-				shouldUpdateProxy = false;
-				UpdateParticleSystem();
-				ReloadProxy();
-			}
+			model.UndoHandler.UndoEvent += UndoRedoEvent;
+			model.UndoHandler.RedoEvent += UndoRedoEvent;
 		}
 
 		public void OnItemSelected(ParticleDefinition definition)
@@ -39,7 +32,7 @@ namespace MG.ParticleEditor.Controllers
 
 		private void ReloadProxy()
 		{
-			currentProxy = null;
+			particlePropertyProxy = null;
 
 			var def = model.CurrentDefinition;
 			if (def != null)
@@ -47,18 +40,18 @@ namespace MG.ParticleEditor.Controllers
 				ParticleDeclaration particleDeclaration;
 				if (model.Declaration.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
 				{
-					currentProxy = new ParticlePropertyProxy(particleDeclaration, def);
+					particlePropertyProxy = new ParticlePropertyProxy(particleDeclaration, def);
 				}
 			}
 
-			propertyView.SetCurrentObject(currentProxy);
+			propertyView.SetCurrentObject(particlePropertyProxy);
 		}
 
 		private void OnPropertyChanged()
 		{
-			if (currentProxy != null)
+			if (particlePropertyProxy != null)
 			{
-				model.UndoHandler.ExecuteAction(currentProxy);
+				model.UndoHandler.ExecuteAction(particlePropertyProxy.CommitAction());
 			}
 
 			UpdateParticleSystem();
@@ -74,15 +67,17 @@ namespace MG.ParticleEditor.Controllers
 		
 		private void OnPropertyDeselected()
 		{
-			if (currentProxy != null)
+			if (particlePropertyProxy != null)
 			{
-				model.UndoHandler.EndUndoGroup(currentProxy.GetUndoGroup());
+				model.UndoHandler.EndUndoGroup(ParticlePropertyProxy.UndoGroup);
 			}
 		}
-		
-		private void OnAfterStateChanged()
+
+		private void UndoRedoEvent()
 		{
-			shouldUpdateProxy = true;
+			propertyView.CancelChanges();
+			ReloadProxy();
+			UpdateParticleSystem();
 		}
 	}
 }

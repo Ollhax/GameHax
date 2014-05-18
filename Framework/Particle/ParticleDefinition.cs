@@ -54,22 +54,22 @@ namespace MG.Framework.Particle
 			Name = other.Name;
 			Emitter = other.Emitter;
 			Declaration = other.Declaration;
-
-			//if (Parameters.Count != other.Parameters.Count)
-			//{
+			
+			if (Parameters.Count != other.Parameters.Count)
+			{
 				Parameters.Clear();
 				foreach (var p in other.Parameters)
 				{
 					Parameters.Add(p.Key, new Parameter(p.Value));
 				}
-			//}
-			//else
-			//{
-			//    foreach (var p in other.Parameters)
-			//    {
-			//        Parameters[p.Key].Value. = p.Value.Value;
-			//    }
-			//}
+			}
+			else
+			{
+			    foreach (var p in other.Parameters)
+			    {
+			        Parameters[p.Key].Value.Set(p.Value.Value.GetAsObject());
+			    }
+			}
 		}
 
 		public bool Equals(ParticleDefinition other)
@@ -163,7 +163,6 @@ namespace MG.Framework.Particle
 				if (child.Name == "ParticleSystem")
 				{
 					var definition = new ParticleDefinition(child);
-					//definition.Load(child);
 					Definitions.Add(definition.Name, definition);
 				}
 			}
