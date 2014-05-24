@@ -5,6 +5,7 @@ using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.EditorCommon.Editors;
+using MG.ParticleEditor.Actions;
 
 namespace MG.ParticleEditor
 {

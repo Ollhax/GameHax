@@ -16,6 +16,7 @@ namespace MG.ParticleEditor
 		public ParticleSystem ParticleSystem;
 		
 		public string StatusText;
+		public bool UpdateTree;
 
 		public int DefinitionIdCounter = 1;
 		

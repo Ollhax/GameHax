@@ -12,18 +12,35 @@ namespace MG.ParticleEditorWindow
 		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
 		private Gtk.TreeView treeView;
+		private const int ColumnId = 0;
+		private const int ColumnName = 1;
 
 		internal Widget Widget { get { return scrolledWindow; } }
 		
 		public class ContextMenu
 		{
 			public int ItemId;
-			public List<KeyValuePair<string, System.Action>> Entries;
+
+			public class Entry
+			{
+				public string Text;
+				public Action Action;
+				public List<Entry> SubEntries;
+
+				public Entry(string text, Action action)
+				{
+					Text = text;
+					Action = action;
+				}
+			}
+
+			public List<Entry> Entries;
 		}
 
 		public event Action<int> ItemSelected = delegate { };
+		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
-
+		
 		public TreeView()
 		{
 			treeView = new Gtk.TreeView();
@@ -33,13 +50,13 @@ namespace MG.ParticleEditorWindow
 			treeView.CanFocus = true;
 			treeView.Name = "treeview";
 			treeView.EnableSearch = true;
-			treeView.SearchColumn = 1;
+			treeView.SearchColumn = ColumnName;
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 			
 			var effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
-
+			
 			treeView.AppendColumn(effectColumn);
 
 			storage = new Gtk.TreeStore(typeof(int), typeof(string));
@@ -64,16 +81,18 @@ namespace MG.ParticleEditorWindow
 			//treeView.RowActivated += WidgetOnRowActivated;
 			treeView.ButtonPressEvent += OnButtonPress;
 			
-			var artistNameCell = new CellRendererText();
-			effectColumn.PackStart(artistNameCell, true);
-			effectColumn.AddAttribute(artistNameCell, "text", 1);
+			var cellRendererText = new CellRendererText();
+			cellRendererText.Editable = true;
+			cellRendererText.Edited += OnTextEdited;
+			effectColumn.PackStart(cellRendererText, true);
+			effectColumn.AddAttribute(cellRendererText, "text", ColumnName);
 		}
 		
 		public void SelectItem(int id)
 		{
 			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
 				{
-					if ((int)model.GetValue(treeIter, 0) == id)
+					if ((int)model.GetValue(treeIter, ColumnId) == id)
 					{
 						treeView.Selection.SelectIter(treeIter);
 						treeView.ScrollToCell(path, null, false, 0, 0);
@@ -83,6 +102,20 @@ namespace MG.ParticleEditorWindow
 				});
 		}
 		
+		private void OnTextEdited(object o, EditedArgs args)
+		{
+			TreeIter iter;
+			if (storage.GetIterFromString(out iter, args.Path))
+			{
+				int id = (int)storage.GetValue(iter, ColumnId);
+				if (ItemRenamed(id, args.NewText))
+				{
+					storage.SetValue(iter, ColumnName, args.NewText);
+				}
+			}
+			//args.Path
+		}
+
 		private void OnSelectionChanged(object sender, EventArgs eventArgs)
 		{
 			ItemSelected.Invoke(GetSelectedItemId());
@@ -94,7 +127,7 @@ namespace MG.ParticleEditorWindow
 			TreeIter iter;
 			if (treeView.Selection.GetSelected(out model, out iter))
 			{
-				int id = (int)model.GetValue(iter, 0);
+				int id = (int)model.GetValue(iter, ColumnId);
 				return id;
 			}
 
@@ -132,23 +165,41 @@ namespace MG.ParticleEditorWindow
 				
 				var menu = new ContextMenu();
 				menu.ItemId = GetSelectedItemId();
-				menu.Entries = new List<KeyValuePair<string, Action>>();
+				menu.Entries = new List<ContextMenu.Entry>();
 				CreateContextMenu(menu);
 
 				if (menu.Entries.Count > 0)
 				{
 					var m = new Menu();
-
 					foreach (var entry in menu.Entries)
 					{
-						var item = new MenuItem(entry.Key);
-						var e = entry;
-						item.ButtonPressEvent += delegate { e.Value(); };
-						m.Add(item);
+						AddMenuEntry(entry, m);
 					}
 
 					m.ShowAll();
 					m.Popup();
+				}
+			}
+		}
+
+		private void AddMenuEntry(ContextMenu.Entry entry, Menu parentMenu)
+		{
+			var item = new MenuItem(entry.Text);
+			if (entry.Action != null)
+			{
+				item.ButtonPressEvent += delegate { entry.Action(); };
+			}
+
+			parentMenu.Add(item);
+
+			if (entry.SubEntries != null)
+			{
+				var itemMenu = new Menu();
+				item.Submenu = itemMenu;
+
+				foreach (var subEntry in entry.SubEntries)
+				{
+					AddMenuEntry(subEntry, itemMenu);
 				}
 			}
 		}

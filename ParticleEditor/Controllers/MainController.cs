@@ -73,7 +73,13 @@ namespace MG.ParticleEditor.Controllers
 
 			assetHandler.Update();
 			renderController.Update(new Time(elapsedSeconds, startStopwatch.Elapsed.TotalSeconds));
-			
+
+			if (model.UpdateTree)
+			{
+				model.UpdateTree = false;
+				treeController.UpdateTree();
+			}
+
 			window.StatusText = model.StatusText;
 			window.RenderView.Refresh();
 		}

@@ -6,6 +6,7 @@ using MG.EditorCommon.Undo;
 using MG.Framework.Assets;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
+using MG.ParticleEditor.Actions;
 using MG.ParticleEditorWindow;
 
 namespace MG.ParticleEditor.Controllers
@@ -23,6 +24,7 @@ namespace MG.ParticleEditor.Controllers
 			this.treeView = treeView;
 			
 			treeView.ItemSelected += OnItemSelected;
+			treeView.ItemRenamed += OnItemRenamed;
 			treeView.CreateContextMenu += OnCreateContextMenu;
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
@@ -32,11 +34,16 @@ namespace MG.ParticleEditor.Controllers
 		{
 			var particleDefinition = CreateParticle(declarationName);
 			model.Definition.Definitions.Add(particleDefinition.Name, particleDefinition);
-			
+
+			UpdateTree();
+		}
+
+		public void UpdateTree()
+		{
 			var items = new List<KeyValuePair<int, string>>();
 			foreach (var def in model.Definition.Definitions)
 			{
-				items.Add(new KeyValuePair<int, string>(def.Value.InternalId, def.Key));
+				items.Add(new KeyValuePair<int, string>(def.Value.InternalId, def.Value.Name));
 			}
 
 			treeView.SetValues(items);
@@ -104,21 +111,46 @@ namespace MG.ParticleEditor.Controllers
 			model.CurrentDefinition = def;
 			ItemSelected(def);
 		}
+		
+		private bool OnItemRenamed(int id, string newText)
+		{
+			var def = model.GetDefinitionById(id);
+			if (def != null)
+			{
+				var renameAction = new RenameAction(model, id, newText);
+				model.UndoHandler.ExecuteAction(renameAction);
+			}
+			return false;
+		}
 
 		private void OnCreateContextMenu(TreeView.ContextMenu contextMenu)
 		{
 			var def = model.GetDefinitionById(contextMenu.ItemId);
+
+			var declarations = model.Declaration.DeclarationsList;
+			if (declarations.Count > 0)
+			{
+				var addEntry = new TreeView.ContextMenu.Entry("Add...", null);
+				addEntry.SubEntries = new List<TreeView.ContextMenu.Entry>();
+
+				foreach (var decl in declarations)
+				{
+					var d = decl;
+					addEntry.SubEntries.Add(new TreeView.ContextMenu.Entry(decl.Name, () => OnContextMenuAdd(d.Name)));
+				}
+
+				contextMenu.Entries.Add(addEntry);
+			}
 			
-			contextMenu.Entries.Add(new KeyValuePair<string, Action>("Add", OnContextMenuAdd));
 			if (def != null)
 			{
-				contextMenu.Entries.Add(new KeyValuePair<string, Action>("Remove", () => OnContextMenuRemove(def.InternalId)));
+				contextMenu.Entries.Add(new TreeView.ContextMenu.Entry("Remove \"" + def.Name + "\"", () => OnContextMenuRemove(def.InternalId)));
 			}
 		}
 
-		private void OnContextMenuAdd()
+		private void OnContextMenuAdd(string declaration)
 		{
-			Log.P("Add");
+			Log.P("Add " + declaration);
 		}
 
 		private void OnContextMenuRemove(int id)

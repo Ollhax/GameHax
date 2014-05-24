@@ -1,6 +1,6 @@
 ﻿using MG.EditorCommon.Undo;
 
-namespace MG.ParticleEditor
+namespace MG.ParticleEditor.Actions
 {
 	public abstract class UndoableParticleAction : UndoableAction
 	{
