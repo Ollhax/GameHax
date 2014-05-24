@@ -9,13 +9,22 @@ namespace MG.ParticleEditorWindow
 {
 	public class MainWindow : IDisposable
 	{
+		public enum MessageType
+		{
+			Info = 0,
+			Warning = 1,
+			Question = 2,
+			Error = 3,
+			Other = 4,
+		}
+		
 		public class ClosingEventArgs : EventArgs
 		{
 			public bool Cancel;
 		}
 
 		public delegate void ClosingEventHandler(object sender, ClosingEventArgs e);
-
+		
 		public event System.Action FileNew = delegate { };
 		public event System.Action FileOpen = delegate { };
 		public event System.Action EditUndo = delegate { };
@@ -117,6 +126,14 @@ namespace MG.ParticleEditorWindow
 				statusbar.Pop(0);
 				statusbar.Push(0, value ?? "");
 			}
+		}
+		
+		public void ShowMessage(string message, MessageType messageType)
+		{
+			var md = new MessageDialog(window, DialogFlags.Modal, (Gtk.MessageType)messageType, ButtonsType.Ok, true, message);
+			
+			md.Run();
+			md.Destroy();
 		}
 		
 		private void WindowOnDeleteEvent(object o, DeleteEventArgs args)

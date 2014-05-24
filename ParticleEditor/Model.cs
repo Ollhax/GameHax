@@ -15,9 +15,6 @@ namespace MG.ParticleEditor
 		public ParticleDefinitionTable Definition;
 		public ParticleSystem ParticleSystem;
 		
-		public string StatusText;
-		public bool UpdateTree;
-
 		public int DefinitionIdCounter = 1;
 		
 		public ParticleDefinition GetDefinitionById(int id)

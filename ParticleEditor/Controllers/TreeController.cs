@@ -13,13 +13,15 @@ namespace MG.ParticleEditor.Controllers
 {
 	class TreeController
 	{
+		private MainController controller;
 		private Model model;
 		private TreeView treeView;
 
 		public event Action<ParticleDefinition> ItemSelected = delegate { };
 		
-		public TreeController(Model model, TreeView treeView)
+		public TreeController(MainController controller, Model model, TreeView treeView)
 		{
+			this.controller = controller;
 			this.model = model;
 			this.treeView = treeView;
 			
@@ -117,8 +119,11 @@ namespace MG.ParticleEditor.Controllers
 			var def = model.GetDefinitionById(id);
 			if (def != null)
 			{
-				var renameAction = new RenameAction(model, id, newText);
-				model.UndoHandler.ExecuteAction(renameAction);
+				var renameAction = new RenameAction(controller, model, id, newText);
+				if (!model.UndoHandler.ExecuteAction(renameAction) && !string.IsNullOrEmpty(renameAction.Error))
+				{
+					controller.ShowMessage(renameAction.Error, MainWindow.MessageType.Error);
+				}
 			}
 			return false;
 		}

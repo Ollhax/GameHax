@@ -25,6 +25,14 @@ namespace MG.ParticleEditor.Controllers
 		private Stopwatch startStopwatch = new Stopwatch();
 		private Stopwatch frameStopwatch = new Stopwatch();
 		
+		public string StatusText;
+		public bool UpdateTree;
+
+		public void ShowMessage(string message, MainWindow.MessageType messageType)
+		{
+			window.ShowMessage(message, messageType);
+		}
+
 		public MainController()
 		{
 			window = new MainWindow("Window");
@@ -43,8 +51,8 @@ namespace MG.ParticleEditor.Controllers
 			assetHandler = new AssetHandler(".");
 
 			documentController = new DocumentController(model, window);
-			renderController = new RenderController(model, assetHandler, window.RenderView);
-			treeController = new TreeController(model, window.TreeView);
+			renderController = new RenderController(this, model, assetHandler, window.RenderView);
+			treeController = new TreeController(this, model, window.TreeView);
 			propertyController = new PropertyController(model, window.PropertyView);
 			
 			treeController.ItemSelected += renderController.OnItemSelected;
@@ -74,13 +82,13 @@ namespace MG.ParticleEditor.Controllers
 			assetHandler.Update();
 			renderController.Update(new Time(elapsedSeconds, startStopwatch.Elapsed.TotalSeconds));
 
-			if (model.UpdateTree)
+			if (UpdateTree)
 			{
-				model.UpdateTree = false;
+				UpdateTree = false;
 				treeController.UpdateTree();
 			}
 
-			window.StatusText = model.StatusText;
+			window.StatusText = StatusText;
 			window.RenderView.Refresh();
 		}
 

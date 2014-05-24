@@ -9,12 +9,14 @@ namespace MG.ParticleEditor.Controllers
 {
 	class RenderController
 	{
+		private MainController controller;
 		private Model model;
 		private AssetHandler assetHandler;
 		private bool loaded;
 
-		public RenderController(Model model, AssetHandler assetHandler, RenderView renderView)
+		public RenderController(MainController controller, Model model, AssetHandler assetHandler, RenderView renderView)
 		{
+			this.controller = controller;
 			this.model = model;
 			this.assetHandler = assetHandler;
 
@@ -33,7 +35,7 @@ namespace MG.ParticleEditor.Controllers
 			if (particleSystem != null)
 			{
 				particleSystem.Update(time);
-				model.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
+				controller.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
 			}
 		}
 
