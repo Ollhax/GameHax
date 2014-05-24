@@ -88,14 +88,19 @@ namespace MG.ParticleEditorWindow
 			effectColumn.AddAttribute(cellRendererText, "text", ColumnName);
 		}
 		
-		public void SelectItem(int id)
+		public void SelectItem(int id, bool scrollToSelected)
 		{
 			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
 				{
 					if ((int)model.GetValue(treeIter, ColumnId) == id)
 					{
 						treeView.Selection.SelectIter(treeIter);
-						treeView.ScrollToCell(path, null, false, 0, 0);
+
+						if (scrollToSelected)
+						{
+							treeView.ScrollToCell(path, null, false, 0, 0);
+						}
+						
 						return true;
 					}
 					return false;
@@ -113,7 +118,6 @@ namespace MG.ParticleEditorWindow
 					storage.SetValue(iter, ColumnName, args.NewText);
 				}
 			}
-			//args.Path
 		}
 
 		private void OnSelectionChanged(object sender, EventArgs eventArgs)
@@ -144,6 +148,7 @@ namespace MG.ParticleEditorWindow
 
 		public void SetValues(List<KeyValuePair<int, string>> values)
 		{
+			var selectedId = GetSelectedItemId();
 			storage.Clear();
 
 			foreach (var kvp in values)
@@ -151,7 +156,7 @@ namespace MG.ParticleEditorWindow
 				storage.AppendValues(kvp.Key, kvp.Value);
 			}
 
-			//storage.AppendValues(id, value);
+			SelectItem(selectedId, false);
 		}
 
 		[GLib.ConnectBefore]

@@ -61,7 +61,7 @@ namespace MG.ParticleEditor.Controllers
 			var particleAction = action as UndoableParticleAction;
 			if (particleAction != null)
 			{
-				treeView.SelectItem(particleAction.CurrentDefinitionId);
+				treeView.SelectItem(particleAction.CurrentDefinitionId, true);
 			}
 		}
 

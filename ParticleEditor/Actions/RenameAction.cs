@@ -13,6 +13,8 @@
 			this.model = model;
 			this.definitionId = definitionId;
 
+			CurrentDefinitionId = definitionId;
+
 			var def = model.GetDefinitionById(definitionId);
 			if (def != null)
 			{
