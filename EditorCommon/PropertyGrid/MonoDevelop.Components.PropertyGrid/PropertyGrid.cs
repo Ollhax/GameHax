@@ -162,13 +162,20 @@ namespace MonoDevelop.Components.PropertyGrid
 			toolbar = toolbarProvider;
 			UpdateTabs ();
 		}
-		
+
+		public class DeselectEventArgs : EventArgs
+		{
+			public bool Canceled;
+		}
+
+		public delegate void DeselectEventHandler(object sender, DeselectEventArgs e);
+
 		public event EventHandler Changed {
 			add { tree.Changed += value; }
 			remove { tree.Changed -= value; }
 		}
 
-		public event EventHandler Deselected
+		public event DeselectEventHandler Deselected
 		{
 			add { tree.Deselected += value; }
 			remove { tree.Deselected -= value; }

@@ -13,7 +13,7 @@ namespace MG.ParticleEditorWindow
 		internal PropertyGrid Widget;
 
 		public event Action PropertyChanged = delegate { };
-		public event Action Deselected = delegate { };
+		public event Action<bool> Deselected = delegate { };
 
 		public PropertyView()
 		{
@@ -49,10 +49,10 @@ namespace MG.ParticleEditorWindow
 		{
 			PropertyChanged.Invoke();
 		}
-
-		private void OnDeselected(object o, EventArgs args)
+		
+		private void OnDeselected(object sender, PropertyGrid.DeselectEventArgs deselectEventArgs)
 		{
-			Deselected.Invoke();
+			Deselected.Invoke(deselectEventArgs.Canceled);
 		}
 
 		//ParticleDeclaration particleDeclaration;

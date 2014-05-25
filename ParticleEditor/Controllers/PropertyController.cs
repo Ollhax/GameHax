@@ -23,7 +23,7 @@ namespace MG.ParticleEditor.Controllers
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
-
+		
 		public void OnChangeDefinition(ParticleDefinition definition)
 		{
 			propertyView.CommitChanges();
@@ -47,9 +47,9 @@ namespace MG.ParticleEditor.Controllers
 			propertyView.SetCurrentObject(particlePropertyProxy);
 		}
 
-		private void OnPropertyDeselected()
+		private void OnPropertyDeselected(bool cancelled)
 		{
-			if (particlePropertyProxy != null)
+			if (!cancelled && particlePropertyProxy != null)
 			{
 				model.UndoHandler.ExecuteAction(particlePropertyProxy.CommitAction());
 				model.UndoHandler.EndUndoGroup(ParticlePropertyProxy.UndoGroup);

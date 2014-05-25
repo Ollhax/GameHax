@@ -106,10 +106,10 @@ namespace MonoDevelop.Components.PropertyGrid
 			resizeCursor.Dispose ();
 			handCursor.Dispose ();
 		}
-
+		
 		public event EventHandler Changed;
 
-		public event EventHandler Deselected;
+		public event PropertyGrid.DeselectEventHandler Deselected;
 
 		public PropertySort PropertySort { get; set; }
 
@@ -773,6 +773,8 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			if (editSession != null)
 			{
+				bool cancel = editSession.CancelChanges;
+
 				Remove (currentEditor);
 				currentEditor.Destroy ();
 				currentEditor = null;
@@ -788,7 +790,7 @@ namespace MonoDevelop.Components.PropertyGrid
 
 				if (Deselected != null)
 				{
-					Deselected.Invoke(this, EventArgs.Empty);
+					Deselected.Invoke(this, new PropertyGrid.DeselectEventArgs { Canceled = cancel });
 				}
 			}
 		}
