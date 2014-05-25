@@ -11,15 +11,15 @@ namespace MG.ParticleEditor
 	{
 		public UndoHandler UndoHandler;
 		public ParticleDefinition CurrentDefinition;
-		public ParticleDeclarationTable Declaration;
-		public ParticleDefinitionTable Definition;
+		public ParticleDeclarationTable DeclarationTable;
+		public ParticleDefinitionTable DefinitionTable;
 		public ParticleSystem ParticleSystem;
 		
 		public int DefinitionIdCounter = 1;
 		
 		public ParticleDefinition GetDefinitionById(int id)
 		{
-			foreach (var def in Definition.Definitions)
+			foreach (var def in DefinitionTable.Definitions)
 			{
 				if (def.Value.InternalId == id) return def.Value;
 			}

@@ -42,10 +42,10 @@ namespace MG.ParticleEditor.Controllers
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
 			model.UndoHandler.AfterStateChanged += AfterUndo;
-			model.Declaration = new ParticleDeclarationTable();
-			model.Declaration.Load("ParticleDeclarations.xml");
+			model.DeclarationTable = new ParticleDeclarationTable();
+			model.DeclarationTable.Load("ParticleDeclarations.xml");
 			
-			model.Definition = new ParticleDefinitionTable();
+			model.DefinitionTable = new ParticleDefinitionTable();
 			//model.Definition.Load("definitions.xml");
 			
 			assetHandler = new AssetHandler(".");

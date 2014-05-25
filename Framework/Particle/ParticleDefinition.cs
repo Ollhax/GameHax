@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
+using MG.Framework.Collections;
 using MG.Framework.Utility;
 
 namespace MG.Framework.Particle
@@ -132,7 +133,7 @@ namespace MG.Framework.Particle
 
 	public class ParticleDefinitionTable
 	{
-		public Dictionary<string, ParticleDefinition> Definitions = new Dictionary<string, ParticleDefinition>();
+		public OrderedDictionary<string, ParticleDefinition> Definitions = new OrderedDictionary<string, ParticleDefinition>();
 		
 		public void Load(string file)
 		{

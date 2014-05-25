@@ -38,7 +38,7 @@ namespace MG.ParticleEditor.Controllers
 			if (def != null)
 			{
 				ParticleDeclaration particleDeclaration;
-				if (model.Declaration.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
+				if (model.DeclarationTable.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
 				{
 					particlePropertyProxy = new ParticlePropertyProxy(particleDeclaration, def);
 				}

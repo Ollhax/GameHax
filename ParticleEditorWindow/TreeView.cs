@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Gdk;
+
 using Gtk;
 
 using Action = System.Action;
@@ -14,6 +16,8 @@ namespace MG.ParticleEditorWindow
 		private Gtk.TreeView treeView;
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
+		private int disableChangeCallbacks;
+		private int lastReorderId;
 
 		internal Widget Widget { get { return scrolledWindow; } }
 		
@@ -37,7 +41,15 @@ namespace MG.ParticleEditorWindow
 			public List<Entry> Entries;
 		}
 
+		public struct ItemIndex
+		{
+			public int Id;
+			public int ParentId;
+			public int Index;
+		}
+		
 		public event Action<int> ItemSelected = delegate { };
+		public event Action<int> ItemMoved = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
 		
@@ -51,6 +63,7 @@ namespace MG.ParticleEditorWindow
 			treeView.Name = "treeview";
 			treeView.EnableSearch = true;
 			treeView.SearchColumn = ColumnName;
+			treeView.Reorderable = true;
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 			
@@ -60,20 +73,9 @@ namespace MG.ParticleEditorWindow
 			treeView.AppendColumn(effectColumn);
 
 			storage = new Gtk.TreeStore(typeof(int), typeof(string));
-			//Gtk.TreeIter iter = listStore.AppendValues("Moop");
-			//Gtk.TreeIter iter = listStore.AppendValues("Moop");
-			//listStore.AppendValues(iter, "Garbage", "Dog New Tricks");
-			//listStore.AppendValues(iter, "Google", "Schmoogle");
-
-			//iter = listStore.AppendValues("Doop");
-			//listStore.AppendValues(iter, "Wooga", "Googa");
-
-			//foreach (var particleDefinitionPair in particleDefinitionTable.Definitions)
-			//{
-			//    var def = particleDefinitionPair.Value;
-			//    listStore.AppendValues(def.Name);
-			//}
-
+			storage.RowChanged += OnRowChanged;
+			storage.RowDeleted += OnRowDeleted;
+			
 			treeView.Model = storage;
 			treeView.Selection.Changed += OnSelectionChanged;
 			//treeView.CursorChanged += (sender, args) => ItemSelected(treeView.Selection.);
@@ -107,6 +109,30 @@ namespace MG.ParticleEditorWindow
 				});
 		}
 		
+		public List<ItemIndex> GetItemIndices()
+		{
+			var indices = new List<ItemIndex>();
+			
+			storage.Foreach(
+				delegate(TreeModel model, TreePath path, TreeIter treeIter)
+				{
+					int id = (int)model.GetValue(treeIter, ColumnId);
+					int index = path.Indices[path.Indices.Length - 1];
+					int parentId = 0;
+
+					TreeIter parentIter;
+					if (storage.IterParent(out parentIter, treeIter))
+					{
+						parentId = (int)storage.GetValue(parentIter, ColumnId);
+					}
+
+					indices.Add(new ItemIndex() { Id = id, Index = index, ParentId = parentId });
+					return false;
+				});
+
+			return indices;
+		}
+
 		private void OnTextEdited(object o, EditedArgs args)
 		{
 			TreeIter iter;
@@ -124,7 +150,7 @@ namespace MG.ParticleEditorWindow
 		{
 			ItemSelected.Invoke(GetSelectedItemId());
 		}
-
+		
 		private int GetSelectedItemId()
 		{
 			TreeModel model;
@@ -148,6 +174,7 @@ namespace MG.ParticleEditorWindow
 
 		public void SetValues(List<KeyValuePair<int, string>> values)
 		{
+			disableChangeCallbacks++;
 			var selectedId = GetSelectedItemId();
 			storage.Clear();
 
@@ -157,6 +184,7 @@ namespace MG.ParticleEditorWindow
 			}
 
 			SelectItem(selectedId, false);
+			disableChangeCallbacks--;
 		}
 
 		[GLib.ConnectBefore]
@@ -187,6 +215,21 @@ namespace MG.ParticleEditorWindow
 			}
 		}
 
+		private void OnRowChanged(object o, RowChangedArgs args)
+		{
+			if (disableChangeCallbacks != 0) return;
+			lastReorderId = (int)storage.GetValue(args.Iter, ColumnId);
+		}
+
+		private void OnRowDeleted(object o, RowDeletedArgs args)
+		{
+			// Listening to RowsDeleted is a hack. We want to listen for reorder, but all other events are either not being called at all
+			// or called in the middle of the reordering, not letting us getting the new item indices.
+
+			if (disableChangeCallbacks != 0) return;
+			ItemMoved.Invoke(lastReorderId);
+		}
+		
 		private void AddMenuEntry(ContextMenu.Entry entry, Menu parentMenu)
 		{
 			var item = new MenuItem(entry.Text);

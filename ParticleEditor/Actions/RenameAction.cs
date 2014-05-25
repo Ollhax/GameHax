@@ -1,4 +1,6 @@
-﻿using MG.ParticleEditor.Controllers;
+﻿using System;
+
+using MG.ParticleEditor.Controllers;
 
 namespace MG.ParticleEditor.Actions
 {
@@ -26,6 +28,10 @@ namespace MG.ParticleEditor.Actions
 			{
 				oldName = def.Name;
 			}
+			else
+			{
+				throw new ArgumentException("Cannot find definition " + definitionId);
+			}
 		}
 		
 		protected override bool CallExecute()
@@ -35,7 +41,7 @@ namespace MG.ParticleEditor.Actions
 				return false;
 			}
 
-			if (model.Definition.Definitions.ContainsKey(newName))
+			if (model.DefinitionTable.Definitions.ContainsKey(newName))
 			{
 				Error = "<b>Error: Duplicate name \"" + newName + "\"</b>\n\nParticle effect names must be unique.";
 				return false;
@@ -45,8 +51,8 @@ namespace MG.ParticleEditor.Actions
 			if (def != null)
 			{
 				def.Name = newName;
-				model.Definition.Definitions.Remove(oldName);
-				model.Definition.Definitions.Add(newName, def);
+				model.DefinitionTable.Definitions.Remove(oldName);
+				model.DefinitionTable.Definitions.Add(newName, def);
 				controller.UpdateTree = true;
 				return true;
 			}
@@ -61,8 +67,8 @@ namespace MG.ParticleEditor.Actions
 			if (def != null)
 			{
 				def.Name = oldName;
-				model.Definition.Definitions.Remove(newName);
-				model.Definition.Definitions.Add(oldName, def);
+				model.DefinitionTable.Definitions.Remove(newName);
+				model.DefinitionTable.Definitions.Add(oldName, def);
 				controller.UpdateTree = true;
 			}
 		}

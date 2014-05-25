@@ -23,7 +23,7 @@ namespace MG.ParticleEditor.Controllers
 
 		public void New()
 		{
-			model.Definition = new ParticleDefinitionTable();
+			model.DefinitionTable = new ParticleDefinitionTable();
 			NewDocument.Invoke();
 		}
 

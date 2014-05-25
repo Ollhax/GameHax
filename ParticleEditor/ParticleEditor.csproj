@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\RenameAction.cs" />
+    <Compile Include="Actions\MoveAction.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PropertyController.cs" />
