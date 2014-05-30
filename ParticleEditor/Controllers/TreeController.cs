@@ -72,10 +72,11 @@ namespace MG.ParticleEditor.Controllers
 			}
 		}
 
-		public void CreateParticleSystem(string declaration, bool undoable)
+		public int CreateParticleSystem(string declaration, bool undoable)
 		{
 			var action = new AddAction(controller, model, declaration, undoable);
 			model.UndoHandler.ExecuteAction(action);
+			return action.CurrentDefinitionId;
 		}
 
 		public void RemoveParticleSystem(int id)
@@ -92,11 +93,7 @@ namespace MG.ParticleEditor.Controllers
 			if (model.DeclarationTable.DeclarationsList.Count > 0)
 			{
 				var decl = model.DeclarationTable.DeclarationsList[0];
-
-				for (int i = 0; i <= 5; i++)
-				{
-					CreateParticleSystem(decl.Name, false);
-				}
+				controller.SelectDefinition = CreateParticleSystem(decl.Name, false);
 			}
 		}
 

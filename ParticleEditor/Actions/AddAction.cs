@@ -30,6 +30,7 @@ namespace MG.ParticleEditor.Actions
 			CurrentDefinitionId = definitionId;
 			model.Modified = true;
 			controller.UpdateTree = true;
+			controller.SelectDefinition = definitionId;
 
 			return undoable;
 		}

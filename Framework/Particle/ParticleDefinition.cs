@@ -257,22 +257,12 @@ namespace MG.Framework.Particle
 			}
 		}
 
-		public bool Save(string file)
+		public void Save(string file)
 		{
-			try
+			using (FileStream fs = File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Write))
 			{
-				using (FileStream fs = File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Write))
-				{
-					Save(fs);
-				}
+				Save(fs);
 			}
-			catch (Exception e)
-			{
-				Log.Error("- Error: " + e.Message);
-				return false;
-			}
-
-			return true;
 		}
 
 		public void Save(Stream stream)

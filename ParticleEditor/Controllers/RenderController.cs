@@ -14,6 +14,8 @@ namespace MG.ParticleEditor.Controllers
 		private AssetHandler assetHandler;
 		private bool loaded;
 
+		public bool Loaded { get { return loaded; } }
+
 		public RenderController(MainController controller, Model model, AssetHandler assetHandler, RenderView renderView)
 		{
 			this.controller = controller;

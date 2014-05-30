@@ -26,6 +26,7 @@ namespace MG.ParticleEditor.Controllers
 		{
 			if (!Close()) return;
 
+			Log.Info("New project created.");
 			controller.UpdateTitle = true;
 			NewDocument.Invoke();
 		}
@@ -42,6 +43,8 @@ namespace MG.ParticleEditor.Controllers
 				model.DocumentFile = result.SelectedPath;
 				controller.UpdateTree = true;
 				controller.UpdateTitle = true;
+				Log.Info("Opened project: " + result.SelectedPath);
+
 				OpenDocument.Invoke();
 			}
 		}
@@ -66,7 +69,8 @@ namespace MG.ParticleEditor.Controllers
 					break;
 				}
 			}
-			
+
+			Log.Info("Closed project.");
 			model.Clear();
 			controller.UpdateTree = true;
 			controller.UpdateTitle = true;
@@ -104,15 +108,24 @@ namespace MG.ParticleEditor.Controllers
 		private bool Save(FilePath outputFile)
 		{
 			bool success = false;
-			if (model.DefinitionTable.Save(outputFile))
+
+			try
 			{
+				model.DefinitionTable.Save(outputFile);
 				model.DocumentFile = outputFile;
 				model.Modified = false;
 				controller.UpdateTitle = true;
+				controller.UpdateTree = true;
 				success = true;
-			}
 
-			controller.UpdateTree = true;
+				Log.Info("Saved to file " + outputFile);
+			}
+			catch (Exception e)
+			{
+				controller.ShowMessage("<b>Error on save!</b>\n\nException: " + e.Message, MainWindow.MessageType.Error);
+				Log.Error("- Error: " + e.Message);
+			}
+			
 			return success;
 		}
 
@@ -125,10 +138,5 @@ namespace MG.ParticleEditor.Controllers
 		{
 			model.UndoHandler.Redo();
 		}
-
-		//public void Close()
-		//{
-
-		//}
 	}
 }

@@ -96,6 +96,8 @@ namespace MG.ParticleEditor.Controllers
 		
 		private void Update()
 		{
+			if (!renderController.Loaded) return;
+
 			float elapsedSeconds = 0;
 			if (!frameStopwatch.IsRunning)
 			{
