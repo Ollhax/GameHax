@@ -34,6 +34,7 @@ namespace MG.ParticleEditor.Actions
 				oldDef = def;
 				collection.Remove(def);
 				controller.UpdateTree = true;
+				model.Modified = true;
 				return true;
 			}
 			return false;
@@ -50,6 +51,7 @@ namespace MG.ParticleEditor.Actions
 
 			collection.Insert(parentIndex, oldDef);
 			controller.UpdateTree = true;
+			model.Modified = true;
 		}
 	}
 }

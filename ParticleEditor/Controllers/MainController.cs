@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Text;
 
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
@@ -25,6 +26,7 @@ namespace MG.ParticleEditor.Controllers
 		
 		public string StatusText;
 		public bool UpdateTree;
+		public bool UpdateTitle;
 		public int SelectDefinition;
 
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
@@ -32,9 +34,29 @@ namespace MG.ParticleEditor.Controllers
 			window.ShowMessage(message, messageType);
 		}
 
+		public MainWindow.ResponseType ShowMessageOkCancel(string message, MainWindow.MessageType messageType)
+		{
+			return window.ShowMessageOkCancel(message, messageType);
+		}
+
+		public MainWindow.ResponseType ShowMessageYesNoCancel(string message, MainWindow.MessageType messageType)
+		{
+			return window.ShowMessageYesNoCancel(message, messageType);
+		}
+
+		public MainWindow.DialogResult ShowSaveDialog(string title, string filters, FilePath startPath)
+		{
+			return window.ShowSaveDialog(title, filters, startPath);
+		}
+
+		public MainWindow.DialogResult ShowOpenDialog(string title, string filters, FilePath startPath)
+		{
+			return window.ShowOpenDialog(title, filters, startPath);
+		}
+
 		public MainController()
 		{
-			window = new MainWindow("Window");
+			window = new MainWindow("");
 			window.Closing += WindowOnClosing;
 			window.Closed += WindowOnClosed;
 
@@ -46,18 +68,24 @@ namespace MG.ParticleEditor.Controllers
 			model.ParticleManager = new ParticleManager(assetHandler);
 			model.DeclarationTable = new ParticleDeclarationTable();
 			model.DeclarationTable.Load("ParticleDeclarations.xml");
-			
 			model.DefinitionTable = new ParticleDefinitionTable();
-			//model.Definition.Load("definitions.xml");
 			
-			documentController = new DocumentController(model, window);
+			documentController = new DocumentController(this, model);
 			renderController = new RenderController(this, model, assetHandler, window.RenderView);
 			treeController = new TreeController(this, model, window.TreeView);
 			propertyController = new PropertyController(model, window.PropertyView);
-			
+
+			window.FileNew += documentController.New;
+			window.FileOpen += documentController.Open;
+			window.FileClose += () => documentController.Close();
+			window.FileSave += () => documentController.Save();
+			window.FileSaveAs += () => documentController.SaveAs();
+			window.EditUndo += documentController.Undo;
+			window.EditRedo += documentController.Redo;
 			treeController.ItemSelected += renderController.OnItemSelected;
 			treeController.ItemSelected += propertyController.OnChangeDefinition;
 			documentController.NewDocument += treeController.OnNewDocument;
+			documentController.OpenDocument += treeController.OnOpenDocument;
 			documentController.New();
 
 			AfterUndo();
@@ -88,10 +116,22 @@ namespace MG.ParticleEditor.Controllers
 				treeController.UpdateTree();
 			}
 
+			if (UpdateTitle)
+			{
+				UpdateTitle = false;
+				UpdateTitleInternal();
+			}
+
 			if (SelectDefinition != 0)
 			{
 				treeController.SelectItem(SelectDefinition);
 				SelectDefinition = 0;
+			}
+
+			var sensitive = window.Sensitive;
+			if (model.DocumentOpen != sensitive)
+			{
+				window.Sensitive = model.DocumentOpen;
 			}
 
 			window.StatusText = StatusText;
@@ -105,13 +145,42 @@ namespace MG.ParticleEditor.Controllers
 
 		private void WindowOnClosing(MainWindow.ClosingEventArgs closingEventArgs)
 		{
-			closingEventArgs.Cancel = false;
+			if (!documentController.Close())
+			{
+				closingEventArgs.Cancel = true;
+			}
 		}
 
 		private void AfterUndo()
 		{
 			window.UndoEnabled = model.UndoHandler.UndoSteps > 0;
 			window.RedoEnabled = model.UndoHandler.RedoSteps > 0;
+			UpdateTitleInternal();
+		}
+
+		private void UpdateTitleInternal()
+		{
+			var title = new StringBuilder();
+			title.Append("Particle Editor");
+
+			if (model.DocumentOpen)
+			{
+				var documentName = "untitled project";
+				if (!model.DocumentFile.IsNullOrEmpty)
+				{
+					documentName = model.DocumentFile.FileName;
+				}
+
+				title.Append(" - ");
+				title.Append(documentName);
+
+				if (model.Modified)
+				{
+					title.Append("*");
+				}
+			}
+
+			window.Title = title.ToString();
 		}
 
 		public void Dispose()

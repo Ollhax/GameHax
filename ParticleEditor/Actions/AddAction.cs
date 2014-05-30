@@ -28,7 +28,9 @@ namespace MG.ParticleEditor.Actions
 
 			definitionId = entry.Id;
 			CurrentDefinitionId = definitionId;
+			model.Modified = true;
 			controller.UpdateTree = true;
+
 			return undoable;
 		}
 
@@ -39,6 +41,7 @@ namespace MG.ParticleEditor.Actions
 
 			if (def != null && collection != null)
 			{
+				model.Modified = true;
 				collection.Remove(def);
 				controller.UpdateTree = true;
 			}

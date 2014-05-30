@@ -15,20 +15,24 @@ namespace MG.ParticleEditor
 
 		class ParticlePropertyChangeset : UndoableParticleAction
 		{
+			private Model model;
+
 			public ParticleDefinition CurrentDefinition;
 			public ParticleDefinition ChangedDefinition;
 			public ParticleDefinition OriginalDefinition;
 
-			public ParticlePropertyChangeset(ParticleDefinition particleDefinition)
+			public ParticlePropertyChangeset(Model model, ParticleDefinition particleDefinition)
 			{
+				this.model = model;
 				CurrentDefinitionId = particleDefinition.Id;
 				CurrentDefinition = particleDefinition;
 				ChangedDefinition = new ParticleDefinition(particleDefinition);
 				OriginalDefinition = new ParticleDefinition(particleDefinition);
 			}
 
-			public ParticlePropertyChangeset(ParticlePropertyChangeset changeset)
+			public ParticlePropertyChangeset(Model model, ParticlePropertyChangeset changeset)
 			{
+				this.model = model;
 				CurrentDefinitionId = changeset.CurrentDefinitionId;
 				CurrentDefinition = changeset.CurrentDefinition;
 				ChangedDefinition = new ParticleDefinition(changeset.ChangedDefinition);
@@ -42,6 +46,7 @@ namespace MG.ParticleEditor
 					return false;
 				}
 
+				model.Modified = true;
 				CurrentDefinition.CopyFrom(ChangedDefinition);
 				return true;
 			}
@@ -63,6 +68,7 @@ namespace MG.ParticleEditor
 		
 		private ParticleDeclaration particleDeclaration;
 		private ParticlePropertyChangeset changeset;
+		private Model model;
 		
 		public UndoableAction CommitAction()
 		{
@@ -70,7 +76,7 @@ namespace MG.ParticleEditor
 			changeset.ChangedDefinition.CopyFrom(changeset.CurrentDefinition);
 
 			// Copy the changeset that is about to be committed.
-			var copy = new ParticlePropertyChangeset(changeset);
+			var copy = new ParticlePropertyChangeset(model, changeset);
 
 			// Rebase the ORIGINAL definition so that we save changes from now -> next commit.
 			changeset.OriginalDefinition.CopyFrom(changeset.CurrentDefinition);
@@ -78,10 +84,11 @@ namespace MG.ParticleEditor
 			return copy;
 		}
 		
-		public ParticlePropertyProxy(ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
+		public ParticlePropertyProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
+			this.model = model;
 			this.particleDeclaration = particleDeclaration;
-			changeset = new ParticlePropertyChangeset(particleDefinition);
+			changeset = new ParticlePropertyChangeset(model, particleDefinition);
 		}
 		
 		//--------------------------------------

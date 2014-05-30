@@ -39,26 +39,13 @@ namespace MG.EditorCommon.Editors
 			//fc.SetCurrentFolder(currentValue.ParentDirectory);
 			fc.SetFilename(currentValue);
 
-			var filterText = declarationParameter.FilePathFilter;
-			if (filterText != null)
+			var filters = GtkTools.ParseFilterString(declarationParameter.FilePathFilter);
+
+			if (filters != null)
 			{
-				var parts = filterText.Split(new [] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-
-				for (int i = 0; i + 1 < parts.Length; i += 2)
-				{
-					var filter = new FileFilter();
-					filter.Name = parts[i];
-
-					var patterns = parts[i+1].Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-					for (int j = 0; j < patterns.Length; j++)
-					{
-						filter.AddPattern(patterns[j]);
-					}
-					
-					fc.AddFilter(filter);
-				}
+				filters.ForEach(fc.AddFilter);
 			}
-
+			
 			if (fc.Run() == (int)ResponseType.Accept)
 			{
 				Property.SetValue(Instance, (FilePath)fc.Filename);

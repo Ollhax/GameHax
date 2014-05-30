@@ -50,7 +50,7 @@ namespace MG.Framework.Particle
 				node.AppendChild(parameterNode);
 
 				XmlHelper.Write(parameterNode, "Name", Name);
-				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().ToString());
+				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
 				XmlHelper.Write(parameterNode, "Value", Value.ToString());
 				XmlHelper.Write(parameterNode, "Random", Random.ToString());
 			}
@@ -254,6 +254,47 @@ namespace MG.Framework.Particle
 					var definition = new ParticleDefinition(child);
 					Definitions.Add(definition);
 				}
+			}
+		}
+
+		public bool Save(string file)
+		{
+			try
+			{
+				using (FileStream fs = File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Write))
+				{
+					Save(fs);
+				}
+			}
+			catch (Exception e)
+			{
+				Log.Error("- Error: " + e.Message);
+				return false;
+			}
+
+			return true;
+		}
+
+		public void Save(Stream stream)
+		{
+			using (var xmlWriter = XmlWriter.Create(stream, XmlHelper.DefaultWriterSettings))
+			{
+				var document = new XmlDocument();
+				Save(document);
+				document.Save(xmlWriter);
+			}
+		}
+
+		public void Save(XmlNode node)
+		{
+			var document = node.OwnerDocument ?? (XmlDocument)node;
+
+			var tableNode = document.CreateElement("ParticleSystemTable");
+			node.AppendChild(tableNode);
+			
+			foreach (var child in Definitions)
+			{
+				child.Save(tableNode);
 			}
 		}
 	}

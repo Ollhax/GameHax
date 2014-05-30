@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Gdk;
-
 using Gtk;
 
 using Action = System.Action;
+using Key = Gdk.Key;
 
 namespace MG.ParticleEditorWindow
 {
@@ -53,6 +52,7 @@ namespace MG.ParticleEditorWindow
 		
 		public event Action<int> ItemSelected = delegate { };
 		public event Action<int> ItemMoved = delegate { };
+		public event Action<int> ItemDeleted = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
 		
@@ -85,6 +85,7 @@ namespace MG.ParticleEditorWindow
 			//treeView.CursorChanged += OnCursorChanged;
 			//treeView.RowActivated += WidgetOnRowActivated;
 			treeView.ButtonPressEvent += OnButtonPress;
+			treeView.KeyPressEvent += OnKeyPress;
 			
 			var cellRendererText = new CellRendererText();
 			cellRendererText.Editable = true;
@@ -298,6 +299,19 @@ namespace MG.ParticleEditorWindow
 
 					m.ShowAll();
 					m.Popup();
+				}
+			}
+		}
+
+		[GLib.ConnectBefore]
+		private void OnKeyPress(object o, KeyPressEventArgs args)
+		{
+			if (args.Event.Key == Key.Delete)
+			{
+				var selectedItem = GetSelectedItemId();
+				if (selectedItem > 0)
+				{
+					ItemDeleted(selectedItem);
 				}
 			}
 		}

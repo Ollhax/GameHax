@@ -27,6 +27,7 @@ namespace MG.ParticleEditor.Controllers
 			treeView.ItemSelected += OnItemSelected;
 			treeView.ItemRenamed += OnItemRenamed;
 			treeView.ItemMoved += OnItemMoved;
+			treeView.ItemDeleted += RemoveParticleSystem;
 			treeView.CreateContextMenu += OnCreateContextMenu;
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
@@ -86,6 +87,7 @@ namespace MG.ParticleEditor.Controllers
 		public void OnNewDocument()
 		{
 			model.DefinitionIdCounter = 1;
+			model.DocumentOpen = true;
 			
 			if (model.DeclarationTable.DeclarationsList.Count > 0)
 			{
@@ -97,7 +99,23 @@ namespace MG.ParticleEditor.Controllers
 				}
 			}
 		}
-		
+
+		public void OnOpenDocument()
+		{
+			model.DefinitionIdCounter = 1;
+			model.DocumentOpen = true;
+			AssignIds(model.DefinitionTable.Definitions);
+		}
+
+		private void AssignIds(ParticleCollection collection)
+		{
+			foreach (var p in collection)
+			{
+				p.Id = model.DefinitionIdCounter++;
+				AssignIds(p.Children);
+			}
+		}
+
 		private void OnItemSelected(int id)
 		{
 			var def = model.DefinitionTable.Definitions.GetById(id);
@@ -132,7 +150,7 @@ namespace MG.ParticleEditor.Controllers
 			var moveAction = new MoveAction(controller, model, movedItemId, newIndex, newParent);
 			model.UndoHandler.ExecuteAction(moveAction);
 		}
-
+		
 		private bool FindItemLocation(List<TreeView.ItemIndex> indices, int itemId, int parentId, out int newIndex, out int newParent)
 		{
 			for (int i = 0; i < indices.Count; i++)

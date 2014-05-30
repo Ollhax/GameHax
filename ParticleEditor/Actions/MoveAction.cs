@@ -64,6 +64,7 @@ namespace MG.ParticleEditor.Actions
 				def.Parent = model.DefinitionTable.Definitions.GetById(newParent);
 				controller.SelectDefinition = definitionId;
 				controller.UpdateTree = true;
+				model.Modified = true;
 				return true;
 			}
 			
@@ -82,6 +83,7 @@ namespace MG.ParticleEditor.Actions
 				oldCollection.Insert(oldIndex, def);
 				def.Parent = model.DefinitionTable.Definitions.GetById(oldParent);
 				controller.UpdateTree = true;
+				model.Modified = true;
 			}
 		}
 	}

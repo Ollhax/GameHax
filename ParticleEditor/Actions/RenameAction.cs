@@ -54,6 +54,7 @@ namespace MG.ParticleEditor.Actions
 				//model.DefinitionTable.Definitions.Remove(oldName);
 				//model.DefinitionTable.Definitions.Add(newName, def);
 				controller.UpdateTree = true;
+				model.Modified = true;
 				return true;
 			}
 
@@ -70,6 +71,7 @@ namespace MG.ParticleEditor.Actions
 				//model.DefinitionTable.Definitions.Remove(newName);
 				//model.DefinitionTable.Definitions.Add(oldName, def);
 				controller.UpdateTree = true;
+				model.Modified = true;
 			}
 		}
 	}

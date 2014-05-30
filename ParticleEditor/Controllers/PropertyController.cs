@@ -40,7 +40,7 @@ namespace MG.ParticleEditor.Controllers
 				ParticleDeclaration particleDeclaration;
 				if (model.DeclarationTable.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
 				{
-					particlePropertyProxy = new ParticlePropertyProxy(particleDeclaration, def);
+					particlePropertyProxy = new ParticlePropertyProxy(model, particleDeclaration, def);
 				}
 			}
 
