@@ -32,13 +32,6 @@ namespace MG.ParticleEditor.Controllers
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
 		
-		public void CreateEntry(string declarationName)
-		{
-			var particleDefinition = CreateParticle(declarationName);
-			model.DefinitionTable.Definitions.Add(particleDefinition);
-			controller.UpdateTree = true;
-		}
-
 		public void UpdateTree()
 		{
 			var indices = new List<TreeView.ItemIndex>();
@@ -55,7 +48,7 @@ namespace MG.ParticleEditor.Controllers
 		{
 			foreach (var def in collection)
 			{
-				var item = new TreeView.ItemIndex { Id = def.InternalId, Name = def.Name };
+				var item = new TreeView.ItemIndex { Id = def.Id, Name = def.Name };
 				indices.Add(item);
 				
 				CreateTreeModel(item.Children, def.Children);
@@ -78,6 +71,18 @@ namespace MG.ParticleEditor.Controllers
 			}
 		}
 
+		public void CreateParticleSystem(string declaration, bool undoable)
+		{
+			var action = new AddAction(controller, model, declaration, undoable);
+			model.UndoHandler.ExecuteAction(action);
+		}
+
+		public void RemoveParticleSystem(int id)
+		{
+			var action = new RemoveAction(controller, model, id);
+			model.UndoHandler.ExecuteAction(action);
+		}
+
 		public void OnNewDocument()
 		{
 			model.DefinitionIdCounter = 1;
@@ -88,36 +93,11 @@ namespace MG.ParticleEditor.Controllers
 
 				for (int i = 0; i <= 5; i++)
 				{
-					CreateEntry(decl.Name);
+					CreateParticleSystem(decl.Name, false);
 				}
 			}
 		}
-
-		private ParticleDefinition CreateParticle(string name)
-		{
-			ParticleDeclaration declaration;
-			if (!model.DeclarationTable.Declarations.TryGetValue(name, out declaration)) return null;
-			
-			var definition = new ParticleDefinition();
-			definition.InternalId = model.DefinitionIdCounter++;
-			definition.Name = declaration.Name + definition.InternalId;
-			definition.Declaration = name;
-			
-			foreach (var declarationParameterPair in declaration.Parameters)
-			{
-				var declarationParameter = declarationParameterPair.Value;
-				var definitionParameter = new ParticleDefinition.Parameter();
-
-				definitionParameter.Name = declarationParameter.Name;
-				definitionParameter.Value = new Any(declarationParameter.DefaultValue);
-				definitionParameter.Random = new Any(declarationParameter.DefaultValueRandom);
-
-				definition.Parameters.Add(definitionParameter.Name, definitionParameter);
-			}
-			
-			return definition;
-		}
-
+		
 		private void OnItemSelected(int id)
 		{
 			var def = model.DefinitionTable.Definitions.GetById(id);
@@ -180,7 +160,7 @@ namespace MG.ParticleEditor.Controllers
 		{
 			for (var i = 0; i < definitions.Count; i++)
 			{
-				if (definitions.Count != indices.Count || definitions[i].InternalId != indices[i].Id)
+				if (definitions.Count != indices.Count || definitions[i].Id != indices[i].Id)
 				{
 					return true;
 				}
@@ -215,18 +195,18 @@ namespace MG.ParticleEditor.Controllers
 			
 			if (def != null)
 			{
-				contextMenu.Entries.Add(new TreeView.ContextMenu.Entry("Remove \"" + def.Name + "\"", () => OnContextMenuRemove(def.InternalId)));
+				contextMenu.Entries.Add(new TreeView.ContextMenu.Entry("Remove \"" + def.Name + "\"", () => OnContextMenuRemove(def.Id)));
 			}
 		}
 
 		private void OnContextMenuAdd(string declaration)
 		{
-			Log.P("Add " + declaration);
+			CreateParticleSystem(declaration, true);
 		}
 
 		private void OnContextMenuRemove(int id)
 		{
-			Log.P("Remove " + id);
+			RemoveParticleSystem(id);
 		}
 	}
 }

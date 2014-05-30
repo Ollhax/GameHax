@@ -7,8 +7,8 @@ namespace MG.Framework.Particle
 {
 	public class ParticleManager
 	{
-		private AssetHandler assetHandler;
-		private Dictionary<string, Pool<ParticleSystem>> particlePools = new Dictionary<string, Pool<ParticleSystem>>();
+		private readonly AssetHandler assetHandler;
+		private readonly Dictionary<int, Pool<ParticleSystem>> particlePools = new Dictionary<int, Pool<ParticleSystem>>();
 
 		public ParticleManager(AssetHandler assetHandler)
 		{
@@ -34,10 +34,10 @@ namespace MG.Framework.Particle
 		{
 			// Get (or create) the pool for this type of particle
 			Pool<ParticleSystem> particlePool;
-			if (!particlePools.TryGetValue(definition.Name, out particlePool))
+			if (!particlePools.TryGetValue(definition.Id, out particlePool))
 			{
 				particlePool = new Pool<ParticleSystem>(8, () => new ParticleSystem(assetHandler, this, definition));
-				particlePools.Add(definition.Name, particlePool);
+				particlePools.Add(definition.Id, particlePool);
 			}
 			return particlePool;
 		}

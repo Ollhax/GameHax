@@ -273,7 +273,15 @@ namespace MG.ParticleEditorWindow
 			{
 				TreePath selectedItemPath;
 				treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath);
-				treeView.Selection.SelectPath(selectedItemPath);
+
+				if (selectedItemPath == null)
+				{
+					treeView.Selection.UnselectAll();
+				}
+				else
+				{
+					treeView.Selection.SelectPath(selectedItemPath);
+				}
 				
 				var menu = new ContextMenu();
 				menu.ItemId = GetSelectedItemId();

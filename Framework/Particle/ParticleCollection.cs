@@ -10,7 +10,7 @@ namespace MG.Framework.Particle
 		{
 			foreach (var child in children)
 			{
-				if (child.InternalId == id) return child;
+				if (child.Id == id) return child;
 				var r = child.Children.GetById(id);
 				if (r != null) return r;
 			}
@@ -29,6 +29,29 @@ namespace MG.Framework.Particle
 
 			return null;
 		}
+
+		public ParticleCollection GetParentCollection(int id)
+		{
+			var r = GetParentCollectionInternal(id);
+			if (r != null) return r;
+			return this;
+		}
+
+		private ParticleCollection GetParentCollectionInternal(int id)
+		{
+			foreach (var child in this)
+			{
+				if (child.Id == id)
+				{
+					return this;
+				}
+
+				var r = child.Children.GetParentCollectionInternal(id);
+				if (r != null) return r;
+			}
+
+			return null;
+		} 
 
 		public int IndexOfRecursive(ParticleDefinition item)
 		{

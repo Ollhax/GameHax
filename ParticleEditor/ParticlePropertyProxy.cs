@@ -21,7 +21,7 @@ namespace MG.ParticleEditor
 
 			public ParticlePropertyChangeset(ParticleDefinition particleDefinition)
 			{
-				CurrentDefinitionId = particleDefinition.InternalId;
+				CurrentDefinitionId = particleDefinition.Id;
 				CurrentDefinition = particleDefinition;
 				ChangedDefinition = new ParticleDefinition(particleDefinition);
 				OriginalDefinition = new ParticleDefinition(particleDefinition);

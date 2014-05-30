@@ -17,7 +17,7 @@ namespace MG.Framework.Particle
 
 			public Parameter()
 			{
-				
+
 			}
 
 			public Parameter(Parameter other)
@@ -41,8 +41,21 @@ namespace MG.Framework.Particle
 				if (!Random.Equals(other.Random)) return false;
 				return true;
 			}
+
+			public void Save(XmlNode node)
+			{
+				var document = node.OwnerDocument ?? (XmlDocument)node;
+
+				var parameterNode = document.CreateElement("Parameter");
+				node.AppendChild(parameterNode);
+
+				XmlHelper.Write(parameterNode, "Name", Name);
+				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().ToString());
+				XmlHelper.Write(parameterNode, "Value", Value.ToString());
+				XmlHelper.Write(parameterNode, "Random", Random.ToString());
+			}
 		}
-		
+
 		public string Name;
 		public string Emitter;
 		public string Declaration;
@@ -51,15 +64,15 @@ namespace MG.Framework.Particle
 		public ParticleDefinition Parent;
 
 		// Extra data used by editor, stored here for convenience.
-		public int InternalId;
-		
+		public int Id;
+
 		public void CopyFrom(ParticleDefinition other)
 		{
 			Name = other.Name;
 			Emitter = other.Emitter;
 			Declaration = other.Declaration;
-			InternalId = other.InternalId;
-			
+			Id = other.Id;
+
 			if (Parameters.Count != other.Parameters.Count)
 			{
 				Parameters.Clear();
@@ -68,10 +81,10 @@ namespace MG.Framework.Particle
 					Parameters.Add(p.Key, new Parameter(p.Value));
 				}
 			}
-			
+
 			foreach (var p in other.Parameters)
 			{
-			    Parameters[p.Key].CopyFrom(p.Value);
+				Parameters[p.Key].CopyFrom(p.Value);
 			}
 
 			if (Children.Count != other.Children.Count)
@@ -91,16 +104,16 @@ namespace MG.Framework.Particle
 			if (Name != other.Name) return false;
 			if (Emitter != other.Emitter) return false;
 			if (Declaration != other.Declaration) return false;
-			if (InternalId != other.InternalId) return false;
+			if (Id != other.Id) return false;
 			if (Parameters.Count != other.Parameters.Count) return false;
-			
+
 			foreach (var param in Parameters)
 			{
 				Parameter otherParam;
 				if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
 				if (!param.Value.Equals(otherParam)) return false;
 			}
-			
+
 			//if (Children.Count != other.Children.Count) return false;
 			//for (int i = 0; i < Children.Count; i++)
 			//{
@@ -120,7 +133,7 @@ namespace MG.Framework.Particle
 		{
 			CopyFrom(other);
 		}
-		
+
 		public ParticleDefinition(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
@@ -140,7 +153,8 @@ namespace MG.Framework.Particle
 
 					if (XmlHelper.HasElement(parameterNode, "Random"))
 					{
-						parameter.Random = new Any(XmlHelper.ReadString(parameterNode, "Random"), XmlHelper.ReadString(parameterNode, "Type"));
+						parameter.Random = new Any(
+							XmlHelper.ReadString(parameterNode, "Random"), XmlHelper.ReadString(parameterNode, "Type"));
 					}
 
 					Parameters.Add(parameter.Name, parameter);
@@ -158,8 +172,50 @@ namespace MG.Framework.Particle
 				}
 			}
 		}
+
+		public void Save(XmlNode node)
+		{
+			var document = node.OwnerDocument ?? (XmlDocument)node;
+
+			var particleSystemNode = document.CreateElement("ParticleSystem");
+			node.AppendChild(particleSystemNode);
+
+			XmlHelper.Write(particleSystemNode, "Name", Name);
+			XmlHelper.Write(particleSystemNode, "Emitter", Emitter);
+			XmlHelper.Write(particleSystemNode, "Declaration", Declaration);
+
+			var parametersNode = document.CreateElement("Parameters");
+			particleSystemNode.AppendChild(parametersNode);
+			foreach (var property in Parameters)
+			{
+				property.Value.Save(parametersNode);
+			}
+
+			var childrenNode = document.CreateElement("Children");
+			particleSystemNode.AppendChild(childrenNode);
+
+			foreach (var child in Children)
+			{
+				child.Save(childrenNode);
+			}
+		}
+
+		public string Serialize()
+		{
+			using (var stringWriter = new StringWriter())
+			using (var xmlTextWriter = XmlWriter.Create(stringWriter, XmlHelper.DefaultWriterSettings))
+			{
+				var document = new XmlDocument();
+
+				Save(document);
+				document.Save(xmlTextWriter);
+				xmlTextWriter.Flush();
+
+				return stringWriter.ToString();
+			}
+		}
 	}
-	
+
 	public class ParticleDefinitionTable
 	{
 		public ParticleCollection Definitions = new ParticleCollection();

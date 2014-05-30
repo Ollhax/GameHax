@@ -32,7 +32,7 @@ namespace MG.ParticleEditor.Actions
 			if (def != null)
 			{
 				oldIndex = model.DefinitionTable.Definitions.IndexOfRecursive(def);
-				oldParent = def.Parent != null ? def.Parent.InternalId : 0;
+				oldParent = def.Parent != null ? def.Parent.Id : 0;
 			}
 			else
 			{
