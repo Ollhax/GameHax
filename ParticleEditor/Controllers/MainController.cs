@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 
-using Gtk;
-
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Assets;
@@ -27,6 +25,7 @@ namespace MG.ParticleEditor.Controllers
 		
 		public string StatusText;
 		public bool UpdateTree;
+		public int SelectDefinition;
 
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
 		{
@@ -39,17 +38,18 @@ namespace MG.ParticleEditor.Controllers
 			window.Closing += WindowOnClosing;
 			window.Closed += WindowOnClosed;
 
+			assetHandler = new AssetHandler(".");
+
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
 			model.UndoHandler.AfterStateChanged += AfterUndo;
+			model.ParticleManager = new ParticleManager(assetHandler);
 			model.DeclarationTable = new ParticleDeclarationTable();
 			model.DeclarationTable.Load("ParticleDeclarations.xml");
 			
 			model.DefinitionTable = new ParticleDefinitionTable();
 			//model.Definition.Load("definitions.xml");
 			
-			assetHandler = new AssetHandler(".");
-
 			documentController = new DocumentController(model, window);
 			renderController = new RenderController(this, model, assetHandler, window.RenderView);
 			treeController = new TreeController(this, model, window.TreeView);
@@ -86,6 +86,12 @@ namespace MG.ParticleEditor.Controllers
 			{
 				UpdateTree = false;
 				treeController.UpdateTree();
+			}
+
+			if (SelectDefinition != 0)
+			{
+				treeController.SelectItem(SelectDefinition);
+				SelectDefinition = 0;
 			}
 
 			window.StatusText = StatusText;

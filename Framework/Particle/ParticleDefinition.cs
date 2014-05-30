@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
-using MG.Framework.Collections;
 using MG.Framework.Utility;
 
 namespace MG.Framework.Particle
@@ -49,7 +47,9 @@ namespace MG.Framework.Particle
 		public string Emitter;
 		public string Declaration;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
-		
+		public ParticleCollection Children = new ParticleCollection();
+		public ParticleDefinition Parent;
+
 		// Extra data used by editor, stored here for convenience.
 		public int InternalId;
 		
@@ -73,6 +73,17 @@ namespace MG.Framework.Particle
 			{
 			    Parameters[p.Key].CopyFrom(p.Value);
 			}
+
+			if (Children.Count != other.Children.Count)
+			{
+				Children.Clear();
+				foreach (var s in other.Children)
+				{
+					Children.Add(new ParticleDefinition(s));
+				}
+			}
+
+			Parent = other.Parent;
 		}
 
 		public bool Equals(ParticleDefinition other)
@@ -89,6 +100,13 @@ namespace MG.Framework.Particle
 				if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
 				if (!param.Value.Equals(otherParam)) return false;
 			}
+			
+			//if (Children.Count != other.Children.Count) return false;
+			//for (int i = 0; i < Children.Count; i++)
+			//{
+			//    if (Children[i].eq)
+			//}
+			//if (Parent != other.Parent) return false;
 
 			return true;
 		}
@@ -128,12 +146,23 @@ namespace MG.Framework.Particle
 					Parameters.Add(parameter.Name, parameter);
 				}
 			}
+
+			var childrenNode = node.SelectSingleNode("Children");
+			if (childrenNode != null)
+			{
+				foreach (XmlNode childNode in childrenNode)
+				{
+					var def = new ParticleDefinition(childNode);
+					def.Parent = this;
+					Children.Add(def);
+				}
+			}
 		}
 	}
-
+	
 	public class ParticleDefinitionTable
 	{
-		public OrderedDictionary<string, ParticleDefinition> Definitions = new OrderedDictionary<string, ParticleDefinition>();
+		public ParticleCollection Definitions = new ParticleCollection();
 		
 		public void Load(string file)
 		{
@@ -167,7 +196,7 @@ namespace MG.Framework.Particle
 				if (child.Name == "ParticleSystem")
 				{
 					var definition = new ParticleDefinition(child);
-					Definitions.Add(definition.Name, definition);
+					Definitions.Add(definition);
 				}
 			}
 		}

@@ -55,7 +55,12 @@ namespace MG.ParticleEditor.Controllers
 
 			if (model.ParticleSystem == null || definition != model.ParticleSystem.Definition)
 			{
-				model.ParticleSystem = new ParticleSystem(assetHandler, definition);
+				if (model.ParticleSystem != null)
+				{
+					model.ParticleManager.Destroy(model.ParticleSystem);
+				}
+
+				model.ParticleSystem = model.ParticleManager.Create(definition);
 				UpdateParticleSystemPosition();
 			}
 		}
@@ -80,6 +85,16 @@ namespace MG.ParticleEditor.Controllers
 			if (particleSystem == null) return;
 			
 			particleSystem.Position = new Vector2(Screen.PrimaryScreen.NormalizedScreenArea.Center);
+
+			
 		}
+
+		//private void ResetChildPosition(ParticleSystem parent)
+		//{
+		//    foreach (var child in parent.SubSystems)
+		//    {
+				
+		//    }
+		//}
 	}
 }

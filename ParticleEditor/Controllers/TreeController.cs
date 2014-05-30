@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
-using MG.Framework.Assets;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
 using MG.ParticleEditor.Actions;
@@ -36,20 +35,31 @@ namespace MG.ParticleEditor.Controllers
 		public void CreateEntry(string declarationName)
 		{
 			var particleDefinition = CreateParticle(declarationName);
-			model.DefinitionTable.Definitions.Add(particleDefinition.Name, particleDefinition);
-
-			UpdateTree();
+			model.DefinitionTable.Definitions.Add(particleDefinition);
+			controller.UpdateTree = true;
 		}
 
 		public void UpdateTree()
 		{
-			var items = new List<KeyValuePair<int, string>>();
-			foreach (var def in model.DefinitionTable.Definitions)
-			{
-				items.Add(new KeyValuePair<int, string>(def.Value.InternalId, def.Value.Name));
-			}
+			var indices = new List<TreeView.ItemIndex>();
+			CreateTreeModel(indices, model.DefinitionTable.Definitions);
+			treeView.SetValues(indices);
+		}
 
-			treeView.SetValues(items);
+		public void SelectItem(int id)
+		{
+			treeView.SelectItem(id, true);
+		}
+
+		private void CreateTreeModel(List<TreeView.ItemIndex> indices, ParticleCollection collection)
+		{
+			foreach (var def in collection)
+			{
+				var item = new TreeView.ItemIndex { Id = def.InternalId, Name = def.Name };
+				indices.Add(item);
+				
+				CreateTreeModel(item.Children, def.Children);
+			}
 		}
 		
 		private void OnUndoRedoEvent(IUndoableAction undoableAction)
@@ -64,7 +74,7 @@ namespace MG.ParticleEditor.Controllers
 			var particleAction = action as UndoableParticleAction;
 			if (particleAction != null)
 			{
-				treeView.SelectItem(particleAction.CurrentDefinitionId, true);
+				controller.SelectDefinition = particleAction.CurrentDefinitionId;
 			}
 		}
 
@@ -92,7 +102,7 @@ namespace MG.ParticleEditor.Controllers
 			definition.InternalId = model.DefinitionIdCounter++;
 			definition.Name = declaration.Name + definition.InternalId;
 			definition.Declaration = name;
-
+			
 			foreach (var declarationParameterPair in declaration.Parameters)
 			{
 				var declarationParameter = declarationParameterPair.Value;
@@ -110,14 +120,14 @@ namespace MG.ParticleEditor.Controllers
 
 		private void OnItemSelected(int id)
 		{
-			var def = model.GetDefinitionById(id);
+			var def = model.DefinitionTable.Definitions.GetById(id);
 			model.CurrentDefinition = def;
 			ItemSelected(def);
 		}
 		
 		private bool OnItemRenamed(int id, string newText)
 		{
-			var def = model.GetDefinitionById(id);
+			var def = model.DefinitionTable.Definitions.GetById(id);
 			if (def != null)
 			{
 				var renameAction = new RenameAction(controller, model, id, newText);
@@ -128,50 +138,65 @@ namespace MG.ParticleEditor.Controllers
 			}
 			return false;
 		}
-
+		
 		private void OnItemMoved(int movedItemId)
 		{
 			var indices = treeView.GetItemIndices();
-
-			// Any indices with parents? If so, revert the change for now
-			foreach (var index in indices)
-			{
-				if (index.ParentId != 0)
-				{
-					UpdateTree();
-					return;
-				}
-			}
 			
-			// Any index change?
-			bool foundChange = false;
-			var defs = model.DefinitionTable.Definitions;
-			for (var i = 0; i < defs.Count; i++)
-			{
-				if (defs[i].InternalId != indices[i].Id)
-				{
-					foundChange = true;
-					break;
-				}
-			}
+			int newIndex;
+			int newParent;
 
-			if (!foundChange) return;
+			if (!HasChange(model.DefinitionTable.Definitions, indices)) return;
+			if (!FindItemLocation(indices, movedItemId, 0, out newIndex, out newParent)) return;
 
-			// Find our new index
-			for (var i = 0; i < indices.Count; i++)
-			{
-				if (indices[i].Id == movedItemId)
-				{
-					var moveAction = new MoveAction(controller, model, movedItemId, indices[i].Index);
-					model.UndoHandler.ExecuteAction(moveAction);
-					return;
-				}
-			}
+			var moveAction = new MoveAction(controller, model, movedItemId, newIndex, newParent);
+			model.UndoHandler.ExecuteAction(moveAction);
 		}
 
+		private bool FindItemLocation(List<TreeView.ItemIndex> indices, int itemId, int parentId, out int newIndex, out int newParent)
+		{
+			for (int i = 0; i < indices.Count; i++)
+			{
+				var index = indices[i];
+				if (index.Id == itemId)
+				{
+					newIndex = i;
+					newParent = parentId;
+					return true;
+				}
+
+				if (FindItemLocation(index.Children, itemId, index.Id, out newIndex, out newParent))
+				{
+					return true;
+				}
+			}
+
+			newIndex = -1;
+			newParent = 0;
+			return false;
+		}
+
+		private bool HasChange(ParticleCollection definitions, List<TreeView.ItemIndex> indices)
+		{
+			for (var i = 0; i < definitions.Count; i++)
+			{
+				if (definitions.Count != indices.Count || definitions[i].InternalId != indices[i].Id)
+				{
+					return true;
+				}
+
+				if (HasChange(definitions[i].Children, indices[i].Children))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+		
 		private void OnCreateContextMenu(TreeView.ContextMenu contextMenu)
 		{
-			var def = model.GetDefinitionById(contextMenu.ItemId);
+			var def = model.DefinitionTable.Definitions.GetById(contextMenu.ItemId);
 
 			var declarations = model.DeclarationTable.DeclarationsList;
 			if (declarations.Count > 0)

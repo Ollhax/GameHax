@@ -78,10 +78,12 @@
     <Compile Include="Framework.cs" />
     <Compile Include="Graphics\ColorEffect.cs" />
     <Compile Include="Graphics\ColorTextureEffect.cs" />
+    <Compile Include="Particle\ParticleCollection.cs" />
     <Compile Include="Particle\ParticleData.cs" />
     <Compile Include="Particle\ParticleDataArray.cs" />
     <Compile Include="Particle\ParticleDefinition.cs" />
     <Compile Include="Particle\ParticleHelpers.cs" />
+    <Compile Include="Particle\ParticleManager.cs" />
     <Compile Include="Particle\ParticleSortMode.cs" />
     <Compile Include="Particle\ParticleSystem.cs" />
     <Compile Include="Graphics\RenderContext.cs" />

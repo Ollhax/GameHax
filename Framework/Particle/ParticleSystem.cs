@@ -20,6 +20,7 @@ namespace MG.Framework.Particle
 
 		public abstract void Update(Time time);
 		public abstract int Emit();
+		public abstract void Clear();
 		public abstract void Reload();
 	}
 
@@ -27,7 +28,6 @@ namespace MG.Framework.Particle
 	{
 		private ParticleDefinition.Parameter paramLife;
 		private ParticleDefinition.Parameter paramSpawnRate;
-		//private ParticleDefinition particleDefinition;
 		private List<Vector2> particlePosition;
 		private List<Vector2> particleVelocity;
 		private List<float> particleLife;
@@ -42,8 +42,6 @@ namespace MG.Framework.Particle
 			particleVelocity = particleData.Get<Vector2>("Velocity");
 			particleLife = particleData.Get<float>("Life");
 			particleAge = particleData.Get<float>("Age");
-
-			Reload();
 		}
 
 		public override void Reload()
@@ -52,6 +50,11 @@ namespace MG.Framework.Particle
 			paramSpawnRate = particleDefinition.Parameters["SpawnRate"];
 		}
 
+		public override void Clear()
+		{
+			particleSpawnAccumulator = 0;
+		}
+		
 		public override void Update(Time time)
 		{
 			particleSpawnAccumulator += time.ElapsedSeconds;
@@ -124,8 +127,10 @@ namespace MG.Framework.Particle
 		
 		public int ActiveParticles { get { return particleData.ActiveParticles; } }
 		public readonly ParticleDefinition Definition;
+		public List<ParticleSystem> SubSystems = new List<ParticleSystem>();
 
 		private AssetHandler assetHandler;
+		private ParticleManager particleManager;
 		private Texture2D particleTexture;
 		private List<float> particleAge;
 		private List<int> particleSortIndex;
@@ -154,14 +159,15 @@ namespace MG.Framework.Particle
 		private ComparisonMostAgeFirst comparisonMostAgeFirst;
 		private ParticleData particleData = new ParticleData(64);
 		private ParticleEmitter emitter;
-
+		
 		private ParticleDefinition.Parameter paramTexture;
 		private ParticleDefinition.Parameter paramSortMode;
 		private ParticleDefinition.Parameter paramBlendMode;
 
-		public ParticleSystem(AssetHandler assetHandler, ParticleDefinition particleDefinition)
+		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
 		{
 			this.assetHandler = assetHandler;
+			this.particleManager = particleManager;
 			this.Definition = particleDefinition;
 			
 			particleData.Register<Vector2>("Position");
@@ -174,10 +180,8 @@ namespace MG.Framework.Particle
 			comparisonMostAgeFirst = new ComparisonMostAgeFirst { ParticleAge = particleAge };
 
 			emitter = new PointEmitter(particleData, particleDefinition);
-
-			Reload();
 		}
-
+		
 		public void Reload()
 		{
 			paramTexture = Definition.Parameters["Texture"];
@@ -188,6 +192,35 @@ namespace MG.Framework.Particle
 			particleTexture = assetHandler.Load<Texture2D>(texture);
 
 			emitter.Reload();
+
+			if (Definition.Children.Count != SubSystems.Count)
+			{
+				ClearChildren();
+				SubSystems.Capacity = Definition.Children.Count;
+				foreach (var child in Definition.Children)
+				{
+					SubSystems.Add(particleManager.Create(child));
+				}
+			}
+		}
+
+		public void Clear()
+		{
+			Position = Vector2.Zero;
+			particleData.ActiveParticles = 0;
+			emitter.Clear();
+
+			ClearChildren();
+		}
+
+		private void ClearChildren()
+		{
+			foreach (var child in SubSystems)
+			{
+				child.Clear();
+				particleManager.Destroy(child);
+			}
+			SubSystems.Clear();
 		}
 		
 		public void Update(Time time)
@@ -217,13 +250,23 @@ namespace MG.Framework.Particle
 					i++;
 				}
 			}
+
+			foreach (var system in SubSystems)
+			{
+				system.Update(time);
+			}
 		}
 
 		public void Draw(RenderContext renderContext)
 		{
+			Draw(renderContext, Matrix.Identity);
+		}
+
+		public void Draw(RenderContext renderContext, Matrix transform)
+		{
 			var quadBatch = renderContext.QuadBatch;
 			var blendMode = (BlendMode)paramBlendMode.Value.Get<int>();
-			quadBatch.Begin(Matrix.Identity, blendMode);
+			quadBatch.Begin(transform, blendMode);
 			
 			for (int i = 0; i < particleSortIndex.Count; i++)
 			{
@@ -256,6 +299,12 @@ namespace MG.Framework.Particle
 			}
 			
 			quadBatch.End();
+
+			var childTransform = transform * MathTools.Create2DAffineMatrix(Position.X, Position.Y, 1, 1, 0);
+			foreach (var system in SubSystems)
+			{
+				system.Draw(renderContext, childTransform);
+			}
 		}
 		
 		private void Destroy(int index)

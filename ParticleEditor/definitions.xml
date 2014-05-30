@@ -32,11 +32,41 @@
 				<Value>1</Value>
 			</Parameter>
 		</Parameters>
-		<!--<SubSystems>
+		<Children>
 			<ParticleSystem>
-			  ...
+				<Name>beep</Name>
+				<Emitter>point</Emitter>
+				<Declaration>Basic</Declaration>
+				<Parameters>
+					<Parameter>
+						<Name>SpawnRate</Name>
+						<Type>Single</Type>
+						<Value>1</Value>
+						<Random>0</Random>
+						<Graph>
+							<Value X="0" Y="0.5"/>
+							<Value X="1" Y="1.0"/>
+						</Graph>
+					</Parameter>
+					<Parameter>
+						<Name>Life</Name>
+						<Type>Single</Type>
+						<Value>1</Value>
+						<Random>0</Random>
+					</Parameter>
+					<Parameter>
+						<Name>SortMode</Name>
+						<Type>Int32</Type>
+						<Value>0</Value>
+					</Parameter>
+					<Parameter>
+						<Name>BlendMode</Name>
+						<Type>Int32</Type>
+						<Value>1</Value>
+					</Parameter>
+				</Parameters>
 			</ParticleSystem>
-		</SubSystems>-->
+		</Children>
 	</ParticleSystem>
 	<ParticleSystem>
 		<Name>beep</Name>

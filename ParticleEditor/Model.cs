@@ -14,17 +14,8 @@ namespace MG.ParticleEditor
 		public ParticleDeclarationTable DeclarationTable;
 		public ParticleDefinitionTable DefinitionTable;
 		public ParticleSystem ParticleSystem;
+		public ParticleManager ParticleManager;
 		
 		public int DefinitionIdCounter = 1;
-		
-		public ParticleDefinition GetDefinitionById(int id)
-		{
-			foreach (var def in DefinitionTable.Definitions)
-			{
-				if (def.Value.InternalId == id) return def.Value;
-			}
-
-			return null;
-		}
 	}
 }

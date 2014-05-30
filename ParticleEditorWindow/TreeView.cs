@@ -18,6 +18,9 @@ namespace MG.ParticleEditorWindow
 		private const int ColumnName = 1;
 		private int disableChangeCallbacks;
 		private int lastReorderId;
+		private bool disableReorderChanges;
+		private HashSet<int> expandedStatus = new HashSet<int>();
+		private int currentSelection;
 
 		internal Widget Widget { get { return scrolledWindow; } }
 		
@@ -41,11 +44,11 @@ namespace MG.ParticleEditorWindow
 			public List<Entry> Entries;
 		}
 
-		public struct ItemIndex
+		public class ItemIndex
 		{
 			public int Id;
-			public int ParentId;
-			public int Index;
+			public string Name;
+			public List<ItemIndex> Children = new List<ItemIndex>();
 		}
 		
 		public event Action<int> ItemSelected = delegate { };
@@ -96,12 +99,14 @@ namespace MG.ParticleEditorWindow
 				{
 					if ((int)model.GetValue(treeIter, ColumnId) == id)
 					{
-						treeView.Selection.SelectIter(treeIter);
-
 						if (scrollToSelected)
 						{
+							treeView.ExpandToPath(path);
+							treeView.ExpandRow(path, false);
 							treeView.ScrollToCell(path, null, false, 0, 0);
 						}
+
+						treeView.Selection.SelectIter(treeIter);
 						
 						return true;
 					}
@@ -116,8 +121,8 @@ namespace MG.ParticleEditorWindow
 			storage.Foreach(
 				delegate(TreeModel model, TreePath path, TreeIter treeIter)
 				{
-					int id = (int)model.GetValue(treeIter, ColumnId);
-					int index = path.Indices[path.Indices.Length - 1];
+					var id = (int)model.GetValue(treeIter, ColumnId);
+					var name = (string)model.GetValue(treeIter, ColumnName);
 					int parentId = 0;
 
 					TreeIter parentIter;
@@ -125,12 +130,101 @@ namespace MG.ParticleEditorWindow
 					{
 						parentId = (int)storage.GetValue(parentIter, ColumnId);
 					}
-
-					indices.Add(new ItemIndex() { Id = id, Index = index, ParentId = parentId });
+					
+					var childList = GetParentList(parentId, indices);
+					childList.Add(new ItemIndex { Id = id, Name = name });
 					return false;
 				});
 
 			return indices;
+		}
+
+		private List<ItemIndex> GetParentList(int parentId, List<ItemIndex> baseList)
+		{
+			var list = GetParentListRecusive(parentId, baseList);
+			if (list != null) return list;
+
+			return baseList;
+		}
+
+		private List<ItemIndex> GetParentListRecusive(int parentId, List<ItemIndex> parentList)
+		{
+			foreach (var item in parentList)
+			{
+				if (item.Id == parentId)
+				{
+					return item.Children;
+				}
+
+				var r = GetParentListRecusive(parentId, item.Children);
+				if (r != null) return r;
+			}
+
+			return null;
+		}
+
+		private void SaveStatus()
+		{
+			expandedStatus.Clear();
+			currentSelection = GetSelectedItemId();
+			treeView.MapExpandedRows(delegate(Gtk.TreeView view, TreePath path)
+				{
+					TreeIter iter;
+					if (treeView.Model.GetIter(out iter, path))
+					{
+						expandedStatus.Add((int)storage.GetValue(iter, ColumnId));
+					}
+				});
+		}
+
+		private void RestoreStatus()
+		{
+			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
+				{
+					var id = (int)model.GetValue(treeIter, ColumnId);
+					if (expandedStatus.Contains(id))
+					{
+						treeView.ExpandToPath(path);
+					}
+					return false;
+				});
+			
+			expandedStatus.Clear();
+			
+			if (currentSelection != 0)
+			{
+				SelectItem(currentSelection, false);
+			}
+		}
+
+		public void SetValues(List<ItemIndex> values)
+		{
+			disableChangeCallbacks++;
+			SaveStatus();
+			storage.Clear();
+			
+			SetValues(TreeIter.Zero, values);
+
+			RestoreStatus();
+			disableChangeCallbacks--;
+		}
+
+		private void SetValues(TreeIter parent, List<ItemIndex> values)
+		{
+			foreach (var v in values)
+			{
+				TreeIter iter;
+				if (parent.Equals(TreeIter.Zero))
+				{
+					iter = storage.AppendValues(v.Id, v.Name);
+				}
+				else
+				{
+					iter = storage.AppendValues(parent, v.Id, v.Name);
+				}
+
+				SetValues(iter, v.Children);
+			}
 		}
 
 		private void OnTextEdited(object o, EditedArgs args)
@@ -171,22 +265,7 @@ namespace MG.ParticleEditorWindow
 		//    var value = model.GetValue(iter, 0);
 		//    Console.WriteLine(value);
 		//}
-
-		public void SetValues(List<KeyValuePair<int, string>> values)
-		{
-			disableChangeCallbacks++;
-			var selectedId = GetSelectedItemId();
-			storage.Clear();
-
-			foreach (var kvp in values)
-			{
-				storage.AppendValues(kvp.Key, kvp.Value);
-			}
-
-			SelectItem(selectedId, false);
-			disableChangeCallbacks--;
-		}
-
+		
 		[GLib.ConnectBefore]
 		private void OnButtonPress(object o, ButtonPressEventArgs args)
 		{
@@ -218,7 +297,10 @@ namespace MG.ParticleEditorWindow
 		private void OnRowChanged(object o, RowChangedArgs args)
 		{
 			if (disableChangeCallbacks != 0) return;
+			if (disableReorderChanges) return;
+
 			lastReorderId = (int)storage.GetValue(args.Iter, ColumnId);
+			disableReorderChanges = true; // If we move several items at once, we only want to know about the first one. (Yes, this is an awful hack.)
 		}
 
 		private void OnRowDeleted(object o, RowDeletedArgs args)
@@ -228,6 +310,7 @@ namespace MG.ParticleEditorWindow
 
 			if (disableChangeCallbacks != 0) return;
 			ItemMoved.Invoke(lastReorderId);
+			disableReorderChanges = false;
 		}
 		
 		private void AddMenuEntry(ContextMenu.Entry entry, Menu parentMenu)

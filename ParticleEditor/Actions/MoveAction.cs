@@ -1,5 +1,6 @@
 ﻿using System;
 
+using MG.Framework.Particle;
 using MG.ParticleEditor.Controllers;
 
 namespace MG.ParticleEditor.Actions
@@ -10,24 +11,28 @@ namespace MG.ParticleEditor.Actions
 		private Model model;
 		private int definitionId;
 		
+		private int newParent;
 		private int newIndex;
+		private int oldParent;
 		private int oldIndex;
 		
 		public string Error;
 
-		public MoveAction(MainController controller, Model model, int definitionId, int newIndex)
+		public MoveAction(MainController controller, Model model, int definitionId, int newIndex, int newParent)
 		{
 			this.controller = controller;
 			this.model = model;
 			this.definitionId = definitionId;
 			this.newIndex = newIndex;
-
+			this.newParent = newParent;
+			
 			CurrentDefinitionId = definitionId;
 
-			var def = model.GetDefinitionById(definitionId);
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
 			if (def != null)
 			{
-				oldIndex = model.DefinitionTable.Definitions.IndexOfKey(def.Name);
+				oldIndex = model.DefinitionTable.Definitions.IndexOfRecursive(def);
+				oldParent = def.Parent != null ? def.Parent.InternalId : 0;
 			}
 			else
 			{
@@ -35,13 +40,29 @@ namespace MG.ParticleEditor.Actions
 			}
 		}
 
-		protected override bool CallExecute()
+		private ParticleCollection GetParentCollection(int parentId)
 		{
-			var def = model.GetDefinitionById(definitionId);
+			var collection = model.DefinitionTable.Definitions;
+			var def = model.DefinitionTable.Definitions.GetById(parentId);
 			if (def != null)
 			{
-				model.DefinitionTable.Definitions.RemoveAt(oldIndex);
-				model.DefinitionTable.Definitions.Insert(newIndex, def.Name, def);
+				collection = def.Children;
+			}
+			return collection;
+		}
+
+		protected override bool CallExecute()
+		{
+			var oldCollection = GetParentCollection(oldParent);
+			var newCollection = GetParentCollection(newParent);
+			
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
+			if (def != null)
+			{
+				oldCollection.RemoveAt(oldIndex);
+				newCollection.Insert(newIndex, def);
+				def.Parent = model.DefinitionTable.Definitions.GetById(newParent);
+				controller.SelectDefinition = definitionId;
 				controller.UpdateTree = true;
 				return true;
 			}
@@ -51,11 +72,15 @@ namespace MG.ParticleEditor.Actions
 
 		protected override void CallUndo()
 		{
-			var def = model.GetDefinitionById(definitionId);
+			var oldCollection = GetParentCollection(oldParent);
+			var newCollection = GetParentCollection(newParent);
+
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
 			if (def != null)
 			{
-				model.DefinitionTable.Definitions.RemoveAt(newIndex);
-				model.DefinitionTable.Definitions.Insert(oldIndex, def.Name, def);
+				newCollection.RemoveAt(newIndex);
+				oldCollection.Insert(oldIndex, def);
+				def.Parent = model.DefinitionTable.Definitions.GetById(oldParent);
 				controller.UpdateTree = true;
 			}
 		}

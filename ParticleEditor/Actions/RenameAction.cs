@@ -23,7 +23,7 @@ namespace MG.ParticleEditor.Actions
 
 			CurrentDefinitionId = definitionId;
 
-			var def = model.GetDefinitionById(definitionId);
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
 			if (def != null)
 			{
 				oldName = def.Name;
@@ -41,18 +41,18 @@ namespace MG.ParticleEditor.Actions
 				return false;
 			}
 
-			if (model.DefinitionTable.Definitions.ContainsKey(newName))
-			{
-				Error = "<b>Error: Duplicate name \"" + newName + "\"</b>\n\nParticle effect names must be unique.";
-				return false;
-			}
-			var def = model.GetDefinitionById(definitionId);
+			//if (model.DefinitionTable.Definitions.ContainsKey(newName))
+			//{
+			//    Error = "<b>Error: Duplicate name \"" + newName + "\"</b>\n\nParticle effect names must be unique.";
+			//    return false;
+			//}
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
 
 			if (def != null)
 			{
 				def.Name = newName;
-				model.DefinitionTable.Definitions.Remove(oldName);
-				model.DefinitionTable.Definitions.Add(newName, def);
+				//model.DefinitionTable.Definitions.Remove(oldName);
+				//model.DefinitionTable.Definitions.Add(newName, def);
 				controller.UpdateTree = true;
 				return true;
 			}
@@ -62,13 +62,13 @@ namespace MG.ParticleEditor.Actions
 
 		protected override void CallUndo()
 		{
-			var def = model.GetDefinitionById(definitionId);
+			var def = model.DefinitionTable.Definitions.GetById(definitionId);
 
 			if (def != null)
 			{
 				def.Name = oldName;
-				model.DefinitionTable.Definitions.Remove(newName);
-				model.DefinitionTable.Definitions.Add(oldName, def);
+				//model.DefinitionTable.Definitions.Remove(newName);
+				//model.DefinitionTable.Definitions.Add(oldName, def);
 				controller.UpdateTree = true;
 			}
 		}
