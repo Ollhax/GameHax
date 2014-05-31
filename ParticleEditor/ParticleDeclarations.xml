@@ -33,7 +33,29 @@
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>
-			</Parameter>			
+			</Parameter>
+			<Parameter>
+				<Name>OffsetX</Name>
+				<PrettyName>Offset X</PrettyName>
+				<Description>Positional offset from the span location, in X direction.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<ValueStep>1.0</ValueStep>				
+				<MinValue>0.0</MinValue>				
+			</Parameter>
+			<Parameter>
+				<Name>OffsetY</Name>
+				<PrettyName>Offset Y</PrettyName>
+				<Description>Positional offset from the span location, in Y direction.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<ValueStep>1.0</ValueStep>				
+				<MinValue>0.0</MinValue>				
+			</Parameter>
 			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>
