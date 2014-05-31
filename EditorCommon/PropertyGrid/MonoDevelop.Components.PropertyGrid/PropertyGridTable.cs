@@ -45,6 +45,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		EditSession editSession;
 		Gtk.Widget currentEditor;
 		TableRow currentEditorRow;
+		TableRow lastEditorRow;
 		bool draggingDivider;
 		Gdk.Pixbuf discloseDown;
 		Gdk.Pixbuf discloseUp;
@@ -109,11 +110,15 @@ namespace MonoDevelop.Components.PropertyGrid
 		
 		public event EventHandler Changed;
 
+		public event EventHandler SelectionChanged;
+
 		public event PropertyGrid.DeselectEventHandler Deselected;
 
 		public PropertySort PropertySort { get; set; }
 
 		public ShadowType ShadowType { get; set; }
+
+		public string SelectedProperty { get { return lastEditorRow != null ? lastEditorRow.Property.Name : null; } }
 
 		public void CommitChanges ()
 		{
@@ -449,8 +454,8 @@ namespace MonoDevelop.Components.PropertyGrid
 					r.Enabled = !r.Property.IsReadOnly || cell.EditsReadOnlyObject;
 					var state = r.Enabled ? State : Gtk.StateType.Insensitive;
 					ctx.Save ();
-					
-					if (r == currentEditorRow)
+
+					if (r == lastEditorRow)
 					{
 						ctx.Rectangle(0, y, dividerX, h + PropertyTopBottomPadding * 2);
 						ctx.SetSourceColor(new Cairo.Color(0.8, 0.9, 1.0, 1));
@@ -571,9 +576,22 @@ namespace MonoDevelop.Components.PropertyGrid
 			//// ~HACK
 
 			TableRow clickedEditor = null;
-			foreach (var r in GetAllRows (true).Where (r => !r.IsCategory)) {
-				if (r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y)) {
+			foreach (var r in GetAllRows (true).Where (r => !r.IsCategory))
+			{
+				Gdk.Rectangle bounds = r.EditorBounds;
+				bounds.X -= dx;
+				bounds.Width += dx;
+
+				if (r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y))
+				{
 					clickedEditor = r;
+					break;
+				}
+				
+				if (bounds.Contains((int)evnt.X, (int)evnt.Y))
+				{
+					SetSelection(r);
+					QueueDraw();
 					break;
 				}
 			}
@@ -799,6 +817,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			EndEditing ();
 			currentEditorRow = row;
+			SetSelection(row);
 			var cell = GetCell (row);
 			editSession = cell.StartEditing (row.EditorBounds, State);
 			if (editSession == null)
@@ -821,6 +840,17 @@ namespace MonoDevelop.Components.PropertyGrid
 			else if (row.EditorBounds.Bottom > vs.Value + vs.PageSize)
 				vs.Value = row.EditorBounds.Bottom - vs.PageSize;
 			QueueDraw ();
+		}
+
+		void SetSelection(TableRow row)
+		{
+			if (lastEditorRow == row)
+				return;
+
+			lastEditorRow = row;
+
+			if (SelectionChanged != null)
+				SelectionChanged.Invoke(this, EventArgs.Empty);
 		}
 
 		void ConnectTabEvent (Gtk.Widget w)

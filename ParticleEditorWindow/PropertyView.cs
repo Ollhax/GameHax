@@ -14,6 +14,7 @@ namespace MG.ParticleEditorWindow
 
 		public event Action PropertyChanged = delegate { };
 		public event Action<bool> Deselected = delegate { };
+		public event Action<string> PropertySelected = delegate { };
 
 		public PropertyView()
 		{
@@ -23,6 +24,7 @@ namespace MG.ParticleEditorWindow
 			Widget.ShowHelp = true;
 			Widget.Changed += OnChanged;
 			Widget.Deselected += OnDeselected;
+			Widget.SelectionChanged += OnSelectionChanged;
 		}
 
 		public void CommitChanges()
@@ -53,6 +55,11 @@ namespace MG.ParticleEditorWindow
 		private void OnDeselected(object sender, PropertyGrid.DeselectEventArgs deselectEventArgs)
 		{
 			Deselected.Invoke(deselectEventArgs.Canceled);
+		}
+		
+		private void OnSelectionChanged(object sender, EventArgs eventArgs)
+		{
+			PropertySelected(Widget.SelectedProperty);
 		}
 
 		//ParticleDeclaration particleDeclaration;

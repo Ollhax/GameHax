@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 
-using MG.EditorCommon;
 using MG.Framework.Utility;
 
 namespace MG.EditorCommon.Editors
@@ -10,15 +9,16 @@ namespace MG.EditorCommon.Editors
 	{
 		private Any any;
 		
-		public readonly ParticleDeclaration.Parameter DeclarationParameter;
-
 		public AnyPropertyDescriptor(ParticleDeclaration.Parameter declarationParameter, Any any)
-			: base(declarationParameter.PrettyName, null)
+			: base(declarationParameter.Name, null)
 		{
 			DeclarationParameter = declarationParameter;
 			this.any = any;
 		}
+		
+		public readonly ParticleDeclaration.Parameter DeclarationParameter;
 
+		public override string DisplayName { get { return DeclarationParameter.PrettyName; } }
 		public override bool CanResetValue(object component) { return false; }
 		public override Type ComponentType { get { return null; } }
 		public override object GetValue(object component) { return any.GetAsObject(); }

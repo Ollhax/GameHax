@@ -170,6 +170,12 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public delegate void DeselectEventHandler(object sender, DeselectEventArgs e);
 
+		public event EventHandler SelectionChanged
+		{
+			add { tree.SelectionChanged += value; }
+			remove { tree.SelectionChanged -= value; }
+		}
+
 		public event EventHandler Changed {
 			add { tree.Changed += value; }
 			remove { tree.Changed -= value; }
@@ -281,6 +287,8 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			tree.CancelChanges();
 		}
+
+		public string SelectedProperty { get { return tree.SelectedProperty; } }
 		
 		void UpdateTabs ()
 		{
