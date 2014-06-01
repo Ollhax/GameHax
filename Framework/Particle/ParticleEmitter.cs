@@ -86,6 +86,9 @@ namespace MG.Framework.Particle
 	public class PointEmitter : BasicParticleEmitter
 	{
 		public Vector2 Point;
+		
+		private RandomFloat paramDirection;
+		private RandomFloat paramRange;
 
 		public PointEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
@@ -93,9 +96,20 @@ namespace MG.Framework.Particle
 
 		}
 
+		public override void Reload()
+		{
+			base.Reload();
+
+			paramDirection = new RandomFloat(particleDefinition.Parameters["Direction"]);
+			paramRange = new RandomFloat(particleDefinition.Parameters["Range"]);
+		}
+
 		public override int Emit()
 		{
-			return EmitInternal(Point, MathTools.Random().RandomDirection() * 40, 0);
+			float range = paramRange;
+			float direction = paramDirection + MathTools.Random().NextFloat(-range, range);
+
+			return EmitInternal(Point, MathTools.FromAngle(MathTools.ToRadians(direction)) * 40, 0);
 		}
 	}
 }

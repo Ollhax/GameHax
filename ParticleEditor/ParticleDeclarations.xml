@@ -17,8 +17,7 @@
 				<Description>How long a particle will last, in seconds.</Description>
 				<Category>General</Category>
 				<Type>Single</Type>
-				<DefaultValue>1.0</DefaultValue>
-				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<DefaultValue>1.0</DefaultValue>				
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>				
 				<Parameters>
@@ -39,11 +38,43 @@
 				<Description>How many particles are spawned per second.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>10.0</DefaultValue>
-				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<DefaultValue>10.0</DefaultValue>				
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>
+			</Parameter>
+			<Parameter>
+				<Name>Direction</Name>
+				<PrettyName>Direction</PrettyName>
+				<Description>Direction of this emitter, in degrees.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>				
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<MaxValue>360.0</MaxValue>				
+			</Parameter>
+			<Parameter>
+				<Name>Range</Name>
+				<PrettyName>Range</PrettyName>
+				<Description>The range of the spread for this emitter, in degrees.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>360.0</DefaultValue>				
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<MaxValue>360.0</MaxValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>1.0</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>					
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>OffsetX</Name>
@@ -51,8 +82,7 @@
 				<Description>Positional offset from the span location, in X direction.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>
-				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<DefaultValue>0.0</DefaultValue>				
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
 				<Parameters>
@@ -62,7 +92,7 @@
 						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.1</ValueStep>
+						<ValueStep>1.0</ValueStep>
 						<MinValue>0.0</MinValue>
 					</Parameter>
 				</Parameters>
@@ -73,8 +103,7 @@
 				<Description>Positional offset from the span location, in Y direction.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>
-				<DefaultValueRandom>0.0</DefaultValueRandom>
+				<DefaultValue>0.0</DefaultValue>				
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
 				<Parameters>
@@ -84,7 +113,7 @@
 						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.1</ValueStep>
+						<ValueStep>1.0</ValueStep>
 						<MinValue>0.0</MinValue>
 					</Parameter>
 				</Parameters>
