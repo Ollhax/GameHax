@@ -16,28 +16,80 @@ namespace MG.EditorCommon
 			public string Description;
 			public string Category;
 			public Any DefaultValue;
-			public Any DefaultValueRandom;
 			public Any ValueStep;
 			public Any MinValue;
 			public Any MaxValue;
 			public uint ValueDigits;
 			public string FilePathFilter; 
 			public List<KeyValuePair<string, Any>> ValueList;
+			public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
+
+			public void Load(XmlNode node)
+			{
+				var type = XmlHelper.ReadString(node, "Type");
+
+				Name = XmlHelper.ReadString(node, "Name");
+				PrettyName = XmlHelper.ReadString(node, "PrettyName", Name);
+				Description = XmlHelper.ReadString(node, "Description", "");
+				Category = XmlHelper.ReadString(node, "Category", "");
+				DefaultValue = new Any(XmlHelper.ReadString(node, "DefaultValue"), type);
+				ValueDigits = XmlHelper.ReadUInt(node, "ValueDigits", 1);
+				FilePathFilter = XmlHelper.ReadString(node, "FilePathFilter", "");
+				
+				if (XmlHelper.HasElement(node, "ValueStep"))
+				{
+					ValueStep = new Any(XmlHelper.ReadString(node, "ValueStep"), type);
+				}
+
+				if (XmlHelper.HasElement(node, "MinValue"))
+				{
+					MinValue = new Any(XmlHelper.ReadString(node, "MinValue"), type);
+				}
+
+				if (XmlHelper.HasElement(node, "MaxValue"))
+				{
+					MaxValue = new Any(XmlHelper.ReadString(node, "MaxValue"), type);
+				}
+
+				var valueListNode = node["ValueList"];
+				if (valueListNode != null)
+				{
+					ValueList = new List<KeyValuePair<string, Any>>();
+
+					foreach (XmlNode valueNode in valueListNode)
+					{
+						var name = XmlHelper.ReadAttributeString(valueNode, "Name");
+						var value = new Any(XmlHelper.ReadAttributeString(valueNode, "Value"), type);
+						ValueList.Add(new KeyValuePair<string, Any>(name, value));
+					}
+				}
+
+				var parametersNode = node.SelectSingleNode("Parameters");
+				if (parametersNode != null)
+				{
+					foreach (XmlNode parameterNode in parametersNode)
+					{
+						var parameter = new Parameter();
+						parameter.Load(parameterNode);
+						Parameters.Add(parameter.Name, parameter);
+					}
+				}
+			}
+
+			private object GetDefaultValue(Type t)
+			{
+				if (t.IsValueType)
+				{
+					return Activator.CreateInstance(t);
+				}
+
+				return null;
+			}
 		}
 
 		public string Name;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
-
-		private object GetDefaultValue(Type t)
-		{
-			if (t.IsValueType)
-			{
-				return Activator.CreateInstance(t);
-			}
-
-			return null;
-		}
-
+		
 		public void Load(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
@@ -48,53 +100,7 @@ namespace MG.EditorCommon
 				foreach (XmlNode parameterNode in parametersNode)
 				{
 					var parameter = new Parameter();
-					var type = XmlHelper.ReadString(parameterNode, "Type");
-
-					parameter.Name = XmlHelper.ReadString(parameterNode, "Name");
-					parameter.PrettyName = XmlHelper.ReadString(parameterNode, "PrettyName", parameter.Name);
-					parameter.Description = XmlHelper.ReadString(parameterNode, "Description", "");
-					parameter.Category = XmlHelper.ReadString(parameterNode, "Category", "");
-					parameter.DefaultValue = new Any(XmlHelper.ReadString(parameterNode, "DefaultValue"), type);
-					parameter.ValueDigits = XmlHelper.ReadUInt(parameterNode, "ValueDigits", 1);
-					parameter.FilePathFilter = XmlHelper.ReadString(parameterNode, "FilePathFilter", "");
-
-					if (XmlHelper.HasElement(parameterNode, "DefaultValueRandom"))
-					{
-						parameter.DefaultValueRandom = new Any(XmlHelper.ReadString(parameterNode, "DefaultValueRandom"), type);
-					}
-					else
-					{
-						parameter.DefaultValueRandom = new Any(GetDefaultValue(parameter.DefaultValue.GetTypeOfValue()).ToString(), type);
-					}
-
-					if (XmlHelper.HasElement(parameterNode, "ValueStep"))
-					{
-						parameter.ValueStep = new Any(XmlHelper.ReadString(parameterNode, "ValueStep"), type);
-					}
-					
-					if (XmlHelper.HasElement(parameterNode, "MinValue"))
-					{
-						parameter.MinValue = new Any(XmlHelper.ReadString(parameterNode, "MinValue"), type);
-					}
-
-					if (XmlHelper.HasElement(parameterNode, "MaxValue"))
-					{
-						parameter.MaxValue = new Any(XmlHelper.ReadString(parameterNode, "MaxValue"), type);
-					}
-
-					var valueListNode = parameterNode["ValueList"];
-					if (valueListNode != null)
-					{
-						parameter.ValueList = new List<KeyValuePair<string, Any>>();
-						
-						foreach (XmlNode valueNode in valueListNode)
-						{
-							var name = XmlHelper.ReadAttributeString(valueNode, "Name");
-							var value = new Any(XmlHelper.ReadAttributeString(valueNode, "Value"), type);
-							parameter.ValueList.Add(new KeyValuePair<string, Any>(name, value));
-						}
-					}
-
+					parameter.Load(parameterNode);
 					Parameters.Add(parameter.Name, parameter);
 				}
 			}

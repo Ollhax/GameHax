@@ -5,5 +5,6 @@ namespace MG.ParticleEditor.Actions
 	public abstract class UndoableParticleAction : UndoableAction
 	{
 		public int CurrentDefinitionId = -1;
+		public string CurrentParameter = null;
 	}
 }

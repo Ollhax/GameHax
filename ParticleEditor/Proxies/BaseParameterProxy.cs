@@ -4,16 +4,15 @@ using System.ComponentModel;
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
-using MG.EditorCommon.Editors;
 using MG.ParticleEditor.Actions;
 
-namespace MG.ParticleEditor
+namespace MG.ParticleEditor.Proxies
 {
-	class ParticlePropertyProxy : ICustomTypeDescriptor
+	abstract class BaseParameterProxy : ICustomTypeDescriptor
 	{
 		public static int UndoGroup = 965168485;
 
-		class ParticlePropertyChangeset : UndoableParticleAction
+		protected class Changeset : UndoableParticleAction
 		{
 			private Model model;
 
@@ -21,7 +20,7 @@ namespace MG.ParticleEditor
 			public ParticleDefinition ChangedDefinition;
 			public ParticleDefinition OriginalDefinition;
 
-			public ParticlePropertyChangeset(Model model, ParticleDefinition particleDefinition)
+			public Changeset(Model model, ParticleDefinition particleDefinition)
 			{
 				this.model = model;
 				CurrentDefinitionId = particleDefinition.Id;
@@ -30,10 +29,11 @@ namespace MG.ParticleEditor
 				OriginalDefinition = new ParticleDefinition(particleDefinition);
 			}
 
-			public ParticlePropertyChangeset(Model model, ParticlePropertyChangeset changeset)
+			public Changeset(Model model, Changeset changeset)
 			{
 				this.model = model;
 				CurrentDefinitionId = changeset.CurrentDefinitionId;
+				CurrentParameter = changeset.CurrentParameter;
 				CurrentDefinition = changeset.CurrentDefinition;
 				ChangedDefinition = new ParticleDefinition(changeset.ChangedDefinition);
 				OriginalDefinition = new ParticleDefinition(changeset.OriginalDefinition);
@@ -61,14 +61,11 @@ namespace MG.ParticleEditor
 				return UndoGroup;
 			}
 		}
-
-		[Category("General")]
-		[ReadOnly(true)]
-		public string Name { get { return changeset.CurrentDefinition.Name; } set { changeset.CurrentDefinition.Name = value; } }
 		
-		private ParticleDeclaration particleDeclaration;
-		private ParticlePropertyChangeset changeset;
-		private Model model;
+		protected Model model;
+		protected ParticleDeclaration particleDeclaration;
+		protected ParticleDefinition particleDefinition;
+		protected Changeset changeset;
 		
 		public UndoableAction CommitAction()
 		{
@@ -76,19 +73,20 @@ namespace MG.ParticleEditor
 			changeset.ChangedDefinition.CopyFrom(changeset.CurrentDefinition);
 
 			// Copy the changeset that is about to be committed.
-			var copy = new ParticlePropertyChangeset(model, changeset);
+			var copy = new Changeset(model, changeset);
 
 			// Rebase the ORIGINAL definition so that we save changes from now -> next commit.
 			changeset.OriginalDefinition.CopyFrom(changeset.CurrentDefinition);
 
 			return copy;
 		}
-		
-		public ParticlePropertyProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
+
+		public BaseParameterProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
 			this.model = model;
 			this.particleDeclaration = particleDeclaration;
-			changeset = new ParticlePropertyChangeset(model, particleDefinition);
+			this.particleDefinition = particleDefinition;
+			changeset = new Changeset(model, particleDefinition);
 		}
 		
 		//--------------------------------------
@@ -106,27 +104,6 @@ namespace MG.ParticleEditor
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() { return GetProperties(null); }
 		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) { return this; }
 
-		public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-		{
-			var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
-			var typeProperties = TypeDescriptor.GetProperties(this.GetType(), attributes);
-			foreach (PropertyDescriptor pd in typeProperties)
-			{
-				pdc.Add(pd);
-			}
-
-			foreach (var param in changeset.CurrentDefinition.Parameters)
-			{
-				var value = param.Value.Value;
-
-				ParticleDeclaration.Parameter declarationParameter;
-				if (particleDeclaration.Parameters.TryGetValue(param.Value.Name, out declarationParameter))
-				{
-					pdc.Add(new AnyPropertyDescriptor(declarationParameter, value));
-				}
-			}
-
-			return pdc;
-		}
+		public abstract PropertyDescriptorCollection GetProperties(Attribute[] attributes);
 	}
 }

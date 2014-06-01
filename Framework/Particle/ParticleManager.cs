@@ -30,6 +30,11 @@ namespace MG.Framework.Particle
 			particlePool.Delete(particleSystem);
 		}
 
+		public void Clear()
+		{
+			particlePools.Clear();
+		}
+
 		private Pool<ParticleSystem> GetPool(ParticleDefinition definition)
 		{
 			// Get (or create) the pool for this type of particle

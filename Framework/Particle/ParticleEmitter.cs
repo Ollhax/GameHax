@@ -24,10 +24,10 @@ namespace MG.Framework.Particle
 
 	public abstract class BasicParticleEmitter : ParticleEmitter
 	{
-		private ParticleDefinition.Parameter paramLife;
-		private ParticleDefinition.Parameter paramSpawnRate;
-		private ParticleDefinition.Parameter paramOffsetX;
-		private ParticleDefinition.Parameter paramOffsetY;
+		private RandomFloat paramLife;
+		private RandomFloat paramSpawnRate;
+		private RandomFloat paramOffsetX;
+		private RandomFloat paramOffsetY;
 		private List<Vector2> particlePosition;
 		private List<Vector2> particleVelocity;
 		private List<float> particleLife;
@@ -46,10 +46,10 @@ namespace MG.Framework.Particle
 
 		public override void Reload()
 		{
-			paramLife = particleDefinition.Parameters["Life"];
-			paramSpawnRate = particleDefinition.Parameters["SpawnRate"];
-			paramOffsetX = particleDefinition.Parameters["OffsetX"];
-			paramOffsetY = particleDefinition.Parameters["OffsetY"];
+			paramLife = new RandomFloat(particleDefinition.Parameters["Life"]);
+			paramSpawnRate = new RandomFloat(particleDefinition.Parameters["SpawnRate"]);
+			paramOffsetX = new RandomFloat(particleDefinition.Parameters["OffsetX"]);
+			paramOffsetY = new RandomFloat(particleDefinition.Parameters["OffsetY"]);
 		}
 
 		public override void Clear()
@@ -61,7 +61,7 @@ namespace MG.Framework.Particle
 		{
 			particleSpawnAccumulator += time.ElapsedSeconds;
 
-			var secondsPerParticle = 1.0f / ParticleHelpers.GetFloat(paramSpawnRate);
+			var secondsPerParticle = 1.0f / paramSpawnRate;
 			while (particleSpawnAccumulator >= secondsPerParticle)
 			{
 				Emit();
@@ -75,10 +75,10 @@ namespace MG.Framework.Particle
 			var index = particleData.ActiveParticles;
 			particleData.ActiveParticles++;
 
-			particlePosition[index] = position + new Vector2(ParticleHelpers.GetFloat(paramOffsetX), ParticleHelpers.GetFloat(paramOffsetY));
+			particlePosition[index] = position + new Vector2(paramOffsetX, paramOffsetY);
 			particleVelocity[index] = velocity;
 			particleAge[index] = 0;
-			particleLife[index] = ParticleHelpers.GetFloat(paramLife);
+			particleLife[index] = paramLife;
 			return index;
 		}
 	}

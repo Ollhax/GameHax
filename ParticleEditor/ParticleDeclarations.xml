@@ -20,7 +20,18 @@
 				<DefaultValue>1.0</DefaultValue>
 				<DefaultValueRandom>0.0</DefaultValueRandom>
 				<ValueStep>0.1</ValueStep>				
-				<MinValue>0.0</MinValue>
+				<MinValue>0.0</MinValue>				
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>SpawnRate</Name>
@@ -42,8 +53,19 @@
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
 				<DefaultValueRandom>0.0</DefaultValueRandom>
-				<ValueStep>1.0</ValueStep>				
-				<MinValue>0.0</MinValue>				
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>OffsetY</Name>
@@ -53,8 +75,19 @@
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
 				<DefaultValueRandom>0.0</DefaultValueRandom>
-				<ValueStep>1.0</ValueStep>				
-				<MinValue>0.0</MinValue>				
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>SortMode</Name>

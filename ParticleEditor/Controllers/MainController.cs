@@ -19,7 +19,8 @@ namespace MG.ParticleEditor.Controllers
 		private DocumentController documentController;
 		private RenderController renderController;
 		private TreeController treeController;
-		private PropertyController propertyController;
+		private MainParameterController mainParameterController;
+		private InfoController infoController;
 
 		private Stopwatch startStopwatch = new Stopwatch();
 		private Stopwatch frameStopwatch = new Stopwatch();
@@ -28,6 +29,7 @@ namespace MG.ParticleEditor.Controllers
 		public bool UpdateTree;
 		public bool UpdateTitle;
 		public int SelectDefinition;
+		public string SelectParameter;
 
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
 		{
@@ -73,7 +75,8 @@ namespace MG.ParticleEditor.Controllers
 			documentController = new DocumentController(this, model);
 			renderController = new RenderController(this, model, assetHandler, window.RenderView);
 			treeController = new TreeController(this, model, window.TreeView);
-			propertyController = new PropertyController(model, window.PropertyView);
+			mainParameterController = new MainParameterController(model, window.PropertyView);
+			infoController = new InfoController(this, model, window.InfoView);
 
 			window.FileNew += documentController.New;
 			window.FileOpen += documentController.Open;
@@ -83,7 +86,8 @@ namespace MG.ParticleEditor.Controllers
 			window.EditUndo += documentController.Undo;
 			window.EditRedo += documentController.Redo;
 			treeController.ItemSelected += renderController.OnItemSelected;
-			treeController.ItemSelected += propertyController.OnChangeDefinition;
+			treeController.ItemSelected += mainParameterController.OnChangeDefinition;
+			mainParameterController.ParameterSelected += infoController.SetInfo;
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
 			documentController.New();
@@ -128,6 +132,15 @@ namespace MG.ParticleEditor.Controllers
 			{
 				treeController.SelectItem(SelectDefinition);
 				SelectDefinition = 0;
+			}
+
+			if (SelectParameter != null)
+			{
+				mainParameterController.SelectParameter(SelectParameter);
+				//treeController.SelectParameter(SelectParameter);
+				//infoController.
+				//infoController.SetInfo(SelectParameter);
+				SelectParameter = null;
 			}
 
 			var sensitive = window.Sensitive;

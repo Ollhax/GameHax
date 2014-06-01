@@ -163,12 +163,12 @@ namespace MonoDevelop.Components.PropertyGrid
 			UpdateTabs ();
 		}
 
-		public class DeselectEventArgs : EventArgs
+		public class EndedEditEventArgs : EventArgs
 		{
 			public bool Canceled;
 		}
 
-		public delegate void DeselectEventHandler(object sender, DeselectEventArgs e);
+		public delegate void DeselectEventHandler(object sender, EndedEditEventArgs e);
 
 		public event EventHandler SelectionChanged
 		{
@@ -181,16 +181,29 @@ namespace MonoDevelop.Components.PropertyGrid
 			remove { tree.Changed -= value; }
 		}
 
-		public event DeselectEventHandler Deselected
+		public event DeselectEventHandler EndedEdit
 		{
-			add { tree.Deselected += value; }
-			remove { tree.Deselected -= value; }
+			add { tree.EndedEdit += value; }
+			remove { tree.EndedEdit -= value; }
 		}
+
+		public event EventHandler CurrentObjectChanged;
 			
 		internal EditorManager EditorManager {
 			get { return editorManager; }
 		}
-		
+
+		public double DividerPosition
+		{
+			get { return tree.DividerPosition; }
+			set { tree.DividerPosition = value; }
+		}
+
+		public int Height
+		{
+			get { return tree.Height; }
+		}
+
 		#region Toolbar state and handlers
 		
 		private const int FirstTabIndex = 3;
@@ -276,6 +289,11 @@ namespace MonoDevelop.Components.PropertyGrid
 			this.propertyProviders = propertyProviders;
 			UpdateTabs ();
 			Populate();
+
+			if (CurrentObjectChanged != null)
+			{
+				CurrentObjectChanged.Invoke(this, EventArgs.Empty);
+			}
 		}
 		
 		public void CommitPendingChanges ()
@@ -288,7 +306,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			tree.CancelChanges();
 		}
 
-		public string SelectedProperty { get { return tree.SelectedProperty; } }
+		public string SelectedProperty { get { return tree.SelectedProperty; } set { tree.SelectedProperty = value; } }
 		
 		void UpdateTabs ()
 		{

@@ -17,6 +17,7 @@ namespace MG.EditorCommon.Editors
 		}
 		
 		public readonly ParticleDeclaration.Parameter DeclarationParameter;
+		public event Action PropertyChanged;
 
 		public override string DisplayName { get { return DeclarationParameter.PrettyName; } }
 		public override bool CanResetValue(object component) { return false; }
@@ -44,6 +45,10 @@ namespace MG.EditorCommon.Editors
 		public override void SetValue(object component, object value)
 		{
 			any.Set(value);
+			if (PropertyChanged != null)
+			{
+				PropertyChanged.Invoke();
+			}
 		}
 
 		public override Type PropertyType

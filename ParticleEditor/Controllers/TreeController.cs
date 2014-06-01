@@ -44,7 +44,7 @@ namespace MG.ParticleEditor.Controllers
 		{
 			treeView.SelectItem(id, true);
 		}
-
+		
 		private void CreateTreeModel(List<TreeView.ItemIndex> indices, ParticleCollection collection)
 		{
 			foreach (var def in collection)
@@ -69,6 +69,7 @@ namespace MG.ParticleEditor.Controllers
 			if (particleAction != null)
 			{
 				controller.SelectDefinition = particleAction.CurrentDefinitionId;
+				controller.SelectParameter = particleAction.CurrentParameter;
 			}
 		}
 
@@ -116,7 +117,7 @@ namespace MG.ParticleEditor.Controllers
 		private void OnItemSelected(int id)
 		{
 			var def = model.DefinitionTable.Definitions.GetById(id);
-			model.CurrentDefinition = def;
+			model.CurrentDefinitionId = id;
 			ItemSelected(def);
 		}
 		

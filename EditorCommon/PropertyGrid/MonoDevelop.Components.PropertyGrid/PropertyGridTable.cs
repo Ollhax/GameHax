@@ -112,13 +112,50 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public event EventHandler SelectionChanged;
 
-		public event PropertyGrid.DeselectEventHandler Deselected;
+		public event PropertyGrid.DeselectEventHandler EndedEdit;
 
 		public PropertySort PropertySort { get; set; }
 
 		public ShadowType ShadowType { get; set; }
 
-		public string SelectedProperty { get { return lastEditorRow != null ? lastEditorRow.Property.Name : null; } }
+		public string SelectedProperty
+		{
+			get { return lastEditorRow != null ? lastEditorRow.Property.Name : null; }
+			set
+			{
+				foreach (var r in GetAllRows(false).Where(r => !r.IsCategory))
+				{
+					if (r.Property.Name == value)
+					{
+						SetSelection(r);
+						break;
+					}
+				}
+			}
+		}
+
+		public double DividerPosition
+		{
+			get { return dividerPosition; }
+			set
+			{
+				if (dividerPosition != value)
+				{
+					dividerPosition = Math.Max(Math.Min(value, 1.0), 0.0);
+					QueueResize();
+				}
+			}
+		}
+
+		public int Height
+		{
+			get
+			{
+				int y = 0;
+				MeasureHeight(rows, ref y);
+				return y;
+			}
+		}
 
 		public void CommitChanges ()
 		{
@@ -173,6 +210,7 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public virtual void Clear ()
 		{
+			SetSelection(null);
 			heightMeasured = false;
 			StopAllAnimations ();
 			EndEditing ();
@@ -804,11 +842,12 @@ namespace MonoDevelop.Components.PropertyGrid
 				
 				editSession = null;
 				currentEditorRow = null;
+				SetSelection(null);
 				QueueDraw ();
 
-				if (Deselected != null)
+				if (EndedEdit != null)
 				{
-					Deselected.Invoke(this, new PropertyGrid.DeselectEventArgs { Canceled = cancel });
+					EndedEdit.Invoke(this, new PropertyGrid.EndedEditEventArgs { Canceled = cancel });
 				}
 			}
 		}

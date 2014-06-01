@@ -13,8 +13,8 @@ namespace MG.Framework.Particle
 		{
 			public string Name;
 			public Any Value;
-			public Any Random;
-
+			public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
+			
 			public Parameter()
 			{
 
@@ -24,21 +24,62 @@ namespace MG.Framework.Particle
 			{
 				Name = other.Name;
 				Value = new Any(other.Value);
-				Random = new Any(other.Random);
+
+				Parameters.Clear();
+				foreach (var p in other.Parameters)
+				{
+					Parameters.Add(p.Key, new Parameter(p.Value));
+				}
+			}
+
+			public Parameter(XmlNode node)
+			{
+				Name = XmlHelper.ReadString(node, "Name");
+				Value = new Any(XmlHelper.ReadString(node, "Value"), XmlHelper.ReadString(node, "Type"));
+
+				var parametersNode = node.SelectSingleNode("Parameters");
+				if (parametersNode != null)
+				{
+					foreach (XmlNode parameterNode in parametersNode)
+					{
+						var parameter = new Parameter(parameterNode);
+						Parameters.Add(parameter.Name, parameter);
+					}
+				}
 			}
 
 			public void CopyFrom(Parameter other)
 			{
 				Name = other.Name;
 				Value.CopyFrom(other.Value);
-				Random.CopyFrom(other.Random);
+
+				if (Parameters.Count != other.Parameters.Count)
+				{
+					Parameters.Clear();
+					foreach (var p in other.Parameters)
+					{
+						Parameters.Add(p.Key, new Parameter(p.Value));
+					}
+				}
+
+				foreach (var p in other.Parameters)
+				{
+					Parameters[p.Key].CopyFrom(p.Value);
+				}
 			}
 
 			public bool Equals(Parameter other)
 			{
 				if (Name != other.Name) return false;
 				if (!Value.Equals(other.Value)) return false;
-				if (!Random.Equals(other.Random)) return false;
+
+				foreach (var param in Parameters)
+				{
+					Parameter otherParam;
+					if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
+					if (!param.Value.Equals(otherParam)) return false;
+				}
+
 				return true;
 			}
 
@@ -52,7 +93,14 @@ namespace MG.Framework.Particle
 				XmlHelper.Write(parameterNode, "Name", Name);
 				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
 				XmlHelper.Write(parameterNode, "Value", Value.ToString());
-				XmlHelper.Write(parameterNode, "Random", Random.ToString());
+				
+				var parametersNode = document.CreateElement("Parameters");
+				parameterNode.AppendChild(parametersNode);
+
+				foreach (var property in Parameters)
+				{
+					property.Value.Save(parametersNode);
+				}
 			}
 		}
 
@@ -145,18 +193,7 @@ namespace MG.Framework.Particle
 			{
 				foreach (XmlNode parameterNode in parametersNode)
 				{
-					var parameter = new Parameter();
-
-					parameter.Name = XmlHelper.ReadString(parameterNode, "Name");
-					parameter.Value = new Any(
-						XmlHelper.ReadString(parameterNode, "Value"), XmlHelper.ReadString(parameterNode, "Type"));
-
-					if (XmlHelper.HasElement(parameterNode, "Random"))
-					{
-						parameter.Random = new Any(
-							XmlHelper.ReadString(parameterNode, "Random"), XmlHelper.ReadString(parameterNode, "Type"));
-					}
-
+					var parameter = new Parameter(parameterNode);
 					Parameters.Add(parameter.Name, parameter);
 				}
 			}

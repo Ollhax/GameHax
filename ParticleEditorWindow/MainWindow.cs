@@ -63,7 +63,8 @@ namespace MG.ParticleEditorWindow
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
-		public readonly PropertyView PropertyView;
+		public readonly ParameterView PropertyView;
+		public readonly InfoView InfoView;
 
 		private bool sensitive = true;
 		
@@ -98,8 +99,9 @@ namespace MG.ParticleEditorWindow
 			// Subcomponents
 			RenderView = new RenderView();
 			TreeView = new TreeView();
-			PropertyView = new PropertyView();
-
+			PropertyView = new ParameterView();
+			InfoView = new InfoView();
+			
 			accelerators = new AccelGroup();
 			window.AddAccelGroup(accelerators);
 
@@ -121,11 +123,14 @@ namespace MG.ParticleEditorWindow
 			var hpaneMain = new HPaned();
 			menuBox.PackStart(hpaneMain, true, true, 0);
 			hpaneMain.Position = 200;
-
+			
+			var rightBox = new HBox(false, 1);
+			hpaneMain.Pack2(rightBox, true, true);
+			
 			// Setup gl widget and graph
 			var vpaneRight = new VPaned();
-			hpaneMain.Pack2(vpaneRight, true, true);
-			vpaneRight.Position = 500;
+			rightBox.PackStart(vpaneRight, true, true, 0);
+			vpaneRight.Position = window.DefaultHeight - 220;
 			
 			var f1 = new Frame();
 			f1.Add(RenderView.Widget);
@@ -138,14 +143,22 @@ namespace MG.ParticleEditorWindow
 			vpaneRight.Pack1(f1, true, true);
 			vpaneRight.Pack2(f2, true, true);
 
-			// Setup tree and properties
-			var vpaneLeft = new VPaned();
-			hpaneMain.Pack1(vpaneLeft, false, true);
-			vpaneLeft.Position = 200;
-			vpaneLeft.Pack1(TreeView.Widget, true, true);
-			vpaneLeft.Pack2(PropertyView.Widget, true, true);
+			// Tree view
+			TreeView.Widget.SetSizeRequest(200, -1);
+			rightBox.PackEnd(TreeView.Widget, false, true, 0);
+
+			// Info view
+			var leftBox = new VBox(false, 0);
+			hpaneMain.Pack1(leftBox, false, false);
+			leftBox.PackEnd(InfoView.Widget, false, true, 0);
+
+			// Property view
+			leftBox.PackEnd(PropertyView.Widget, true, true, 0);
+			PropertyView.Widget.DividerPosition = 0.4;
 
 			window.ShowAll();
+
+			InfoView.MetaProperties.Widget.ShowToolbar = false;
 		}
 
 		public string StatusText
@@ -232,6 +245,7 @@ namespace MG.ParticleEditorWindow
 				PropertyView.Widget.Sensitive = value;
 				TreeView.Widget.Sensitive = value;
 				RenderView.Widget.Sensitive = value;
+				InfoView.Widget.Sensitive = value;
 				editMenuItem.Sensitive = value;
 				fileSave.Sensitive = value;
 				fileSaveAs.Sensitive = value;

@@ -10,11 +10,14 @@ namespace MG.ParticleEditor
 	class Model
 	{
 		public UndoHandler UndoHandler;
-		public ParticleDefinition CurrentDefinition;
+		public string CurrentParameter;
+		public int CurrentDefinitionId;
 		public ParticleDeclarationTable DeclarationTable;
 		public ParticleDefinitionTable DefinitionTable;
 		public ParticleSystem ParticleSystem;
 		public ParticleManager ParticleManager;
+
+		public ParticleDefinition CurrentDefinition { get { return DefinitionTable.Definitions.GetById(CurrentDefinitionId); } }
 
 		public bool DocumentOpen;
 		public FilePath DocumentFile;
@@ -26,9 +29,11 @@ namespace MG.ParticleEditor
 			DocumentOpen = false;
 			DocumentFile = null;
 			DefinitionTable = new ParticleDefinitionTable();
+			ParticleManager.Clear();
 			ParticleSystem = null;
 			UndoHandler.Clear();
-			CurrentDefinition = null;
+			CurrentParameter = null;
+			CurrentDefinitionId = 0;
 			DefinitionIdCounter = 1;
 			Modified = false;
 		}

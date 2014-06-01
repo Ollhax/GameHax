@@ -50,11 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="InfoView.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderView.cs" />
     <Compile Include="TreeView.cs" />
-    <Compile Include="PropertyView.cs" />
+    <Compile Include="ParameterView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EditorCommon\EditorCommon.csproj">
