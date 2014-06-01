@@ -158,6 +158,7 @@ namespace MG.ParticleEditorWindow
 
 			window.ShowAll();
 
+			InfoView.Visible = false;
 			InfoView.MetaProperties.Widget.ShowToolbar = false;
 		}
 
