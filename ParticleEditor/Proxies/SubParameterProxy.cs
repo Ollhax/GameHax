@@ -3,6 +3,7 @@ using System.ComponentModel;
 using MG.EditorCommon;
 using MG.Framework.Particle;
 using MG.EditorCommon.Editors;
+using MG.ParticleEditor.Controllers;
 
 namespace MG.ParticleEditor.Proxies
 {
@@ -10,8 +11,8 @@ namespace MG.ParticleEditor.Proxies
 	{
 		private string parameterName;
 
-		public SubParameterProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition, string parameterName)
-			: base(model, particleDeclaration, particleDefinition)
+		public SubParameterProxy(MainController controller, Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition, string parameterName)
+			: base(controller, model, particleDeclaration, particleDefinition, 112515)
 		{
 			this.parameterName = parameterName;
 			changeset.CurrentParameter = parameterName;
@@ -37,12 +38,19 @@ namespace MG.ParticleEditor.Proxies
 					ParticleDeclaration.Parameter declarationSubParameter;
 					if (declarationParameter.Parameters.TryGetValue(param.Value.Name, out declarationSubParameter))
 					{
-						pdc.Add(new AnyPropertyDescriptor(declarationSubParameter, value));
+						var p = new AnyPropertyDescriptor(declarationSubParameter, value);
+						p.PropertyChanged += () => OnPropertyChanged(p);
+						pdc.Add(p);
 					}
 				}
 			}
 
 			return pdc;
+		}
+		
+		private void OnPropertyChanged(AnyPropertyDescriptor property)
+		{
+			changeset.CurrentSubParameter = property.DeclarationParameter.Name;
 		}
 	}
 }

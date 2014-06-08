@@ -6,5 +6,6 @@ namespace MG.ParticleEditor.Actions
 	{
 		public int CurrentDefinitionId = -1;
 		public string CurrentParameter = null;
+		public string CurrentSubParameter = null;
 	}
 }

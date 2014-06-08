@@ -4,6 +4,7 @@ using System.ComponentModel;
 using MG.EditorCommon;
 using MG.Framework.Particle;
 using MG.EditorCommon.Editors;
+using MG.ParticleEditor.Controllers;
 
 namespace MG.ParticleEditor.Proxies
 {
@@ -13,8 +14,8 @@ namespace MG.ParticleEditor.Proxies
 		[ReadOnly(true)]
 		public string Name { get { return changeset.CurrentDefinition.Name; } set { changeset.CurrentDefinition.Name = value; } }
 
-		public MainParameterProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
-			: base(model, particleDeclaration, particleDefinition)
+		public MainParameterProxy(MainController controller, Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
+			: base(controller, model, particleDeclaration, particleDefinition, 754784)
 		{
 			
 		}

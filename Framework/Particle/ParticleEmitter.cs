@@ -24,7 +24,8 @@ namespace MG.Framework.Particle
 
 	public abstract class BasicParticleEmitter : ParticleEmitter
 	{
-		private RandomFloat paramLife;
+		private float paramEmitterLife;
+		private RandomFloat paramParticleLife;
 		private RandomFloat paramSpawnRate;
 		private RandomFloat paramOffsetX;
 		private RandomFloat paramOffsetY;
@@ -33,7 +34,11 @@ namespace MG.Framework.Particle
 		private List<float> particleLife;
 		private List<float> particleAge;
 
+		private float emitterAge;
 		private float particleSpawnAccumulator;
+
+		public float EmitterLifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : emitterAge; } }
+		public bool Alive { get { return paramEmitterLife <= 0 || emitterAge < paramEmitterLife; } }
 
 		public BasicParticleEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
@@ -42,14 +47,16 @@ namespace MG.Framework.Particle
 			particleVelocity = particleData.Get<Vector2>("Velocity");
 			particleLife = particleData.Get<float>("Life");
 			particleAge = particleData.Get<float>("Age");
+
+			paramParticleLife = particleDefinition.GetFloatParameter("ParticleLife");
+			paramSpawnRate = particleDefinition.GetFloatParameter("SpawnRate");
+			paramOffsetX = particleDefinition.GetFloatParameter("OffsetX");
+			paramOffsetY = particleDefinition.GetFloatParameter("OffsetY");
 		}
 
 		public override void Reload()
 		{
-			paramLife = new RandomFloat(particleDefinition.Parameters["Life"]);
-			paramSpawnRate = new RandomFloat(particleDefinition.Parameters["SpawnRate"]);
-			paramOffsetX = new RandomFloat(particleDefinition.Parameters["OffsetX"]);
-			paramOffsetY = new RandomFloat(particleDefinition.Parameters["OffsetY"]);
+			paramEmitterLife = particleDefinition.Parameters["EmitterLife"].Value.Get<float>();
 		}
 
 		public override void Clear()
@@ -60,12 +67,21 @@ namespace MG.Framework.Particle
 		public override void Update(Time time)
 		{
 			particleSpawnAccumulator += time.ElapsedSeconds;
+			emitterAge += time.ElapsedSeconds;
 
-			var secondsPerParticle = 1.0f / paramSpawnRate;
-			while (particleSpawnAccumulator >= secondsPerParticle)
+			if (paramEmitterLife > 0 && emitterAge > paramEmitterLife)
 			{
-				Emit();
-				particleSpawnAccumulator -= secondsPerParticle;
+				emitterAge %= paramEmitterLife;
+			}
+
+			if (Alive)
+			{
+				var secondsPerParticle = 1.0f / paramSpawnRate.Get(EmitterLifeFractional, 0);
+				while (particleSpawnAccumulator >= secondsPerParticle)
+				{
+					Emit();
+					particleSpawnAccumulator -= secondsPerParticle;
+				}
 			}
 		}
 
@@ -75,10 +91,12 @@ namespace MG.Framework.Particle
 			var index = particleData.ActiveParticles;
 			particleData.ActiveParticles++;
 
-			particlePosition[index] = position + new Vector2(paramOffsetX, paramOffsetY);
+			var e = EmitterLifeFractional;
+
+			particlePosition[index] = position + new Vector2(paramOffsetX.Get(e, 0), paramOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
 			particleAge[index] = 0;
-			particleLife[index] = paramLife;
+			particleLife[index] = paramParticleLife.Get(e, 0);
 			return index;
 		}
 	}
@@ -93,21 +111,16 @@ namespace MG.Framework.Particle
 		public PointEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
 		{
-
+			paramDirection = particleDefinition.GetFloatParameter("Direction");
+			paramRange = particleDefinition.GetFloatParameter("Range");
 		}
-
-		public override void Reload()
-		{
-			base.Reload();
-
-			paramDirection = new RandomFloat(particleDefinition.Parameters["Direction"]);
-			paramRange = new RandomFloat(particleDefinition.Parameters["Range"]);
-		}
-
+		
 		public override int Emit()
 		{
-			float range = paramRange;
-			float direction = paramDirection + MathTools.Random().NextFloat(-range, range);
+			var e = EmitterLifeFractional;
+
+			float range = paramRange.Get(e, 0) / 2;
+			float direction = paramDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
 
 			return EmitInternal(Point, MathTools.FromAngle(MathTools.ToRadians(direction)) * 40, 0);
 		}

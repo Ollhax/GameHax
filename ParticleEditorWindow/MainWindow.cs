@@ -65,6 +65,7 @@ namespace MG.ParticleEditorWindow
 		public readonly TreeView TreeView;
 		public readonly ParameterView PropertyView;
 		public readonly InfoView InfoView;
+		public readonly GraphView GraphView;
 
 		private bool sensitive = true;
 		
@@ -101,7 +102,8 @@ namespace MG.ParticleEditorWindow
 			TreeView = new TreeView();
 			PropertyView = new ParameterView();
 			InfoView = new InfoView();
-			
+			GraphView = new GraphView();
+
 			accelerators = new AccelGroup();
 			window.AddAccelGroup(accelerators);
 
@@ -137,7 +139,7 @@ namespace MG.ParticleEditorWindow
 			f1.ShadowType = ShadowType.In;
 
 			var f2 = new Frame();
-			f2.Add(CreateGraph());
+			f2.Add(GraphView.Widget);
 			f2.ShadowType = ShadowType.None;
 			
 			vpaneRight.Pack1(f1, true, true);
@@ -247,6 +249,7 @@ namespace MG.ParticleEditorWindow
 				TreeView.Widget.Sensitive = value;
 				RenderView.Widget.Sensitive = value;
 				InfoView.Widget.Sensitive = value;
+				GraphView.Widget.Sensitive = value;
 				editMenuItem.Sensitive = value;
 				fileSave.Sensitive = value;
 				fileSaveAs.Sensitive = value;
@@ -347,13 +350,6 @@ namespace MG.ParticleEditorWindow
 			{
 				window.Destroy();
 			}
-		}
-
-		private HaxGraph CreateGraph()
-		{
-			var graph = new HaxGraph();
-			graph.Name = "Graph";
-			return graph;
 		}
 
 		public void Dispose()

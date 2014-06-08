@@ -87,8 +87,6 @@ namespace MG.ParticleEditor.Controllers
 			if (particleSystem == null) return;
 			
 			particleSystem.Position = new Vector2(Screen.PrimaryScreen.NormalizedScreenArea.Center);
-
-			
 		}
 
 		//private void ResetChildPosition(ParticleSystem parent)

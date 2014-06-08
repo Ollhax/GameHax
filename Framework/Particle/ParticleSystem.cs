@@ -120,7 +120,6 @@ namespace MG.Framework.Particle
 
 			var particlePosition = particleData.Get<Vector2>("Position");
 			var particleVelocity = particleData.Get<Vector2>("Velocity");
-			
 			var particleLife = particleData.Get<float>("Life");
 
 			for (int i = 0; i < particleData.ActiveParticles;)

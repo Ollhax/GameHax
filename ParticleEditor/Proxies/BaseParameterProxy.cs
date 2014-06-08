@@ -5,35 +5,41 @@ using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.ParticleEditor.Actions;
+using MG.ParticleEditor.Controllers;
 
 namespace MG.ParticleEditor.Proxies
 {
 	abstract class BaseParameterProxy : ICustomTypeDescriptor
 	{
-		public static int UndoGroup = 965168485;
-
 		protected class Changeset : UndoableParticleAction
 		{
+			private MainController controller;
 			private Model model;
+			private int undoGroup;
 
 			public ParticleDefinition CurrentDefinition;
 			public ParticleDefinition ChangedDefinition;
 			public ParticleDefinition OriginalDefinition;
 
-			public Changeset(Model model, ParticleDefinition particleDefinition)
+			public Changeset(MainController controller, Model model, ParticleDefinition particleDefinition, int undoGroup)
 			{
+				this.controller = controller;
 				this.model = model;
+				this.undoGroup = undoGroup;
 				CurrentDefinitionId = particleDefinition.Id;
 				CurrentDefinition = particleDefinition;
 				ChangedDefinition = new ParticleDefinition(particleDefinition);
 				OriginalDefinition = new ParticleDefinition(particleDefinition);
 			}
 
-			public Changeset(Model model, Changeset changeset)
+			public Changeset(MainController controller, Model model, Changeset changeset)
 			{
+				this.controller = controller;
 				this.model = model;
+				undoGroup = changeset.undoGroup;
 				CurrentDefinitionId = changeset.CurrentDefinitionId;
 				CurrentParameter = changeset.CurrentParameter;
+				CurrentSubParameter = changeset.CurrentSubParameter;
 				CurrentDefinition = changeset.CurrentDefinition;
 				ChangedDefinition = new ParticleDefinition(changeset.ChangedDefinition);
 				OriginalDefinition = new ParticleDefinition(changeset.OriginalDefinition);
@@ -46,6 +52,7 @@ namespace MG.ParticleEditor.Proxies
 					return false;
 				}
 
+				controller.UpdateParticleSystem = true;
 				model.Modified = true;
 				CurrentDefinition.CopyFrom(ChangedDefinition);
 				return true;
@@ -53,27 +60,31 @@ namespace MG.ParticleEditor.Proxies
 
 			protected override void CallUndo()
 			{
+				controller.UpdateParticleSystem = true;
 				CurrentDefinition.CopyFrom(OriginalDefinition);
 			}
 
 			public override int GetUndoGroup()
 			{
-				return UndoGroup;
+				return undoGroup;
 			}
 		}
-		
+
+		protected MainController controller;
 		protected Model model;
 		protected ParticleDeclaration particleDeclaration;
 		protected ParticleDefinition particleDefinition;
 		protected Changeset changeset;
-		
+
+		public readonly int UndoGroup;
+
 		public UndoableAction CommitAction()
 		{
 			// Move all changes (which are done in the CURRENT definition) to the CHANGED definition.
 			changeset.ChangedDefinition.CopyFrom(changeset.CurrentDefinition);
 
 			// Copy the changeset that is about to be committed.
-			var copy = new Changeset(model, changeset);
+			var copy = new Changeset(controller, model, changeset);
 
 			// Rebase the ORIGINAL definition so that we save changes from now -> next commit.
 			changeset.OriginalDefinition.CopyFrom(changeset.CurrentDefinition);
@@ -81,12 +92,14 @@ namespace MG.ParticleEditor.Proxies
 			return copy;
 		}
 
-		public BaseParameterProxy(Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
+		public BaseParameterProxy(MainController controller, Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition, int undoGroup)
 		{
+			this.controller = controller;
 			this.model = model;
 			this.particleDeclaration = particleDeclaration;
 			this.particleDefinition = particleDefinition;
-			changeset = new Changeset(model, particleDefinition);
+			UndoGroup = undoGroup;
+			changeset = new Changeset(controller, model, particleDefinition, undoGroup);
 		}
 		
 		//--------------------------------------

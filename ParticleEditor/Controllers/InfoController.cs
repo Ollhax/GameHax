@@ -1,4 +1,6 @@
-﻿using MG.EditorCommon;
+﻿using System;
+
+using MG.EditorCommon;
 using MG.ParticleEditorWindow;
 
 namespace MG.ParticleEditor.Controllers
@@ -8,7 +10,7 @@ namespace MG.ParticleEditor.Controllers
 		private MainController controller;
 		private Model model;
 		private InfoView infoView;
-		private SubParameterController subParameterController;
+		public SubParameterController SubParameterController;
 
 		public InfoController(MainController controller, Model model, InfoView infoView)
 		{
@@ -16,15 +18,15 @@ namespace MG.ParticleEditor.Controllers
 			this.model = model;
 			this.infoView = infoView;
 
-			subParameterController = new SubParameterController(model, infoView.MetaProperties);
+			SubParameterController = new SubParameterController(controller, model, infoView.MetaProperties);
 		}
 		
-		public void SetInfo(string currentParameter)
+		public void UpdateInfo()
 		{
-			model.CurrentParameter = currentParameter;
-			subParameterController.OnChangeParameter();
+			var currentParameter = model.CurrentParameter;
+			SubParameterController.OnChangeParameter();
+			
 			var def = model.CurrentDefinition;
-
 			if (def == null || string.IsNullOrEmpty(currentParameter))
 			{
 				infoView.Visible = false;

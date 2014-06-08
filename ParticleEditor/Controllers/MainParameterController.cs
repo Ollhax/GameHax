@@ -7,8 +7,8 @@ namespace MG.ParticleEditor.Controllers
 {
 	class MainParameterController : AbstractParameterController
 	{
-		public MainParameterController(Model model, ParameterView parameterView)
-			: base(model, parameterView)
+		public MainParameterController(MainController controller, Model model, ParameterView parameterView)
+			: base(controller, model, parameterView)
 		{
 			
 		}
@@ -17,6 +17,12 @@ namespace MG.ParticleEditor.Controllers
 		{
 			parameterView.CommitChanges();
 			ReloadProxy();
+		}
+
+		protected override void OnParameterSelected(string parameter)
+		{
+			model.CurrentParameter = parameter;
+			base.OnParameterSelected(parameter);
 		}
 		
 		protected override void ReloadProxy()
@@ -29,7 +35,7 @@ namespace MG.ParticleEditor.Controllers
 				ParticleDeclaration particleDeclaration;
 				if (model.DeclarationTable.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
 				{
-					parameterProxy = new MainParameterProxy(model, particleDeclaration, def);
+					parameterProxy = new MainParameterProxy(controller, model, particleDeclaration, def);
 				}
 			}
 

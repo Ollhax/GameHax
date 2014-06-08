@@ -53,7 +53,7 @@ namespace MG.ParticleEditorWindow
 			
 			propertyGridFrame = new Frame();
 			propertyGridFrame.Add(MetaProperties.Widget);
-			propertyGridFrame.BorderWidth = 3;
+			propertyGridFrame.BorderWidth = 0;
 			propertyGridFrame.ShadowType = ShadowType.In;
 			container.PackStart(propertyGridFrame, true, true, 0);
 		}

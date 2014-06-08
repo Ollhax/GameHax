@@ -11,6 +11,7 @@ namespace MG.ParticleEditor
 	{
 		public UndoHandler UndoHandler;
 		public string CurrentParameter;
+		public string CurrentSubParameter;
 		public int CurrentDefinitionId;
 		public ParticleDeclarationTable DeclarationTable;
 		public ParticleDefinitionTable DefinitionTable;
@@ -33,6 +34,7 @@ namespace MG.ParticleEditor
 			ParticleSystem = null;
 			UndoHandler.Clear();
 			CurrentParameter = null;
+			CurrentSubParameter = null;
 			CurrentDefinitionId = 0;
 			DefinitionIdCounter = 1;
 			Modified = false;

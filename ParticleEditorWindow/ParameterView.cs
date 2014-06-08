@@ -9,6 +9,7 @@ namespace MG.ParticleEditorWindow
 		internal PropertyGrid Widget;
 
 		public event Action Changed = delegate { };
+		public event Action StartedEdit = delegate { };
 		public event Action<bool> EndedEdit = delegate { };
 		public event Action<string> SelectionChanged = delegate { };
 		
@@ -16,6 +17,7 @@ namespace MG.ParticleEditorWindow
 		{
 			Widget = new PropertyGrid();
 			Widget.Changed += OnChanged;
+			Widget.StartedEdit += OnStartedEdit;
 			Widget.EndedEdit += OnEndedEdit;
 			Widget.SelectionChanged += OnSelectionChanged;
 		}
@@ -48,6 +50,11 @@ namespace MG.ParticleEditorWindow
 		private void OnChanged(object sender, EventArgs eventArgs)
 		{
 			Changed.Invoke();
+		}
+
+		private void OnStartedEdit(object sender, EventArgs eventArgs)
+		{
+			StartedEdit.Invoke();
 		}
 		
 		private void OnEndedEdit(object sender, PropertyGrid.EndedEditEventArgs endedEditEventArgs)

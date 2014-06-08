@@ -10,12 +10,43 @@
 				<Type>FilePath</Type>
 				<DefaultValue>weapon_laser_red.png</DefaultValue>				
 				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
-			</Parameter>
+			</Parameter>			
 			<Parameter>
-				<Name>Life</Name>
-				<PrettyName>Life</PrettyName>
+				<Name>EmitterLife</Name>
+				<PrettyName>Emitter Life</PrettyName>
+				<Description>The duration of this particle system, in seconds.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>				
+				<ValueStep>0.1</ValueStep>				
+				<MinValue>0.0</MinValue>				
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.01</ValueStep>
+						<MinValue>0.0</MinValue>
+						<MaxValue>1.0</MaxValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<!--<Parameter>
+				<Name>PlayOnce</Name>
+				<PrettyName>Play Once</PrettyName>
+				<Description>If true, play this effect once and then remove it.</Description>
+				<Category>Emitter</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>False</DefaultValue>				
+				<Parameters/>
+			</Parameter>-->
+			<Parameter>
+				<Name>ParticleLife</Name>
+				<PrettyName>Particle Life</PrettyName>
 				<Description>How long a particle will last, in seconds.</Description>
-				<Category>General</Category>
+				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>				
 				<ValueStep>0.1</ValueStep>				
@@ -23,14 +54,46 @@
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
-						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
+						<PrettyName>Random (+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.1</ValueStep>
+						<ValueStep>0.01</ValueStep>
 						<MinValue>0.0</MinValue>
+						<MaxValue>1.0</MaxValue>
 					</Parameter>
-				</Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Graph (Emitter)</PrettyName>
+						<Description></Description>
+						<Type>String</Type>
+						<DefaultValue>lin:0.0:0.0,lin:1.0:1.0</DefaultValue>
+						<!--
+						
+							EmitterLife,lin:0.0:0.0,lin:1.0:1.0
+							
+							0. Dependent parameter. If zero, x ranges from [0-inf). Else, x ranges from [0-1]. Y is bounded by the depended parameter's min/max value.
+							N. Parameters:
+								lin:x,y
+								bez:x,y,lx,ly,rx,ry
+						-->
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Graph (Particle)</PrettyName>
+						<Description></Description>
+						<Type>String</Type>
+						<DefaultValue></DefaultValue>
+						<!--
+							EmitterLife,lin:0.0:0.0,lin:1.0:1.0
+							
+							0. Dependent parameter. If zero, x ranges from [0-inf). Else, x ranges from [0-1]. Y is bounded by the depended parameter's min/max value.
+							N. Parameters:
+								lin:x,y
+								bez:x,y,lx,ly,rx,ry
+						-->
+					</Parameter>
+				</Parameters>				
 			</Parameter>
 			<Parameter>
 				<Name>SpawnRate</Name>
@@ -39,7 +102,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>10.0</DefaultValue>				
-				<ValueStep>0.1</ValueStep>				
+				<ValueStep>0.1</ValueStep>
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>
 			</Parameter>
@@ -68,12 +131,13 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
+						<Description>Amount of randomization for this parameter, as a fraction of the value. E.g, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>1.0</ValueStep>
+						<ValueStep>0.01</ValueStep>
 						<MinValue>0.0</MinValue>
-					</Parameter>					
+						<MaxValue>1.0</MaxValue>
+					</Parameter>
 				</Parameters>
 			</Parameter>
 			<Parameter>
@@ -89,11 +153,12 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
+						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>1.0</ValueStep>
+						<ValueStep>0.01</ValueStep>
 						<MinValue>0.0</MinValue>
+						<MaxValue>1.0</MaxValue>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -110,11 +175,12 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
+						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>1.0</ValueStep>
+						<ValueStep>0.01</ValueStep>
 						<MinValue>0.0</MinValue>
+						<MaxValue>1.0</MaxValue>
 					</Parameter>
 				</Parameters>
 			</Parameter>

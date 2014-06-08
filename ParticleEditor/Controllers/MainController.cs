@@ -21,6 +21,7 @@ namespace MG.ParticleEditor.Controllers
 		private TreeController treeController;
 		private MainParameterController mainParameterController;
 		private InfoController infoController;
+		private GraphController graphController;
 
 		private Stopwatch startStopwatch = new Stopwatch();
 		private Stopwatch frameStopwatch = new Stopwatch();
@@ -28,8 +29,10 @@ namespace MG.ParticleEditor.Controllers
 		public string StatusText;
 		public bool UpdateTree;
 		public bool UpdateTitle;
+		public bool UpdateParticleSystem;
 		public int SelectDefinition;
 		public string SelectParameter;
+		public string SelectSubParameter;
 
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
 		{
@@ -75,8 +78,9 @@ namespace MG.ParticleEditor.Controllers
 			documentController = new DocumentController(this, model);
 			renderController = new RenderController(this, model, assetHandler, window.RenderView);
 			treeController = new TreeController(this, model, window.TreeView);
-			mainParameterController = new MainParameterController(model, window.PropertyView);
+			mainParameterController = new MainParameterController(this, model, window.PropertyView);
 			infoController = new InfoController(this, model, window.InfoView);
+			graphController = new GraphController(this, model, window.GraphView);
 
 			window.FileNew += documentController.New;
 			window.FileOpen += documentController.Open;
@@ -87,7 +91,14 @@ namespace MG.ParticleEditor.Controllers
 			window.EditRedo += documentController.Redo;
 			treeController.ItemSelected += renderController.OnItemSelected;
 			treeController.ItemSelected += mainParameterController.OnChangeDefinition;
-			mainParameterController.ParameterSelected += infoController.SetInfo;
+			mainParameterController.ParameterSelected += s => infoController.UpdateInfo();
+			//mainParameterController.ParameterSelected += s => graphController.OnParameterSelected();
+			infoController.SubParameterController.ParameterSelected += graphController.OnSubParameterSelected;
+			infoController.SubParameterController.StartedEdit += mainParameterController.CancelEdit;
+			mainParameterController.StartedEdit += infoController.SubParameterController.CancelEdit;
+
+			graphController.GraphChanged += infoController.SubParameterController.OnChangeParameter;
+
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
 			documentController.New();
@@ -128,6 +139,16 @@ namespace MG.ParticleEditor.Controllers
 				UpdateTitleInternal();
 			}
 
+			if (UpdateParticleSystem)
+			{
+				UpdateParticleSystem = false;
+				if (model.ParticleSystem != null)
+				{
+					model.CurrentDefinition.ReloadCache();
+					model.ParticleSystem.Reload();
+				}		
+			}
+
 			if (SelectDefinition != 0)
 			{
 				treeController.SelectItem(SelectDefinition);
@@ -141,6 +162,12 @@ namespace MG.ParticleEditor.Controllers
 				//infoController.
 				//infoController.SetInfo(SelectParameter);
 				SelectParameter = null;
+			}
+
+			if (SelectSubParameter != null)
+			{
+				//infoController.SubParameterController.SelectParameter(SelectSubParameter);
+				SelectSubParameter = null;
 			}
 
 			var sensitive = window.Sensitive;

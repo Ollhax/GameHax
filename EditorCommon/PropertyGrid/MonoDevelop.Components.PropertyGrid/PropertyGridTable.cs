@@ -112,6 +112,8 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public event EventHandler SelectionChanged;
 
+		public event EventHandler StartedEdit;
+
 		public event PropertyGrid.DeselectEventHandler EndedEdit;
 
 		public PropertySort PropertySort { get; set; }
@@ -842,7 +844,12 @@ namespace MonoDevelop.Components.PropertyGrid
 				
 				editSession = null;
 				currentEditorRow = null;
-				SetSelection(null);
+
+				if (!cancel)
+				{
+					SetSelection(null);
+				}
+				
 				QueueDraw ();
 
 				if (EndedEdit != null)
@@ -879,6 +886,11 @@ namespace MonoDevelop.Components.PropertyGrid
 			else if (row.EditorBounds.Bottom > vs.Value + vs.PageSize)
 				vs.Value = row.EditorBounds.Bottom - vs.PageSize;
 			QueueDraw ();
+
+			if (StartedEdit != null)
+			{
+				StartedEdit.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		void SetSelection(TableRow row)

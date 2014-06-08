@@ -181,6 +181,12 @@ namespace MonoDevelop.Components.PropertyGrid
 			remove { tree.Changed -= value; }
 		}
 
+		public event EventHandler StartedEdit
+		{
+			add { tree.StartedEdit += value; }
+			remove { tree.StartedEdit -= value; }
+		}
+
 		public event DeselectEventHandler EndedEdit
 		{
 			add { tree.EndedEdit += value; }

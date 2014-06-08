@@ -104,6 +104,7 @@ namespace MG.Framework.Particle
 			}
 		}
 
+		public int Id;
 		public string Name;
 		public string Emitter;
 		public string Declaration;
@@ -111,9 +112,8 @@ namespace MG.Framework.Particle
 		public ParticleCollection Children = new ParticleCollection();
 		public ParticleDefinition Parent;
 
-		// Extra data used by editor, stored here for convenience.
-		public int Id;
-
+		private Dictionary<string, RandomFloat> cachedFloats = new Dictionary<string, RandomFloat>();
+		
 		public void CopyFrom(ParticleDefinition other)
 		{
 			Name = other.Name;
@@ -161,14 +161,7 @@ namespace MG.Framework.Particle
 				if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
 				if (!param.Value.Equals(otherParam)) return false;
 			}
-
-			//if (Children.Count != other.Children.Count) return false;
-			//for (int i = 0; i < Children.Count; i++)
-			//{
-			//    if (Children[i].eq)
-			//}
-			//if (Parent != other.Parent) return false;
-
+			
 			return true;
 		}
 
@@ -250,6 +243,24 @@ namespace MG.Framework.Particle
 
 				return stringWriter.ToString();
 			}
+		}
+
+		public void ReloadCache()
+		{
+			foreach (var f in cachedFloats.Values)
+			{
+				f.Reload();
+			}
+		}
+
+		internal RandomFloat GetFloatParameter(string parameterName)
+		{
+			RandomFloat f;
+			if (cachedFloats.TryGetValue(parameterName, out f)) return f;
+
+			f = new RandomFloat(this, parameterName);
+			cachedFloats.Add(parameterName, f);
+			return f;
 		}
 	}
 
