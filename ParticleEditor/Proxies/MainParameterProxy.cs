@@ -31,12 +31,12 @@ namespace MG.ParticleEditor.Proxies
 
 			foreach (var param in changeset.CurrentDefinition.Parameters)
 			{
-				var value = param.Value.Value;
+				var definitionParam = param.Value;
 
 				ParticleDeclaration.Parameter declarationParameter;
-				if (particleDeclaration.Parameters.TryGetValue(param.Value.Name, out declarationParameter))
+				if (particleDeclaration.Parameters.TryGetValue(definitionParam.Name, out declarationParameter))
 				{
-					var p = new AnyPropertyDescriptor(declarationParameter, value);
+					var p = new ParticleParameterDescriptor(declarationParameter, definitionParam);
 					p.PropertyChanged += () => OnPropertyChanged(p);
 					pdc.Add(p);
 				}
@@ -45,7 +45,7 @@ namespace MG.ParticleEditor.Proxies
 			return pdc;
 		}
 
-		private void OnPropertyChanged(AnyPropertyDescriptor property)
+		private void OnPropertyChanged(ParticleParameterDescriptor property)
 		{
 			changeset.CurrentParameter = property.DeclarationParameter.Name;
 		}

@@ -10,7 +10,7 @@ using MG.Framework.Utility;
 
 namespace MG.Framework.Converters
 {
-	public class FilePathConverter : ExpandableObjectConverter
+	public class FilePathConverter : TypeConverter
 	{
 		private PropertyDescriptorCollection propertyDescriptor;
 

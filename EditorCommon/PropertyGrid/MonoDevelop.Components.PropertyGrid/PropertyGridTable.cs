@@ -317,7 +317,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				IsCategory = false,
 				Property = prop,
 				Label = prop.DisplayName,
-				Instace = instance,
+				Instace = instance,				
 			};
 			rowList.Add (row);
 
@@ -325,8 +325,9 @@ namespace MonoDevelop.Components.PropertyGrid
 			if (typeof (ExpandableObjectConverter).IsAssignableFrom (tc.GetType ())) {
 				object cob = prop.GetValue (instance);
 				row.ChildRows = new List<TableRow> ();
-				foreach (PropertyDescriptor cprop in TypeDescriptor.GetConverter(cob.GetType()).GetProperties(cob))
-					AppendProperty (row.ChildRows, cprop, cob);
+				
+				foreach (PropertyDescriptor cprop in tc.GetProperties(cob)) //TypeDescriptor.GetConverter(cob.GetType()).GetProperties(cob))
+					AppendProperty(row.ChildRows, cprop, cob);
 			}
 		}
 

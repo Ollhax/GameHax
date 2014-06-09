@@ -1,28 +1,28 @@
 ﻿using System;
 using System.ComponentModel;
 
-using MG.Framework.Utility;
+using MG.EditorCommon.Editors;
+using MG.Framework.Particle;
 
-namespace MG.EditorCommon.Editors
+namespace MG.EditorCommon
 {
-	public class AnyPropertyDescriptor : PropertyDescriptor
+	public class ParticleParameterDescriptor : PropertyDescriptor
 	{
-		private Any any;
-		
-		public AnyPropertyDescriptor(ParticleDeclaration.Parameter declarationParameter, Any any)
+		public ParticleParameterDescriptor(ParticleDeclaration.Parameter declarationParameter, ParticleDefinition.Parameter definitionParameter)
 			: base(declarationParameter.Name, null)
 		{
 			DeclarationParameter = declarationParameter;
-			this.any = any;
+			DefinitionParameter = definitionParameter;
 		}
 		
 		public readonly ParticleDeclaration.Parameter DeclarationParameter;
+		public readonly ParticleDefinition.Parameter DefinitionParameter;
 		public event Action PropertyChanged;
 
 		public override string DisplayName { get { return DeclarationParameter.PrettyName; } }
 		public override bool CanResetValue(object component) { return false; }
 		public override Type ComponentType { get { return null; } }
-		public override object GetValue(object component) { return any.GetAsObject(); }
+		public override object GetValue(object component) { return DefinitionParameter.Value.GetAsObject(); }
 		public override string Description { get { return DeclarationParameter.Description; } }
 		public override string Category { get { return DeclarationParameter.Category; } }
 		public override bool IsReadOnly { get { return false; } }
@@ -33,9 +33,20 @@ namespace MG.EditorCommon.Editors
 		{
 			get
 			{
+				if (DeclarationParameter.Parameters.Count > 0)
+				{
+					return new ParticleSubParameterConverter(DeclarationParameter, DefinitionParameter);
+				}
+
 				if (DeclarationParameter.ValueList != null)
 				{
 					return new ValueListConverter(DeclarationParameter.ValueList);
+				}
+
+				if (base.Converter is ExpandableObjectConverter)
+				{
+					// Don't want anything but subparameters to expand, so create wrapper converters for expandable types
+				    return new NonExpandableObjectConverter(base.Converter);
 				}
 
 				return base.Converter;
@@ -44,7 +55,7 @@ namespace MG.EditorCommon.Editors
 
 		public override void SetValue(object component, object value)
 		{
-			any.Set(value);
+			DefinitionParameter.Value.Set(value);
 			if (PropertyChanged != null)
 			{
 				PropertyChanged.Invoke();
@@ -53,14 +64,14 @@ namespace MG.EditorCommon.Editors
 
 		public override Type PropertyType
 		{
-			get { return any.GetTypeOfValue(); }
+			get { return DefinitionParameter.Value.GetTypeOfValue(); }
 		}
 
 		public override object GetEditor(Type editorBaseType)
 		{
-			if (any.IsInt()) return new IntEditor();
-			if (any.IsFloat()) return new FloatEditor();
-			if (any.IsFilePath()) return new FilePathEditor();
+			if (DefinitionParameter.Value.IsInt()) return new IntEditor();
+			if (DefinitionParameter.Value.IsFloat()) return new FloatEditor();
+			if (DefinitionParameter.Value.IsFilePath()) return new FilePathEditor();
 
 			return base.GetEditor(editorBaseType);
 		}

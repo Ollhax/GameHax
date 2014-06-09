@@ -57,7 +57,9 @@
     <Compile Include="GtkTools.cs" />
     <Compile Include="HaxGLWidget\GLWidget.cs" />
     <Compile Include="HaxGLWidget\HaxGLWidget.cs" />
+    <Compile Include="NonExpandableObjectConverter.cs" />
     <Compile Include="ParticleDeclaration.cs" />
+    <Compile Include="ParticleSubParameterConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyGrid\Mono.TextEditor\HelperMethods.cs" />
     <Compile Include="PropertyGrid\Mono.TextEditor\Platform.cs" />
@@ -95,11 +97,11 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components\PangoCairoHelper.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />
     <Compile Include="HaxGraph\HaxGraph.cs" />
-    <Compile Include="Editors\AnyPropertyDescriptor.cs" />
+    <Compile Include="ParticleParameterDescriptor.cs" />
     <Compile Include="Editors\FilePathEditor.cs" />
     <Compile Include="Editors\FloatEditor.cs" />
     <Compile Include="Editors\IntEditor.cs" />
-    <Compile Include="Editors\ValueListConverter.cs" />
+    <Compile Include="ValueListConverter.cs" />
     <Compile Include="Undo\GenericUndoableAction.cs" />
     <Compile Include="Undo\IUndoableAction.cs" />
     <Compile Include="Undo\UndoableAction.cs" />
@@ -125,11 +127,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PropertyGrid\Resources\arrow-left.png">
-		<LogicalName>arrow-left.png</LogicalName>
-	</EmbeddedResource>
+      <LogicalName>arrow-left.png</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="PropertyGrid\Resources\arrow-right.png">
-		<LogicalName>arrow-right.png</LogicalName>
-	</EmbeddedResource>
+      <LogicalName>arrow-right.png</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

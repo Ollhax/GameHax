@@ -67,7 +67,7 @@ namespace MG.EditorCommon.Editors
 		public void Initialize(EditSession session)
 		{
 			propType = session.Property.PropertyType;
-			var declarationParameter = ((AnyPropertyDescriptor)session.Property).DeclarationParameter;
+			var declarationParameter = ((ParticleParameterDescriptor)session.Property).DeclarationParameter;
 
 			double min, max;
 

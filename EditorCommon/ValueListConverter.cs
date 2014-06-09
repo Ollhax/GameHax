@@ -5,7 +5,7 @@ using System.Globalization;
 
 using MG.Framework.Utility;
 
-namespace MG.EditorCommon.Editors
+namespace MG.EditorCommon
 {
 	public class ValueListConverter : TypeConverter
 	{

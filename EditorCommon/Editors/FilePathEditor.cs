@@ -17,7 +17,7 @@ namespace MG.EditorCommon.Editors
 		
 		public override void LaunchDialogue()
 		{
-			var declarationParameter = ((AnyPropertyDescriptor)Property).DeclarationParameter;
+			var declarationParameter = ((ParticleParameterDescriptor)Property).DeclarationParameter;
 
 			var kindAtt = this.Property.Attributes.OfType<FilePathIsFolderAttribute>().FirstOrDefault();
 			FileChooserAction action;
