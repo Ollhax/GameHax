@@ -66,6 +66,7 @@
     <Compile Include="Controllers\RenderController.cs" />
     <Compile Include="Controllers\TreeController.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="Proxies\ParticleParameterDescriptor.cs" />
     <Compile Include="Proxies\MainParameterProxy.cs" />
     <Compile Include="Proxies\SubParameterProxy.cs" />
     <Compile Include="Proxies\BaseParameterProxy.cs" />

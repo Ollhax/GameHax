@@ -49,12 +49,14 @@ namespace MonoDevelop.Components.PropertyGrid
 		bool draggingDivider;
 		Gdk.Pixbuf discloseDown;
 		Gdk.Pixbuf discloseUp;
+		Gdk.Pixbuf arrowLeft;
+		Gdk.Pixbuf arrowRight;
 		bool heightMeasured;
 
 		const int CategoryTopBottomPadding = 6;
 		const int CategoryLeftPadding = 8;
 		const int PropertyTopBottomPadding = 5;
-		const int PropertyLeftPadding = 8;
+		const int PropertyLeftPadding = 10;
 		const int PropertyContentLeftPadding = 8;
 		const int PropertyIndent = 8;
 		static readonly Cairo.Color LabelBackgroundColor = new Cairo.Color (250d/255d, 250d/255d, 250d/255d);
@@ -98,6 +100,8 @@ namespace MonoDevelop.Components.PropertyGrid
 			handCursor = new Cursor (CursorType.Hand1);
 			discloseDown = Gdk.Pixbuf.LoadFromResource ("disclose-arrow-down.png");
 			discloseUp = Gdk.Pixbuf.LoadFromResource ("disclose-arrow-up.png");
+			arrowLeft = Gdk.Pixbuf.LoadFromResource("arrow-left.png");
+			arrowRight = Gdk.Pixbuf.LoadFromResource("arrow-right.png");
 		}
 
 		protected override void OnDestroyed ()
@@ -313,7 +317,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				IsCategory = false,
 				Property = prop,
 				Label = prop.DisplayName,
-				Instace = instance
+				Instace = instance,
 			};
 			rowList.Add (row);
 
@@ -321,7 +325,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			if (typeof (ExpandableObjectConverter).IsAssignableFrom (tc.GetType ())) {
 				object cob = prop.GetValue (instance);
 				row.ChildRows = new List<TableRow> ();
-				foreach (PropertyDescriptor cprop in TypeDescriptor.GetProperties (cob))
+				foreach (PropertyDescriptor cprop in TypeDescriptor.GetConverter(cob.GetType()).GetProperties(cob))
 					AppendProperty (row.ChildRows, cprop, cob);
 			}
 		}
@@ -483,7 +487,9 @@ namespace MonoDevelop.Components.PropertyGrid
 					Pango.CairoHelper.ShowLayout (ctx, layout);
 
 					var img = r.Expanded ? discloseUp : discloseDown;
-					CairoHelper.SetSourcePixbuf (ctx, img, Allocation.Width - img.Width - CategoryTopBottomPadding, y + (rh - img.Height) / 2);
+					var area = GetCategoryArrowArea(r);
+
+					CairoHelper.SetSourcePixbuf(ctx, img, area.X + (area.Width - img.Width) / 2, area.Y + (area.Height- img.Height) / 2);
 					ctx.Paint ();
 
 					y += rh;
@@ -520,6 +526,13 @@ namespace MonoDevelop.Components.PropertyGrid
 						//ctx.Rectangle(dividerX + 1, r.EditorBounds.Y, Allocation.Width - dividerX - 1, r.EditorBounds.Height);
 						//ctx.SetSourceColor(new Cairo.Color(0.8, 0.9, 1.0, 1));
 						//ctx.Fill();
+					}
+
+					if (r.ChildRows != null && r.ChildRows.Count > 0)
+					{
+						var img = r.Expanded ? arrowLeft : arrowRight;
+						CairoHelper.SetSourcePixbuf(ctx, img, 2, y + (h + PropertyTopBottomPadding * 2) / 2 - img.Height / 2);
+						ctx.Paint();
 					}
 
 					ctx.Rectangle(0, y, dividerX, h + PropertyTopBottomPadding * 2);
@@ -582,12 +595,36 @@ namespace MonoDevelop.Components.PropertyGrid
 			}
 		}
 
+		private Gdk.Rectangle GetExpanderArea(TableRow r)
+		{
+			if (r.ChildRows == null || r.ChildRows.Count == 0) return Gdk.Rectangle.Zero;
+
+			int dx = (int)((double)Allocation.Width * dividerPosition);
+
+			Gdk.Rectangle b = r.EditorBounds;
+			b.X = 0;
+			b.Width = PropertyLeftPadding;
+			return b;
+		}
+
+		private Gdk.Rectangle GetCategoryArrowArea(TableRow r)
+		{
+			int rh = r.EditorBounds.Height;
+
+			Gdk.Rectangle b;
+			b.Width = 20;
+			b.Height = b.Width;
+			b.X = Allocation.Width - b.Width - CategoryTopBottomPadding;
+			b.Y = r.EditorBounds.Y + (rh - b.Height) / 2;
+			return b;
+		}
+
 		protected override bool OnButtonPressEvent (EventButton evnt)
 		{
 			if (evnt.Type != EventType.ButtonPress)
 				return base.OnButtonPressEvent (evnt);
 
-			var cat = rows.FirstOrDefault (r => r.IsCategory && r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y));
+			var cat = rows.FirstOrDefault(r => r.IsCategory && GetCategoryArrowArea(r).Contains((int)evnt.X, (int)evnt.Y));
 			if (cat != null) {
 				cat.Expanded = !cat.Expanded;
 				if (cat.Expanded)
@@ -605,22 +642,20 @@ namespace MonoDevelop.Components.PropertyGrid
 				return true;
 			}
 
-			//// HACK: Want end event to be able to change the active object. This recreates the rows, which is fine, but
-			//// the actual row resizing is not done by the time we want to check them for size. So, force update the sizes
-			//// here by performing all pending events.
-			//EndEditing();
-			//while (Application.EventsPending())
-			//{
-			//    Application.RunIteration(false);
-			//}
-			//// ~HACK
-
 			TableRow clickedEditor = null;
 			foreach (var r in GetAllRows (true).Where (r => !r.IsCategory))
 			{
-				Gdk.Rectangle bounds = r.EditorBounds;
-				bounds.X -= dx;
-				bounds.Width += dx;
+				var expanderBounds = GetExpanderArea(r);
+				if (!expanderBounds.IsEmpty && expanderBounds.Contains((int)evnt.X, (int)evnt.Y))
+				{
+					r.Expanded = !r.Expanded;
+					QueueResize();
+					return true;
+				}
+
+				Gdk.Rectangle selectionBounds = r.EditorBounds;
+				selectionBounds.X -= dx;
+				selectionBounds.Width += dx;
 
 				if (r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y))
 				{
@@ -628,7 +663,7 @@ namespace MonoDevelop.Components.PropertyGrid
 					break;
 				}
 				
-				if (bounds.Contains((int)evnt.X, (int)evnt.Y))
+				if (selectionBounds.Contains((int)evnt.X, (int)evnt.Y))
 				{
 					SetSelection(r);
 					QueueDraw();
@@ -667,10 +702,25 @@ namespace MonoDevelop.Components.PropertyGrid
 				return true;
 			}
 
-			var cat = rows.FirstOrDefault (r => r.IsCategory && r.EditorBounds.Contains ((int)evnt.X, (int)evnt.Y));
-			if (cat != null) {
+			var cat = rows.FirstOrDefault(r => r.IsCategory && GetCategoryArrowArea(r).Contains((int)evnt.X, (int)evnt.Y));
+			if (cat != null) 
+			{
 				GdkWindow.Cursor = handCursor;
 				return true;
+			}
+
+			foreach (var row in GetAllRows(true))
+			{
+				if (row.IsCategory) continue;
+
+				var area = GetExpanderArea(row);
+				if (area.IsEmpty) continue;
+
+				if (area.Contains((int)evnt.X, (int)evnt.Y))
+				{
+					GdkWindow.Cursor = handCursor;
+					return true;
+				}
 			}
 
 			int dx = (int)((double)Allocation.Width * dividerPosition);

@@ -123,7 +123,14 @@
       <LogicalName>MonoDevelop.Components.PropertyGrid.SortByCat.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="PropertyGrid\Resources\arrow-left.png">
+		<LogicalName>arrow-left.png</LogicalName>
+	</EmbeddedResource>
+    <EmbeddedResource Include="PropertyGrid\Resources\arrow-right.png">
+		<LogicalName>arrow-right.png</LogicalName>
+	</EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
