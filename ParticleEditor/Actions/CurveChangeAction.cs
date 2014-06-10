@@ -19,8 +19,7 @@ namespace MG.ParticleEditor.Actions
 			this.model = model;
 			CurrentDefinitionId = definitionId;
 			CurrentParameter = currentParameter;
-			CurrentSubParameter = currentSubParameter;
-
+			
 			var graphParameter = GetGraphParameter();
 			if (graphParameter != null)
 			{
@@ -63,20 +62,20 @@ namespace MG.ParticleEditor.Actions
 		
 		private ParticleDefinition.Parameter GetGraphParameter()
 		{
-			var def = model.DefinitionTable.Definitions.GetById(CurrentDefinitionId);
+			//var def = model.DefinitionTable.Definitions.GetById(CurrentDefinitionId);
 
-			if (def != null && CurrentSubParameter != null && CurrentSubParameter.StartsWith("Graph"))
-			{
-				ParticleDefinition.Parameter parameter;
-				if (def.Parameters.TryGetValue(CurrentParameter, out parameter))
-				{
-					ParticleDefinition.Parameter graphParameter;
-					if (parameter.Parameters.TryGetValue(CurrentSubParameter, out graphParameter))
-					{
-						return graphParameter;
-					}
-				}
-			}
+			//if (def != null && CurrentSubParameter != null && CurrentSubParameter.StartsWith("Graph"))
+			//{
+			//    ParticleDefinition.Parameter parameter;
+			//    if (def.Parameters.TryGetValue(CurrentParameter, out parameter))
+			//    {
+			//        ParticleDefinition.Parameter graphParameter;
+			//        if (parameter.Parameters.TryGetValue(CurrentSubParameter, out graphParameter))
+			//        {
+			//            return graphParameter;
+			//        }
+			//    }
+			//}
 
 			return null;
 		}

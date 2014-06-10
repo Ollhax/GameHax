@@ -63,8 +63,7 @@ namespace MG.ParticleEditorWindow
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
-		public readonly ParameterView PropertyView;
-		public readonly InfoView InfoView;
+		public readonly ParameterView ParameterView;
 		public readonly GraphView GraphView;
 
 		private bool sensitive = true;
@@ -100,8 +99,7 @@ namespace MG.ParticleEditorWindow
 			// Subcomponents
 			RenderView = new RenderView();
 			TreeView = new TreeView();
-			PropertyView = new ParameterView();
-			InfoView = new InfoView();
+			ParameterView = new ParameterView();
 			GraphView = new GraphView();
 
 			accelerators = new AccelGroup();
@@ -129,39 +127,34 @@ namespace MG.ParticleEditorWindow
 			var rightBox = new HBox(false, 1);
 			hpaneMain.Pack2(rightBox, true, true);
 			
-			// Setup gl widget and graph
-			var vpaneRight = new VPaned();
-			rightBox.PackStart(vpaneRight, true, true, 0);
-			vpaneRight.Position = window.DefaultHeight - 220;
+			//// Setup gl widget and graph
+			//var vpaneRight = new VPaned();
+			//rightBox.PackStart(vpaneRight, true, true, 0);
+			//vpaneRight.Position = window.DefaultHeight - 220;
 			
-			var f1 = new Frame();
-			f1.Add(RenderView.Widget);
-			f1.ShadowType = ShadowType.In;
+			//var f1 = new Frame();
+			//f1.Add(RenderView.Widget);
+			//f1.ShadowType = ShadowType.In;
 
-			var f2 = new Frame();
-			f2.Add(GraphView.Widget);
-			f2.ShadowType = ShadowType.None;
+			//var f2 = new Frame();
+			//f2.Add(GraphView.Widget);
+			//f2.ShadowType = ShadowType.None;
 			
-			vpaneRight.Pack1(f1, true, true);
-			vpaneRight.Pack2(f2, true, true);
+			//vpaneRight.Pack1(f1, true, true);
+			//vpaneRight.Pack2(f2, true, true);
+
+			rightBox.PackStart(RenderView.Widget, true, true, 0);
 
 			// Tree view
 			TreeView.Widget.SetSizeRequest(200, -1);
 			rightBox.PackEnd(TreeView.Widget, false, true, 0);
 
-			// Info view
-			var leftBox = new VBox(false, 0);
-			hpaneMain.Pack1(leftBox, false, false);
-			leftBox.PackEnd(InfoView.Widget, false, true, 0);
-
-			// Property view
-			leftBox.PackEnd(PropertyView.Widget, true, true, 0);
-			PropertyView.Widget.DividerPosition = 0.4;
+			// Parameter view
+			ParameterView.Widget.SetSizeRequest(300, -1);
+			hpaneMain.Pack1(ParameterView.Widget, false, false);
+			ParameterView.Widget.DividerPosition = 0.35;
 
 			window.ShowAll();
-
-			InfoView.Visible = false;
-			InfoView.MetaProperties.Widget.ShowToolbar = false;
 		}
 
 		public string StatusText
@@ -245,10 +238,9 @@ namespace MG.ParticleEditorWindow
 			set
 			{
 				sensitive = value;
-				PropertyView.Widget.Sensitive = value;
+				ParameterView.Widget.Sensitive = value;
 				TreeView.Widget.Sensitive = value;
 				RenderView.Widget.Sensitive = value;
-				InfoView.Widget.Sensitive = value;
 				GraphView.Widget.Sensitive = value;
 				editMenuItem.Sensitive = value;
 				fileSave.Sensitive = value;

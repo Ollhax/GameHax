@@ -70,7 +70,6 @@ namespace MG.ParticleEditor.Controllers
 			{
 				controller.SelectDefinition = particleAction.CurrentDefinitionId;
 				controller.SelectParameter = particleAction.CurrentParameter;
-				controller.SelectSubParameter = particleAction.CurrentSubParameter;
 			}
 		}
 

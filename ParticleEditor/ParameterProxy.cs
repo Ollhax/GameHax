@@ -7,9 +7,9 @@ using MG.Framework.Particle;
 using MG.ParticleEditor.Actions;
 using MG.ParticleEditor.Controllers;
 
-namespace MG.ParticleEditor.Proxies
+namespace MG.ParticleEditor
 {
-	abstract class BaseParameterProxy : ICustomTypeDescriptor
+	class ParameterProxy : ICustomTypeDescriptor
 	{
 		protected class Changeset : UndoableParticleAction
 		{
@@ -39,7 +39,6 @@ namespace MG.ParticleEditor.Proxies
 				undoGroup = changeset.undoGroup;
 				CurrentDefinitionId = changeset.CurrentDefinitionId;
 				CurrentParameter = changeset.CurrentParameter;
-				CurrentSubParameter = changeset.CurrentSubParameter;
 				CurrentDefinition = changeset.CurrentDefinition;
 				ChangedDefinition = new ParticleDefinition(changeset.ChangedDefinition);
 				OriginalDefinition = new ParticleDefinition(changeset.OriginalDefinition);
@@ -78,6 +77,10 @@ namespace MG.ParticleEditor.Proxies
 
 		public readonly int UndoGroup;
 
+		[Category("General")]
+		[ReadOnly(true)]
+		public string Name { get { return changeset.CurrentDefinition.Name; } set { changeset.CurrentDefinition.Name = value; } }
+		
 		public UndoableAction CommitAction()
 		{
 			// Move all changes (which are done in the CURRENT definition) to the CHANGED definition.
@@ -92,14 +95,14 @@ namespace MG.ParticleEditor.Proxies
 			return copy;
 		}
 
-		public BaseParameterProxy(MainController controller, Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition, int undoGroup)
+		public ParameterProxy(MainController controller, Model model, ParticleDeclaration particleDeclaration, ParticleDefinition particleDefinition)
 		{
 			this.controller = controller;
 			this.model = model;
 			this.particleDeclaration = particleDeclaration;
 			this.particleDefinition = particleDefinition;
-			UndoGroup = undoGroup;
-			changeset = new Changeset(controller, model, particleDefinition, undoGroup);
+			UndoGroup = 515135;
+			changeset = new Changeset(controller, model, particleDefinition, UndoGroup);
 		}
 		
 		//--------------------------------------
@@ -117,6 +120,34 @@ namespace MG.ParticleEditor.Proxies
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties() { return GetProperties(null); }
 		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) { return this; }
 
-		public abstract PropertyDescriptorCollection GetProperties(Attribute[] attributes);
+		public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+		{
+			var pdc = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
+			var typeProperties = TypeDescriptor.GetProperties(this.GetType(), attributes);
+			foreach (PropertyDescriptor pd in typeProperties)
+			{
+				pdc.Add(pd);
+			}
+
+			foreach (var param in changeset.CurrentDefinition.Parameters)
+			{
+				var definitionParam = param.Value;
+
+				ParticleDeclaration.Parameter declarationParameter;
+				if (particleDeclaration.Parameters.TryGetValue(definitionParam.Name, out declarationParameter))
+				{
+					var p = new ParticleParameterDescriptor(declarationParameter, definitionParam);
+					p.PropertyChanged += OnPropertyChanged;
+					pdc.Add(p);
+				}
+			}
+			
+			return pdc;
+		}
+
+		private void OnPropertyChanged(string name)
+		{
+			changeset.CurrentParameter = name;
+		}
 	}
 }

@@ -1,22 +1,23 @@
 ﻿using System;
 
+using MG.EditorCommon;
 using MG.EditorCommon.Undo;
-using MG.ParticleEditor.Proxies;
+using MG.Framework.Particle;
 using MG.ParticleEditorWindow;
 
 namespace MG.ParticleEditor.Controllers
 {
-	abstract class AbstractParameterController
+	class ParameterController
 	{
 		protected MainController controller;
 		protected Model model;
 		protected ParameterView parameterView;
-		protected BaseParameterProxy parameterProxy;
+		protected ParameterProxy parameterProxy;
 
 		public event Action<string> ParameterSelected = delegate { };
 		public event Action StartedEdit = delegate { };
 
-		public AbstractParameterController(MainController controller, Model model, ParameterView parameterView)
+		public ParameterController(MainController controller, Model model, ParameterView parameterView)
 		{
 			this.controller = controller;
 			this.model = model;
@@ -39,10 +40,32 @@ namespace MG.ParticleEditor.Controllers
 			parameterView.CancelChanges();
 		}
 
-		protected abstract void ReloadProxy();
-
-		protected virtual void OnParameterSelected(string parameter)
+		public void OnChangeDefinition(ParticleDefinition definition)
 		{
+			parameterView.CommitChanges();
+			ReloadProxy();
+		}
+
+		protected void ReloadProxy()
+		{
+			parameterProxy = null;
+
+			var def = model.CurrentDefinition;
+			if (def != null)
+			{
+				ParticleDeclaration particleDeclaration;
+				if (model.DeclarationTable.Declarations.TryGetValue(def.Declaration, out particleDeclaration))
+				{
+					parameterProxy = new ParameterProxy(controller, model, particleDeclaration, def);
+				}
+			}
+
+			parameterView.SetCurrentObject(parameterProxy);
+		}
+
+		protected void OnParameterSelected(string parameter)
+		{
+			model.CurrentParameter = parameter;
 			ParameterSelected(parameter);
 		}
 
