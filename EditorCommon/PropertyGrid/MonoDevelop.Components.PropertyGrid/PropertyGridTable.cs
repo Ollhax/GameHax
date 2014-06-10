@@ -964,31 +964,36 @@ namespace MonoDevelop.Components.PropertyGrid
 			}
 		}
 
-		void ExpandTo(TableRow row)
+		bool ExpandTo(TableRow row)
 		{
 			foreach (var r in GetAllRows(false))
 			{
 				if (r.ChildRows != null && r.ChildRows.Contains(row))
 				{
+					bool ret = !r.Expanded;
+
 					r.Expanded = true;
-					ExpandTo(r);
-					return;
+					ret |= ExpandTo(r);
+					return ret;
 				}
 			}
+
+			return false;
 		}
 
 		void SetSelection(TableRow row)
 		{
 			if (lastEditorRow == row)
 				return;
-			
-			lastEditorRow = row;
 
-			if (row != null)
+			if (row != null && ExpandTo(row))
 			{
-				ExpandTo(row);
+				QueueResize();
 			}
 
+			lastEditorRow = row;
+			QueueDraw();
+			
 			if (SelectionChanged != null)
 				SelectionChanged.Invoke(this, EventArgs.Empty);
 		}
