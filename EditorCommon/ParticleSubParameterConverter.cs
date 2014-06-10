@@ -8,14 +8,16 @@ namespace MG.EditorCommon
 	{
 		private PropertyDescriptorCollection propertyDescriptor;
 
-		public ParticleSubParameterConverter(ParticleDeclaration.Parameter declarationParameter, ParticleDefinition.Parameter definitionParameter)
+		public ParticleSubParameterConverter(ParticleParameterDescriptor.PropertyChangeDelegate changeDelegate, ParticleDeclaration.Parameter declarationParameter, ParticleDefinition.Parameter definitionParameter)
 		{
 			propertyDescriptor = new PropertyDescriptorCollection(new PropertyDescriptor[0]);
 
 			foreach (var paramPair in declarationParameter.Parameters)
 			{
 				ParticleDeclaration.Parameter parameter = paramPair.Value;
-				propertyDescriptor.Add(new ParticleParameterDescriptor(parameter, definitionParameter.Parameters[parameter.Name]));
+				var descriptor = new ParticleParameterDescriptor(parameter, definitionParameter.Parameters[parameter.Name]);
+				descriptor.PropertyChanged += delegate(string name) { changeDelegate(declarationParameter.Name + "." + name); };
+				propertyDescriptor.Add(descriptor);
 			}
 		}
 		

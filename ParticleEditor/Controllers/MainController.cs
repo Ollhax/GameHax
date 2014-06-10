@@ -158,9 +158,6 @@ namespace MG.ParticleEditor.Controllers
 			if (SelectParameter != null)
 			{
 				mainParameterController.SelectParameter(SelectParameter);
-				//treeController.SelectParameter(SelectParameter);
-				//infoController.
-				//infoController.SetInfo(SelectParameter);
 				SelectParameter = null;
 			}
 

@@ -76,6 +76,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			public bool IsCategory;
 			public string Label;
 			public object Instace;
+			public string FullName;
 			public PropertyDescriptor Property;
 			public List<TableRow> ChildRows;
 			public bool Expanded;
@@ -126,12 +127,12 @@ namespace MonoDevelop.Components.PropertyGrid
 
 		public string SelectedProperty
 		{
-			get { return lastEditorRow != null ? lastEditorRow.Property.Name : null; }
+			get { return lastEditorRow != null ? lastEditorRow.FullName : null; }
 			set
 			{
 				foreach (var r in GetAllRows(false).Where(r => !r.IsCategory))
 				{
-					if (r.Property.Name == value)
+					if (r.FullName == value)
 					{
 						SetSelection(r);
 						break;
@@ -176,40 +177,56 @@ namespace MonoDevelop.Components.PropertyGrid
 				EndEditing();
 			}
 		}
+		
+		Dictionary<string, bool> expandedStatus;
 
-		HashSet<string> expandedStatus;
-		int currentSelection;
+		private void SaveExpandedStatusRecursive(string parent, List<TableRow> rowChildren)
+		{
+			foreach (var r in rowChildren)
+			{
+				var name = parent + r.Label;
+				expandedStatus[name] = r.Expanded;
 
+				if (r.ChildRows != null && (r.Expanded || r.AnimatingExpand))
+				{
+					SaveExpandedStatusRecursive(name, r.ChildRows);
+				}
+			}
+		}
+
+		private void LoadExpandedStatusRecursive(string parent, List<TableRow> rowChildren)
+		{
+			foreach (var r in rowChildren)
+			{
+				var name = parent + r.Label;
+				bool expanded = false;
+				if (expandedStatus.TryGetValue(name, out expanded))
+				{
+					r.Expanded = expanded;
+				}
+
+				if (r.ChildRows != null && (r.Expanded || r.AnimatingExpand))
+				{
+					LoadExpandedStatusRecursive(name, r.ChildRows);
+				}
+			}
+		}
+		
 		public void SaveStatus ()
 		{
-			//// Olle: Save current selection as well as the expanded state. (Need to save scoll amount too?)
-			//currentSelection = GetAllRows(false).ToList().IndexOf(currentEditorRow);
-
-			expandedStatus = new HashSet<string> ();
-			foreach (var r in rows.Where (r => r.IsCategory))
-				if (!r.Expanded)
-					expandedStatus.Add (r.Label);
+			expandedStatus = new Dictionary<string, bool>();
+			SaveExpandedStatusRecursive("", rows);
 		}
 
 		public void RestoreStatus ()
 		{
 			if (expandedStatus == null)
 				return;
+
+			LoadExpandedStatusRecursive("", rows);
 			
-			foreach (var row in rows.Where (r => r.IsCategory))
-				row.Expanded = !expandedStatus.Contains (row.Label);
-
 			expandedStatus = null;
-
-			//if (currentSelection >= 0)
-			//{
-			//    var current = GetAllRows(false).ElementAtOrDefault(currentSelection);
-			//    if (current != null)
-			//    {
-			//        StartEditing(current);
-			//    }
-			//}
-
+			
 			QueueDraw ();
 			QueueResize ();
 		}
@@ -243,7 +260,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				if (PropertySort != PropertySort.NoSort)
 					sorted.Sort ((a,b) => a.DisplayName.CompareTo (b.DisplayName));
 				foreach (PropertyDescriptor pd in sorted)
-					AppendProperty (rows, pd, instance);
+					AppendProperty ("", rows, pd, instance);
 			}
 			else {
 				//sorted.Sort ((a,b) => {
@@ -276,7 +293,7 @@ namespace MonoDevelop.Components.PropertyGrid
 						lastCat = row;
 						rowList = row.ChildRows;
 					}
-					AppendProperty (rowList, pd, instance);
+					AppendProperty ("", rowList, pd, instance);
 				}
 			}
 			QueueDraw ();
@@ -308,15 +325,18 @@ namespace MonoDevelop.Components.PropertyGrid
 	
 		void AppendProperty (PropertyDescriptor prop, object instance)
 		{
-			AppendProperty (rows, prop, new InstanceData (instance));
+			AppendProperty ("", rows, prop, new InstanceData (instance));
 		}
 		
-		void AppendProperty (List<TableRow> rowList, PropertyDescriptor prop, object instance)
+		void AppendProperty (string parentName, List<TableRow> rowList, PropertyDescriptor prop, object instance)
 		{
+			string fullName = parentName + (!string.IsNullOrEmpty(parentName) ? "." : "") + prop.Name;
+
 			TableRow row = new TableRow () {
 				IsCategory = false,
 				Property = prop,
 				Label = prop.DisplayName,
+				FullName = fullName,
 				Instace = instance,				
 			};
 			rowList.Add (row);
@@ -327,7 +347,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				row.ChildRows = new List<TableRow> ();
 				
 				foreach (PropertyDescriptor cprop in tc.GetProperties(cob)) //TypeDescriptor.GetConverter(cob.GetType()).GetProperties(cob))
-					AppendProperty(row.ChildRows, cprop, cob);
+					AppendProperty(fullName, row.ChildRows, cprop, cob);
 			}
 		}
 
@@ -944,12 +964,30 @@ namespace MonoDevelop.Components.PropertyGrid
 			}
 		}
 
+		void ExpandTo(TableRow row)
+		{
+			foreach (var r in GetAllRows(false))
+			{
+				if (r.ChildRows != null && r.ChildRows.Contains(row))
+				{
+					r.Expanded = true;
+					ExpandTo(r);
+					return;
+				}
+			}
+		}
+
 		void SetSelection(TableRow row)
 		{
 			if (lastEditorRow == row)
 				return;
-
+			
 			lastEditorRow = row;
+
+			if (row != null)
+			{
+				ExpandTo(row);
+			}
 
 			if (SelectionChanged != null)
 				SelectionChanged.Invoke(this, EventArgs.Empty);

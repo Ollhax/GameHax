@@ -17,8 +17,9 @@ namespace MG.EditorCommon
 		
 		public readonly ParticleDeclaration.Parameter DeclarationParameter;
 		public readonly ParticleDefinition.Parameter DefinitionParameter;
-		public event Action PropertyChanged;
-
+		public delegate void PropertyChangeDelegate(string propertyName);
+		public event PropertyChangeDelegate PropertyChanged;
+		
 		public override string DisplayName { get { return DeclarationParameter.PrettyName; } }
 		public override bool CanResetValue(object component) { return false; }
 		public override Type ComponentType { get { return null; } }
@@ -35,7 +36,7 @@ namespace MG.EditorCommon
 			{
 				if (DeclarationParameter.Parameters.Count > 0)
 				{
-					return new ParticleSubParameterConverter(DeclarationParameter, DefinitionParameter);
+					return new ParticleSubParameterConverter(PropertyChanged, DeclarationParameter, DefinitionParameter);
 				}
 
 				if (DeclarationParameter.ValueList != null)
@@ -58,7 +59,7 @@ namespace MG.EditorCommon
 			DefinitionParameter.Value.Set(value);
 			if (PropertyChanged != null)
 			{
-				PropertyChanged.Invoke();
+				PropertyChanged.Invoke(DeclarationParameter.Name);
 			}
 		}
 

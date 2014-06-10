@@ -39,7 +39,7 @@ namespace MG.ParticleEditor.Proxies
 					if (declarationParameter.Parameters.TryGetValue(definitionParam.Name, out declarationSubParameter))
 					{
 						var p = new ParticleParameterDescriptor(declarationSubParameter, definitionParam);
-						p.PropertyChanged += () => OnPropertyChanged(p);
+						//p.PropertyChanged += () => OnPropertyChanged(p);
 						pdc.Add(p);
 					}
 				}
@@ -48,9 +48,9 @@ namespace MG.ParticleEditor.Proxies
 			return pdc;
 		}
 		
-		private void OnPropertyChanged(ParticleParameterDescriptor property)
-		{
-			changeset.CurrentSubParameter = property.DeclarationParameter.Name;
-		}
+		//private void OnPropertyChanged(ParticleParameterDescriptor property)
+		//{
+		//    changeset.CurrentSubParameter = property.DeclarationParameter.Name;
+		//}
 	}
 }
