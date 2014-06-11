@@ -122,7 +122,7 @@ namespace MG.ParticleEditorWindow
 			// Setup left/right pane
 			var hpaneMain = new HPaned();
 			menuBox.PackStart(hpaneMain, true, true, 0);
-			hpaneMain.Position = 200;
+			hpaneMain.Position = 300;
 			
 			var rightBox = new HBox(false, 1);
 			hpaneMain.Pack2(rightBox, true, true);
@@ -150,7 +150,7 @@ namespace MG.ParticleEditorWindow
 			rightBox.PackEnd(TreeView.Widget, false, true, 0);
 
 			// Parameter view
-			ParameterView.Widget.SetSizeRequest(300, -1);
+			ParameterView.Widget.SetSizeRequest(150, -1);
 			hpaneMain.Pack1(ParameterView.Widget, false, false);
 			ParameterView.Widget.DividerPosition = 0.35;
 

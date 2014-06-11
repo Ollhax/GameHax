@@ -90,6 +90,22 @@ namespace MG.Framework.Numerics
 		public ExtrapolateMode ExtrapolateModeRight = ExtrapolateMode.Equal;
 
 		/// <summary>
+		/// Return the first entry, or null if the curve has no entries.
+		/// </summary> 
+		public CurveEntry Front
+		{
+			get { if (entries.Count > 0) return entries[0]; return null; }
+		}
+
+		/// <summary>
+		/// Return the last entry, or null if the curve has no entries.
+		/// </summary> 
+		public CurveEntry End
+		{
+			get { if (entries.Count > 0) return entries[entries.Count - 1]; return null; }
+		}
+
+		/// <summary>
 		/// Create an empty curve.
 		/// </summary>
 		public ComplexCurve()

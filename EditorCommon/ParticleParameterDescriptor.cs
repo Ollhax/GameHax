@@ -73,6 +73,7 @@ namespace MG.EditorCommon
 			if (DefinitionParameter.Value.IsInt()) return new IntEditor();
 			if (DefinitionParameter.Value.IsFloat()) return new FloatEditor();
 			if (DefinitionParameter.Value.IsFilePath()) return new FilePathEditor();
+			if (DefinitionParameter.Value.IsComplexCurve()) return new GraphEditor();
 
 			return base.GetEditor(editorBaseType);
 		}

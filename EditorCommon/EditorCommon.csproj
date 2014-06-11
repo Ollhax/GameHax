@@ -54,6 +54,7 @@
     <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editors\GraphEditor.cs" />
     <Compile Include="GtkTools.cs" />
     <Compile Include="HaxGLWidget\GLWidget.cs" />
     <Compile Include="HaxGLWidget\HaxGLWidget.cs" />

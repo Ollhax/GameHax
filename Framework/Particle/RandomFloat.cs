@@ -39,20 +39,14 @@ namespace MG.Framework.Particle
 				ParticleDefinition.Parameter parameterGraph;
 				if (parameter.Parameters.TryGetValue("GraphEmitter", out parameterGraph))
 				{
-					var s = parameterGraph.Value.Get<string>();
-					if (!string.IsNullOrEmpty(s))
-					{
-						graphEmitter = ComplexCurve.FromInvariantString(parameterGraph.Value.Get<string>());
-					}
+					graphEmitter = parameterGraph.Value.Get<ComplexCurve>();
+					if (graphEmitter.Count == 0) graphEmitter = null;
 				}
 
 				if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
 				{
-					var s = parameterGraph.Value.Get<string>();
-					if (!string.IsNullOrEmpty(s))
-					{
-						graphParticle = ComplexCurve.FromInvariantString(parameterGraph.Value.Get<string>());
-					}
+					graphParticle = parameterGraph.Value.Get<ComplexCurve>();
+					if (graphParticle.Count == 0) graphParticle = null;
 				}
 			}
 		}
