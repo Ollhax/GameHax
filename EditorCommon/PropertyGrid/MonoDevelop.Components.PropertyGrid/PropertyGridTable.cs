@@ -671,6 +671,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				{
 					r.Expanded = !r.Expanded;
 					QueueResize();
+					EndEditing();
 					return true;
 				}
 
