@@ -29,7 +29,7 @@ namespace MG.Framework.Particle
 				graphEmitter = null;
 				graphParticle = null;
 				randomValue = 0;
-
+				
 				ParticleDefinition.Parameter parameterRandom;
 				if (parameter.Parameters.TryGetValue("Random", out parameterRandom))
 				{
@@ -63,7 +63,8 @@ namespace MG.Framework.Particle
 
 			if (randomValue != 0)
 			{
-				v += MathTools.Random().NextFloat(-randomValue * v, randomValue * v);
+				v += MathTools.Random().NextFloat(-randomValue, randomValue);
+
 			}
 
 			if (graphEmitter != null)

@@ -24,12 +24,11 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
+						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.01</ValueStep>
-						<MinValue>0.0</MinValue>
-						<MaxValue>1.0</MaxValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>						
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -39,8 +38,7 @@
 				<Description>If true, play this effect once and then remove it.</Description>
 				<Category>Emitter</Category>
 				<Type>Boolean</Type>
-				<DefaultValue>False</DefaultValue>				
-				<Parameters/>
+				<DefaultValue>False</DefaultValue>
 			</Parameter>-->
 			<Parameter>
 				<Name>ParticleLife</Name>
@@ -54,13 +52,12 @@
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
-						<PrettyName>Random (+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.01</ValueStep>
+						<ValueStep>0.1</ValueStep>
 						<MinValue>0.0</MinValue>
-						<MaxValue>1.0</MaxValue>
 					</Parameter>
 					<Parameter>
 						<Name>GraphEmitter</Name>
@@ -105,6 +102,17 @@
 				<ValueStep>0.1</ValueStep>
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>Direction</Name>
@@ -126,19 +134,7 @@
 				<DefaultValue>360.0</DefaultValue>				
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
-				<MaxValue>360.0</MaxValue>
-				<Parameters>
-					<Parameter>
-						<Name>Random</Name>
-						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter, as a fraction of the value. E.g, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
-						<Type>Single</Type>
-						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.01</ValueStep>
-						<MinValue>0.0</MinValue>
-						<MaxValue>1.0</MaxValue>
-					</Parameter>
-				</Parameters>
+				<MaxValue>360.0</MaxValue>				
 			</Parameter>
 			<Parameter>
 				<Name>OffsetX</Name>
@@ -153,12 +149,11 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
+						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.01</ValueStep>
+						<ValueStep>1.0</ValueStep>
 						<MinValue>0.0</MinValue>
-						<MaxValue>1.0</MaxValue>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -175,12 +170,11 @@
 					<Parameter>
 						<Name>Random</Name>
 						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter, as a fraction of the value. I.e, if random = 0.5 and the value is 5, the output value is randomized between [2.5, 7.5].</Description>
+						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.01</ValueStep>
-						<MinValue>0.0</MinValue>
-						<MaxValue>1.0</MaxValue>
+						<ValueStep>1.0</ValueStep>
+						<MinValue>0.0</MinValue>						
 					</Parameter>
 				</Parameters>
 			</Parameter>

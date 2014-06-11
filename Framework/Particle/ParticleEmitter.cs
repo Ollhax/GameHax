@@ -76,11 +76,31 @@ namespace MG.Framework.Particle
 
 			if (Alive)
 			{
-				var secondsPerParticle = 1.0f / paramSpawnRate.Get(EmitterLifeFractional, 0);
-				while (particleSpawnAccumulator >= secondsPerParticle)
+				int insaneCounter = 100;
+				while (insaneCounter > 0)
 				{
-					Emit();
-					particleSpawnAccumulator -= secondsPerParticle;
+					insaneCounter--;
+
+					var spawnRate = paramSpawnRate.Get(EmitterLifeFractional, 0);
+
+					if (spawnRate > 0)
+					{
+						var secondsPerParticle = 1.0f / spawnRate;
+
+						if (particleSpawnAccumulator >= secondsPerParticle)
+						{
+							Emit();
+							particleSpawnAccumulator -= secondsPerParticle;
+						}
+						else
+						{
+							break;
+						}
+					}
+					else
+					{
+						break;
+					}
 				}
 			}
 		}
