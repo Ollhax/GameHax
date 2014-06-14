@@ -693,10 +693,13 @@ namespace MonoDevelop.Components.PropertyGrid
 				}
 			}
 			if (clickedEditor != null && clickedEditor.Enabled)
+			{
 				StartEditing (clickedEditor);
-			else {
-				EndEditing ();
-				GrabFocus ();
+			}
+			else
+			{
+				EndEditing();
+				GrabFocus();
 			}
 
 			return base.OnButtonPressEvent (evnt);

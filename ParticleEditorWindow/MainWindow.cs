@@ -64,8 +64,7 @@ namespace MG.ParticleEditorWindow
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
 		public readonly ParameterView ParameterView;
-		public readonly GraphView GraphView;
-
+		
 		private bool sensitive = true;
 		
 		public string Title { get { return window.Title; } set { window.Title = value; } }
@@ -100,8 +99,7 @@ namespace MG.ParticleEditorWindow
 			RenderView = new RenderView();
 			TreeView = new TreeView();
 			ParameterView = new ParameterView();
-			GraphView = new GraphView();
-
+			
 			accelerators = new AccelGroup();
 			window.AddAccelGroup(accelerators);
 
@@ -241,7 +239,6 @@ namespace MG.ParticleEditorWindow
 				ParameterView.Widget.Sensitive = value;
 				TreeView.Widget.Sensitive = value;
 				RenderView.Widget.Sensitive = value;
-				GraphView.Widget.Sensitive = value;
 				editMenuItem.Sensitive = value;
 				fileSave.Sensitive = value;
 				fileSaveAs.Sensitive = value;

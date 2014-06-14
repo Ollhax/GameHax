@@ -56,7 +56,6 @@
     <Compile Include="Actions\RemoveAction.cs" />
     <Compile Include="Actions\RenameAction.cs" />
     <Compile Include="Actions\MoveAction.cs" />
-    <Compile Include="Controllers\GraphController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ParameterController.cs" />

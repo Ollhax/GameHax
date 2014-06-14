@@ -63,6 +63,8 @@ namespace MG.EditorCommon.HaxGraph
 			ctx.Save();
 			ctx.Rectangle(bounds.X, bounds.Y, bounds.Width, bounds.Height);
 			ctx.Clip();
+
+			var drawBounds = new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
 			
 			if (state == StateType.Selected)
 			{
@@ -79,23 +81,57 @@ namespace MG.EditorCommon.HaxGraph
 			if (curve.Count > 0)
 			{
 				ctx.SetSourceRGBA(1, 0, 0, 1);
+				
+				int numSteps = (int)drawBounds.Width;
 
-				var p = ToScreen(curve.Front, new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
+				var p = Evaluate(0, drawBounds);
+				var l = p;
 				ctx.MoveTo(p.X, p.Y);
+				ctx.LineWidth = 1.0;
+				SetDash(ctx, true);
 
-				foreach (var entry in curve)
+				var startFraction = curve.Front.Value.X;
+				var endFraction = curve.End.Value.X;
+				int part = 0;
+				
+				for (int i = 0; i < numSteps; i++)
 				{
-					p = ToScreen(entry, new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
+					var fraction = (float)i / numSteps;
+															
+					p = Evaluate(fraction, drawBounds);
 					ctx.LineTo(p.X, p.Y);
+					l = p;
+
+					bool pastStart = (fraction >= startFraction && part == 0);
+					bool pastEnd = (fraction >= endFraction && part == 1);
+					if (pastStart || pastEnd)
+					{
+						part++;						
+						ctx.Stroke();
+						SetDash(ctx, pastEnd);
+						ctx.MoveTo(l.X, l.Y);
+					}
 				}
 
-				ctx.LineWidth = 1.0;
 				ctx.Stroke();
 			}
 
 			ctx.Restore();
 		}
-
+		
+		private void SetDash(Cairo.Context ctx, bool enabled)
+		{
+			if (enabled)
+			{
+				ctx.SetDash(new double[] { 4, 4 }, 1);
+				ctx.LineCap = Cairo.LineCap.Butt;
+			}
+			else
+			{
+				ctx.SetDash(new double[] { }, 0);
+			}
+		}
+		
 		private void DrawingAreaOnExposeEvent(object o, ExposeEventArgs args)
 		{
 			using (Cairo.Context c = Gdk.CairoHelper.Create(args.Event.Window))
@@ -124,10 +160,27 @@ namespace MG.EditorCommon.HaxGraph
 
 		protected override bool OnButtonPressEvent(EventButton evnt)
 		{
+			//var point = new Vector2((float)evnt.X, (float)evnt.Y);
+			//var area = GraphArea;
+			//if (curve != null)
+			//{
+			//    foreach (var entry in curve)
+			//    {
+			//        var entryScreenPoint = ToScreen(entry, area);
+			//        if ((entryScreenPoint - point).Length() < 10)
+			//        {
+			//            Console.WriteLine(entry.Value.X);
+			//        }
+			//    }
+			//}
+
 			//drawingArea.SetSizeRequest(200, 200);
 			
 			//Console.WriteLine(evnt.Button);
-			return base.OnButtonPressEvent(evnt);
+			//evnt.
+
+			//return base.OnButtonPressEvent(evnt);
+			return true;
 		}
 
 		//protected override bool OnButtonReleaseEvent(EventButton evnt)
@@ -140,13 +193,19 @@ namespace MG.EditorCommon.HaxGraph
 			get
 			{
 				var area = Allocation;
-				return new RectangleF(area.X, area.Y, area.Width * 0.9f, area.Height);
+				return new RectangleF(area.X, area.Y, area.Width, area.Height);
 			}
 		}
-
-		private Vector2 ToScreen(CurveEntry entry, RectangleF area)
+		
+		private Vector2 Evaluate(float x, RectangleF area)
 		{
-			return new Vector2(area.X + entry.Value.X * area.Width, area.Y + area.Height - entry.Value.Y * area.Height);
+			var y = curve.Evaluate(x);
+			return ToScreen(new Vector2(x, y), area);
+		}
+
+		private Vector2 ToScreen(Vector2 value, RectangleF area)
+		{
+			return new Vector2(area.X + value.X * area.Width, area.Y + area.Height - value.Y * area.Height);
 		}
 
 		private Vector2 FromScreen(Vector2 screenPoint, RectangleF area)
@@ -156,15 +215,16 @@ namespace MG.EditorCommon.HaxGraph
 
 		private void OnMotionNotifyEvent(object o, MotionNotifyEventArgs args)
 		{
-			var mousePos = new Vector2((float)args.Event.X, (float)args.Event.Y);
-			args.RetVal = true;
-
+			var area = GraphArea;
+			args.RetVal = true; // Don't delegate this event to our parent
+			var mousePos = new Vector2((float)args.Event.X, (float)args.Event.Y) + area.Position;
+			
 			if (curve != null)
 			{
 				CurveEntry currentEntry = null;
 				foreach (var entry in curve)
 				{
-					var screenPoint = ToScreen(entry, GraphArea);
+					var screenPoint = ToScreen(entry.Value, area);
 					
 					float length = (screenPoint - mousePos).Length();
 					
@@ -177,7 +237,7 @@ namespace MG.EditorCommon.HaxGraph
 
 				if (currentEntry != null)
 				{
-					var replacement = new CurveEntry(FromScreen(mousePos, GraphArea));
+					var replacement = new CurveEntry(FromScreen(mousePos, area));
 					curve.Remove(currentEntry);
 					curve.Add(replacement);
 					QueueDraw();

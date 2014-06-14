@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 using Gtk;
 
@@ -19,7 +18,6 @@ namespace MG.EditorCommon.Editors
 
 			graph = new HaxGraph.HaxGraph();
 			graph.Curve = (ComplexCurve)Property.GetValue(Instance);
-			
 		}
 
 		public override void GetSize(int availableWidth, out int width, out int height)
@@ -48,12 +46,18 @@ namespace MG.EditorCommon.Editors
 		public GraphPropertyEditor()
 		{
 			graph = new HaxGraph.HaxGraph();
-			
+			graph.Changed += GraphOnChanged;
+
 			Add(graph);
 			ShowAll();
 
 			SizeRequested += OnSizeRequested;
 			SizeAllocated += OnSizeAllocated;
+		}
+
+		private void GraphOnChanged()
+		{
+			ValueChanged.Invoke(this, EventArgs.Empty);
 		}
 
 		void OnSizeRequested(object o, SizeRequestedArgs args)
@@ -85,49 +89,11 @@ namespace MG.EditorCommon.Editors
 				graph.SizeAllocate(his);
 			}
 		}
-
-
+		
 		public void Initialize(EditSession session)
 		{
 			if (session.Property.PropertyType != typeof(ComplexCurve))
 				throw new ApplicationException("Graph editor does not support editing values of type " + session.Property.PropertyType);
-			
-			//propType = session.Property.PropertyType;
-			//var declarationParameter = ((ParticleParameterDescriptor)session.Property).DeclarationParameter;
-
-			//double min, max;
-
-			//if (propType == typeof(double))
-			//{
-			//    min = Double.MinValue;
-			//    max = Double.MaxValue;
-			//}
-			//else if (propType == typeof(float))
-			//{
-			//    min = float.MinValue;
-			//    max = float.MaxValue;
-			//}
-			//else
-			//    throw new ApplicationException("FloatRange editor does not support editing values of type " + propType);
-
-			//if (declarationParameter.MinValue != null && declarationParameter.MinValue.IsFloat())
-			//{
-			//    min = (double)Convert.ChangeType(declarationParameter.MinValue.Get<float>(), typeof(double));
-			//}
-
-			//if (declarationParameter.MaxValue != null && declarationParameter.MaxValue.IsFloat())
-			//{
-			//    max = (double)Convert.ChangeType(declarationParameter.MaxValue.Get<float>(), typeof(double));
-			//}
-
-			//if (declarationParameter.ValueStep != null && declarationParameter.ValueStep.IsFloat())
-			//{
-			//    float step = declarationParameter.ValueStep.Get<float>();
-			//    SetIncrements(step, step);
-			//}
-
-			//SetRange(min, max);
-			//Digits = declarationParameter.ValueDigits;
 		}
 		
 		object IPropertyEditor.Value
