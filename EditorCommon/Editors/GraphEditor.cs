@@ -48,11 +48,18 @@ namespace MG.EditorCommon.Editors
 			graph = new HaxGraph.HaxGraph();
 			graph.Changed += GraphOnChanged;
 
+			KeyPressEvent += OnKeyPressEvent;
+
 			Add(graph);
 			ShowAll();
-
+			
 			SizeRequested += OnSizeRequested;
 			SizeAllocated += OnSizeAllocated;
+		}
+
+		private void OnKeyPressEvent(object o, KeyPressEventArgs args)
+		{
+			graph.KeyPress(args.Event);
 		}
 
 		private void GraphOnChanged()
@@ -72,7 +79,6 @@ namespace MG.EditorCommon.Editors
 					width = height = 80;
 				SetSizeRequest(width + pad * 2, height + pad * 2);
 			}
-
 		}
 
 		void OnSizeAllocated(object o, SizeAllocatedArgs args)
