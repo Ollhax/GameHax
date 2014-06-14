@@ -31,6 +31,8 @@ namespace MG.EditorCommon
 				Name = XmlHelper.ReadString(node, "Name");
 				PrettyName = XmlHelper.ReadString(node, "PrettyName", Name);
 				Description = XmlHelper.ReadString(node, "Description", "");
+				Description = Description.Replace("\\n", "\n");
+				
 				Category = XmlHelper.ReadString(node, "Category", "");
 				DefaultValue = new Any(XmlHelper.ReadString(node, "DefaultValue"), type);
 				ValueDigits = XmlHelper.ReadUInt(node, "ValueDigits", 1);

@@ -828,7 +828,7 @@ namespace MonoDevelop.Components.PropertyGrid
 				//tooltipWindow.Markup = s.ToString();
 				//tooltipWindow.ShowPopup(this, new Gdk.Rectangle(0, row.EditorBounds.Y, Allocation.Width, row.EditorBounds.Height), PopupPosition.Right);
 
-				TooltipText = row.Property.Description;
+				TooltipMarkup = row.Property.Description;
 				//TooltipText = row.Property.DisplayName;
 			}
 		}

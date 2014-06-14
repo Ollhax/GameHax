@@ -50,6 +50,7 @@ namespace MG.Framework.Particle
 		private ParticleDefinition.Parameter paramTexture;
 		private ParticleDefinition.Parameter paramSortMode;
 		private ParticleDefinition.Parameter paramBlendMode;
+		private bool paramParticleInfinite;
 
 		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
 		{
@@ -74,6 +75,7 @@ namespace MG.Framework.Particle
 			paramTexture = Definition.Parameters["Texture"];
 			paramSortMode = Definition.Parameters["SortMode"];
 			paramBlendMode = Definition.Parameters["BlendMode"];
+			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
 
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
@@ -110,6 +112,23 @@ namespace MG.Framework.Particle
 			SubSystems.Clear();
 		}
 		
+		public bool Dead
+		{
+			get
+			{
+				if (emitter.Alive) return false;
+				if (paramParticleInfinite) return false;
+				if (particleData.ActiveParticles > 0) return false;
+
+				foreach (var system in SubSystems)
+				{
+					if (!system.Dead) return false;
+				}
+
+				return true;
+			}
+		}
+
 		public void Update(Time time)
 		{
 			if (time.ElapsedSeconds <= 0)
@@ -121,13 +140,13 @@ namespace MG.Framework.Particle
 			var particlePosition = particleData.Get<Vector2>("Position");
 			var particleVelocity = particleData.Get<Vector2>("Velocity");
 			var particleLife = particleData.Get<float>("Life");
-
+			
 			for (int i = 0; i < particleData.ActiveParticles;)
 			{
 				particlePosition[i] += particleVelocity[i] * time.ElapsedSeconds;
 				particleAge[i] += time.ElapsedSeconds;
 
-				if (particleAge[i] >= particleLife[i])
+				if (!paramParticleInfinite && particleAge[i] >= particleLife[i])
 				{
 					Destroy(i);
 				}

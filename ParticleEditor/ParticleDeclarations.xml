@@ -14,37 +14,31 @@
 			<Parameter>
 				<Name>EmitterLife</Name>
 				<PrettyName>Emitter Life</PrettyName>
-				<Description>The duration of this particle system, in seconds.</Description>
+				<Description>The duration of this particle system, in seconds. If zeroed, this emitter is disabled.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>				
+				<DefaultValue>1.0</DefaultValue>				
 				<ValueStep>0.1</ValueStep>				
 				<MinValue>0.0</MinValue>				
-				<Parameters>
-					<Parameter>
-						<Name>Random</Name>
-						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
-						<Type>Single</Type>
-						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.1</ValueStep>
-						<MinValue>0.0</MinValue>						
-					</Parameter>
-				</Parameters>
-			</Parameter>
-			<!--<Parameter>
-				<Name>PlayOnce</Name>
-				<PrettyName>Play Once</PrettyName>
-				<Description>If true, play this effect once and then remove it.</Description>
+			</Parameter>			
+			<Parameter>
+				<Name>EmitterLoop</Name>
+				<PrettyName>Loop Mode</PrettyName>
+				<Description>How emitters are handled after their life time has expired:\n\n&lt;b&gt;Loop:&lt;/b&gt; The emitter life resets after reaching the maximum.\n\n&lt;b&gt;Infinite:&lt;/b&gt;The emitter goes on forever. The life setting only applies to graphs using the emitter life as parameter.\n\n&lt;b&gt;Once:&lt;/b&gt; The emitter is destroyed after playing once.</Description>
 				<Category>Emitter</Category>
-				<Type>Boolean</Type>
-				<DefaultValue>False</DefaultValue>
-			</Parameter>-->
+				<Type>Int32</Type>
+				<DefaultValue>0</DefaultValue>
+				<ValueList>
+					<Value Name="Loop" Value="0"/>
+					<Value Name="Infinite" Value="1"/>
+					<Value Name="Once" Value="2"/>
+				</ValueList>
+			</Parameter>
 			<Parameter>
 				<Name>ParticleLife</Name>
 				<PrettyName>Particle Life</PrettyName>
-				<Description>How long a particle will last, in seconds.</Description>
-				<Category>Emitter</Category>
+				<Description>How long a particle will last, in seconds. If zeroed, particles are not created.</Description>
+				<Category>Particle</Category>
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>				
 				<ValueStep>0.1</ValueStep>				
@@ -91,6 +85,14 @@
 						-->
 					</Parameter>
 				</Parameters>				
+			</Parameter>
+			<Parameter>
+				<Name>ParticleInfinite</Name>
+				<PrettyName>Infinite Particles</PrettyName>
+				<Description>If true, particles do not die after exceeding their life time.</Description>
+				<Category>Particle</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>false</DefaultValue>
 			</Parameter>
 			<Parameter>
 				<Name>SpawnRate</Name>

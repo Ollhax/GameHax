@@ -16,6 +16,7 @@ namespace MG.Framework.Particle
 			this.particleDefinition = particleDefinition;
 		}
 
+		public abstract bool Alive { get; }
 		public abstract void Update(Time time);
 		public abstract int Emit();
 		public abstract void Clear();
@@ -24,6 +25,14 @@ namespace MG.Framework.Particle
 
 	public abstract class BasicParticleEmitter : ParticleEmitter
 	{
+		enum EmitterLoopMode
+		{
+			Loop = 0,
+			Infinite = 1,
+			Once = 2
+		}
+
+		private EmitterLoopMode paramEmitterLoopMode;
 		private float paramEmitterLife;
 		private RandomFloat paramParticleLife;
 		private RandomFloat paramSpawnRate;
@@ -37,8 +46,8 @@ namespace MG.Framework.Particle
 		private float emitterAge;
 		private float particleSpawnAccumulator;
 
-		public float EmitterLifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : emitterAge; } }
-		public bool Alive { get { return paramEmitterLife <= 0 || emitterAge < paramEmitterLife; } }
+		public float EmitterLifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : 0; } }
+		public override bool Alive { get { return paramEmitterLife > 0 && (emitterAge < paramEmitterLife || paramEmitterLoopMode == EmitterLoopMode.Infinite); } }
 
 		public BasicParticleEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
@@ -57,19 +66,23 @@ namespace MG.Framework.Particle
 		public override void Reload()
 		{
 			paramEmitterLife = particleDefinition.Parameters["EmitterLife"].Value.Get<float>();
+			paramEmitterLoopMode = (EmitterLoopMode)particleDefinition.Parameters["EmitterLoop"].Value.Get<int>();
 		}
 
 		public override void Clear()
 		{
+			emitterAge = 0;
 			particleSpawnAccumulator = 0;
 		}
 
 		public override void Update(Time time)
 		{
+			if (paramEmitterLife <= 0) return;
+
 			particleSpawnAccumulator += time.ElapsedSeconds;
 			emitterAge += time.ElapsedSeconds;
 
-			if (paramEmitterLife > 0 && emitterAge > paramEmitterLife)
+			if (emitterAge > paramEmitterLife && paramEmitterLoopMode == EmitterLoopMode.Loop)
 			{
 				emitterAge %= paramEmitterLife;
 			}

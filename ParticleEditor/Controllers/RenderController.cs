@@ -37,7 +37,18 @@ namespace MG.ParticleEditor.Controllers
 			if (particleSystem != null)
 			{
 				particleSystem.Update(time);
-				controller.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
+				
+				if (particleSystem.Dead)
+				{
+					model.ParticleManager.Destroy(particleSystem);
+					model.ParticleSystem = null;
+
+					controller.StatusText = "Particle system dead.";
+				}
+				else
+				{
+					controller.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
+				}
 			}
 		}
 
