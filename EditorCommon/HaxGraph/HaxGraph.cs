@@ -8,6 +8,7 @@ using MG.Framework.Numerics;
 using Action = System.Action;
 using Curve = MG.Framework.Numerics.Curve;
 using Key = Gdk.Key;
+using Rectangle = Gdk.Rectangle;
 
 namespace MG.EditorCommon.HaxGraph
 {
@@ -27,8 +28,22 @@ namespace MG.EditorCommon.HaxGraph
 		private bool movingEntry;
 		private Handle hoveredHandle = Handle.None;
 		private Handle movingHandle = Handle.None;
+
+		private void ClearState()
+		{
+			hoveredEntry = null;
+			selectedEntry = null;
+			movingEntry = false;
+			hoveredHandle = Handle.None;
+			movingHandle = Handle.None;
+		}
 		
 		public event Action Changed = delegate { };
+
+		private Gdk.Pixbuf iconCurveDelete;
+		private Gdk.Pixbuf iconCurveLinear;
+		private Gdk.Pixbuf iconCurveBezier;
+		private Gdk.Pixbuf iconCurveClear;
 		
 		public Curve Curve
 		{
@@ -47,13 +62,18 @@ namespace MG.EditorCommon.HaxGraph
 		{
 			ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 255)); // Disable graying on selection
 			AddEvents((int)(EventMask.AllEventsMask));
+			
+			iconCurveDelete = Gdk.Pixbuf.LoadFromResource("chart_curve_delete.png");
+			iconCurveBezier = Gdk.Pixbuf.LoadFromResource("chart_curve.png");
+			iconCurveLinear = Gdk.Pixbuf.LoadFromResource("chart_line.png");
+			iconCurveClear = Gdk.Pixbuf.LoadFromResource("cancel.png");
 		}
 		
 		public void Draw(Gdk.Drawable window, Cairo.Context ctx, Gdk.Rectangle bounds, StateType state)
 		{
 			if (curve == null)
 				return;
-			
+
 			var drawBounds = GraphAreaFromBounds(new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height));
 			var outerBounds = drawBounds.Inflated(3);
 			
@@ -217,7 +237,8 @@ namespace MG.EditorCommon.HaxGraph
 		{
 			using (Cairo.Context c = Gdk.CairoHelper.Create(evnt.Window))
 			{
-				Draw(evnt.Window, c, evnt.Area, StateType.Selected);
+				var area = LocalAllocation; //evnt.Area
+				Draw(evnt.Window, c, area, StateType.Selected);
 			}
 			return true;
 		}
@@ -230,13 +251,22 @@ namespace MG.EditorCommon.HaxGraph
 			return new RectangleF(bounds.X + padding, bounds.Y + padding, bounds.Width - padding * 2 - paddingRight, bounds.Height - padding * 2 - paddingBottom);
 		}
 
-		private RectangleF GraphArea
+		private Rectangle LocalAllocation
 		{
 			get
 			{
 				var area = Allocation;
 				area.X = 0;
 				area.Y = 0;
+				return area;
+			}
+		}
+
+		private RectangleF GraphArea
+		{
+			get
+			{
+				var area = LocalAllocation;
 				return GraphAreaFromBounds(new RectangleF(area.X, area.Y, area.Width, area.Height));
 			}
 		}
@@ -311,24 +341,39 @@ namespace MG.EditorCommon.HaxGraph
 
 		protected override bool OnButtonPressEvent(EventButton evnt)
 		{
-			var area = GraphArea;
 			var mousePos = new Vector2((float)evnt.X, (float)evnt.Y);
+			if (evnt.Button == 1)
+			{
+				return LeftMousePress(mousePos);
+			}
+			
+			if (evnt.Button == 3)
+			{
+				return RightMousePress(mousePos);
+			}
+
+			return true;
+		}
+		
+		private bool LeftMousePress(Vector2 position)
+		{
+			var area = GraphArea;
 
 			if (!movingEntry)
 			{
 				if (movingHandle == Handle.None)
 				{
-					movingHandle = GetHandle(mousePos, area);
+					movingHandle = GetHandle(position, area);
 				}
 
 				if (movingHandle == Handle.None)
 				{
-					selectedEntry = GetEntryAt(mousePos);
+					selectedEntry = GetEntryAt(position);
 					QueueDraw();
 
 					if (selectedEntry != null)
 					{
-						movingHandle = GetHandle(mousePos, area);
+						movingHandle = GetHandle(position, area);
 
 						if (movingHandle == Handle.None && !movingEntry)
 						{
@@ -337,10 +382,10 @@ namespace MG.EditorCommon.HaxGraph
 					}
 					else
 					{
-						var p = FromScreen(mousePos, area);
+						var p = FromScreen(position, area);
 						var closestP = Evaluate(p.X, area);
 
-						if (curve.Count == 0 || Math.Abs(closestP.Y - mousePos.Y) < 12)
+						if (curve.Count == 0 || Math.Abs(closestP.Y - position.Y) < 12)
 						{
 							selectedEntry = CreateCurveEntry(p);
 							movingEntry = true;
@@ -348,15 +393,48 @@ namespace MG.EditorCommon.HaxGraph
 					}
 				}
 			}
-			
+
 			if (movingEntry)
 			{
-				UpdateEntryPosition(mousePos);
+				UpdateEntryPosition(position);
 			}
-			
+
 			return true;
 		}
-		
+
+		private bool RightMousePress(Vector2 position)
+		{
+			selectedEntry = GetEntryAt(position);
+			QueueDraw();
+
+			var m = new Menu();
+
+			if (selectedEntry != null)
+			{
+				var currentEntry = selectedEntry;
+
+				AddMenuEntry(m, "Linear", iconCurveLinear, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Linear); });
+				AddMenuEntry(m, "Bezier", iconCurveBezier, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Bezier); });
+				m.Add(new SeparatorMenuItem());
+				AddMenuEntry(m, "Delete", iconCurveDelete, delegate { RemoveCurveEntry(currentEntry); });
+			}
+
+			AddMenuEntry(m, "Clear All", iconCurveClear, delegate { ClearCurve(); });
+
+			m.ShowAll();
+			m.Popup();
+
+			return true;
+		}
+
+		private void AddMenuEntry(Menu menu, string text, Pixbuf icon, Action action)
+		{
+			var item = new ImageMenuItem(text);
+			item.Image = new Gtk.Image(icon);
+			item.ButtonPressEvent += delegate { action(); };
+			menu.Add(item);
+		}
+
 		protected override bool OnButtonReleaseEvent(EventButton evnt)
 		{
 			if (movingEntry)
@@ -485,6 +563,14 @@ namespace MG.EditorCommon.HaxGraph
 		private void RemoveCurveEntry(CurveEntry entry)
 		{
 			curve.Remove(entry);
+			ClearState();
+			OnCurveChange();
+		}
+
+		private void ClearCurve()
+		{
+			curve.Clear();
+			ClearState();
 			OnCurveChange();
 		}
 
@@ -505,7 +591,7 @@ namespace MG.EditorCommon.HaxGraph
 			curve.Remove(oldEntry);
 			curve.Add(entry);
 			OnCurveChange();
-
+			
 			return entry;
 		}
 	}

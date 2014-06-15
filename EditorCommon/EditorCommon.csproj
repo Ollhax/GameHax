@@ -142,5 +142,18 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup />
+  <ItemGroup>
+	<EmbeddedResource Include="HaxGraph\chart_curve.png">
+      <LogicalName>chart_curve.png</LogicalName>
+    </EmbeddedResource>
+	<EmbeddedResource Include="HaxGraph\chart_curve_delete.png">
+      <LogicalName>chart_curve_delete.png</LogicalName>
+    </EmbeddedResource>
+	<EmbeddedResource Include="HaxGraph\chart_line.png">
+      <LogicalName>chart_line.png</LogicalName>
+    </EmbeddedResource>
+	<EmbeddedResource Include="HaxGraph\cancel.png">
+      <LogicalName>cancel.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
