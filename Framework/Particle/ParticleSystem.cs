@@ -51,6 +51,7 @@ namespace MG.Framework.Particle
 		private ParticleDefinition.Parameter paramSortMode;
 		private ParticleDefinition.Parameter paramBlendMode;
 		private bool paramParticleInfinite;
+		private Gradient paramParticleColor;
 
 		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
 		{
@@ -76,6 +77,7 @@ namespace MG.Framework.Particle
 			paramSortMode = Definition.Parameters["SortMode"];
 			paramBlendMode = Definition.Parameters["BlendMode"];
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
+			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
 
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
@@ -171,6 +173,13 @@ namespace MG.Framework.Particle
 		{
 			var quadBatch = renderContext.QuadBatch;
 			var blendMode = (BlendMode)paramBlendMode.Value.Get<int>();
+
+			// TODO: Figure out the best blending mode
+			if (blendMode == BlendMode.BlendmodeAlpha)
+			{
+				blendMode = BlendMode.BlendmodeNonPremultiplied;
+			}
+
 			quadBatch.Begin(transform, blendMode);
 			
 			for (int i = 0; i < particleSortIndex.Count; i++)
@@ -198,8 +207,8 @@ namespace MG.Framework.Particle
 				var p = particlePosition[index];
 				var a = particleAge[index];
 				var l = particleLife[index];
-				var color = Color.Lerp(new Color(1.0f, 1.0f, 1.0f, 1.0f), new Color(0, 0, 0, 0), a / l);
-
+				var color = paramParticleColor.Evaluate(a / l);
+				
 				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, 1, 1, 0), color, particleTexture.Size / 2, 0);
 			}
 			

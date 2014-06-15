@@ -426,48 +426,5 @@ namespace MG.Framework.Numerics
 		{
 			return entries.GetEnumerator();
 		}
-
-		/// <summary>
-		/// Convert this curve to a string representation that does not change depending on culture.
-		/// </summary>
-		/// <returns>An invariant string representation.</returns>
-		public string ToInvariantString()
-		{
-			var converter = TypeDescriptor.GetConverter(typeof(Curve));
-
-			try
-			{
-				var s = converter.ConvertToString(null, CultureInfo.InvariantCulture, this);
-				return s;
-			}
-			catch (Exception)
-			{
-
-			}
-
-			return "";
-		}
-
-		/// <summary>
-		/// Create a curve from a string.
-		/// </summary>
-		/// <param name="s">Source string.</param>
-		/// <returns>A new curve, or null if the conversion was unsuccessful.</returns>
-		public static Curve FromInvariantString(string s)
-		{
-			var converter = TypeDescriptor.GetConverter(typeof(Curve));
-
-			try
-			{
-				var graph = converter.ConvertFromString(null, CultureInfo.InvariantCulture, s) as Curve;
-				return graph;
-			}
-			catch (Exception)
-			{
-
-			}
-
-			return null;
-		}
 	}
 }

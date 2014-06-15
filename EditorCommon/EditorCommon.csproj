@@ -54,10 +54,12 @@
     <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editors\GradientEditor.cs" />
     <Compile Include="Editors\GraphEditor.cs" />
     <Compile Include="GtkTools.cs" />
     <Compile Include="HaxGLWidget\GLWidget.cs" />
     <Compile Include="HaxGLWidget\HaxGLWidget.cs" />
+    <Compile Include="HaxGradient\HaxGradient.cs" />
     <Compile Include="NonExpandableObjectConverter.cs" />
     <Compile Include="ParticleDeclaration.cs" />
     <Compile Include="ParticleSubParameterConverter.cs" />
@@ -143,16 +145,16 @@
   </Target>
   -->
   <ItemGroup>
-	<EmbeddedResource Include="HaxGraph\chart_curve.png">
+    <EmbeddedResource Include="HaxGraph\chart_curve.png">
       <LogicalName>chart_curve.png</LogicalName>
     </EmbeddedResource>
-	<EmbeddedResource Include="HaxGraph\chart_curve_delete.png">
+    <EmbeddedResource Include="HaxGraph\chart_curve_delete.png">
       <LogicalName>chart_curve_delete.png</LogicalName>
     </EmbeddedResource>
-	<EmbeddedResource Include="HaxGraph\chart_line.png">
+    <EmbeddedResource Include="HaxGraph\chart_line.png">
       <LogicalName>chart_line.png</LogicalName>
     </EmbeddedResource>
-	<EmbeddedResource Include="HaxGraph\cancel.png">
+    <EmbeddedResource Include="HaxGraph\cancel.png">
       <LogicalName>cancel.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

@@ -16,9 +16,10 @@ namespace MG.Framework.Utility
 		public Any(Tween value) { boxedValue = value; }
 		public Any(Color value) { boxedValue = value; }
 		public Any(Curve value) { boxedValue = value; }
-		public Any(string value) { boxedValue = value; }
+		public Any(string value) { boxedValue = value; }		
 		public Any(Vector2 value) { boxedValue = value; }
 		public Any(Vector2I value) { boxedValue = value; }
+		public Any(Gradient value) { boxedValue = value; }
 		public Any(FilePath value) { boxedValue = value; }
 		public Any(RectangleF value) { boxedValue = value; }
 		public Any(RelativePosition2 value) { boxedValue = value; }
@@ -38,6 +39,7 @@ namespace MG.Framework.Utility
 			else if (nameOfType == typeof(string).Name) boxedValue = valueAsString;
 			else if (nameOfType == typeof(Vector2).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Vector2)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(Vector2I).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Vector2I)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
+			else if (nameOfType == typeof(Gradient).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Gradient)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(FilePath).Name) boxedValue = new FilePath(valueAsString);
 			else if (nameOfType == typeof(RectangleF).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(RectangleF)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(RelativePosition2).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(RelativePosition2)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
@@ -55,6 +57,7 @@ namespace MG.Framework.Utility
 			else if (other.boxedValue is string) boxedValue = ((string)other.boxedValue).Clone();
 			else if (other.boxedValue is Vector2) boxedValue = (Vector2)(other.boxedValue);
 			else if (other.boxedValue is Vector2I) boxedValue = (Vector2I)(other.boxedValue);
+			else if (other.boxedValue is Gradient) boxedValue = new Gradient((Gradient)(other.boxedValue));
 			else if (other.boxedValue is FilePath) boxedValue = (FilePath)(other.boxedValue);
 			else if (other.boxedValue is RectangleF) boxedValue = (RectangleF)(other.boxedValue);
 			else if (other.boxedValue is RelativePosition2) boxedValue = (RelativePosition2)(other.boxedValue);
@@ -76,6 +79,7 @@ namespace MG.Framework.Utility
 		public string Get(string defaultValue) { if (boxedValue is string) return (string)boxedValue; return defaultValue; }
 		public Vector2 Get(Vector2 defaultValue) { if (boxedValue is Vector2) return (Vector2)boxedValue; return defaultValue; }
 		public Vector2I Get(Vector2I defaultValue) { if (boxedValue is Vector2I) return (Vector2I)boxedValue; return defaultValue; }
+		public Gradient Get(Gradient defaultValue) { if (boxedValue is Gradient) return (Gradient)boxedValue; return defaultValue; }
 		public FilePath Get(FilePath defaultValue) { if (boxedValue is FilePath) return (FilePath)boxedValue; return defaultValue; }
 		public RectangleF Get(RectangleF defaultValue) { if (boxedValue is RectangleF) return (RectangleF)boxedValue; return defaultValue; }
 		public RelativePosition2 Get(RelativePosition2 defaultValue) { if (boxedValue is RelativePosition2) return (RelativePosition2)boxedValue; return defaultValue; }
@@ -94,6 +98,7 @@ namespace MG.Framework.Utility
 		public bool IsString() { return boxedValue is string; }
 		public bool IsVector2() { return boxedValue is Vector2; }
 		public bool IsVector2I() { return boxedValue is Vector2I; }
+		public bool IsGradient() { return boxedValue is Gradient; }
 		public bool IsFilePath() { return boxedValue is FilePath; }
 		public bool IsRectangleF() { return boxedValue is RectangleF; }
 		public bool IsRelativePosition2() { return boxedValue is RelativePosition2; }

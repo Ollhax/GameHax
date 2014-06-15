@@ -120,8 +120,8 @@ namespace MG.EditorCommon.HaxGraph
 				var startFraction = curve.Front.Value.X;
 				var endFraction = curve.End.Value.X;
 				int part = 0;
-				
-				for (int i = 0; i <= numSteps; i++)
+
+				for (int i = 0; numSteps > 0 && i <= numSteps; i++)
 				{
 					var fraction = (float)i / numSteps;
 					

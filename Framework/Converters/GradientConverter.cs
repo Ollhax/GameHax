@@ -7,7 +7,7 @@ using MG.Framework.Numerics;
 
 namespace MG.Framework.Converters
 {
-	public class CurveConverter : TypeConverter
+	public class GradientConverter : TypeConverter
 	{
 		private const char ListSeparator = ';';
 		private const char EntrySeparator = ':';
@@ -26,30 +26,22 @@ namespace MG.Framework.Converters
 		{
 			if (value is string)
 			{
-				var curve = new Curve();
+				var gradient = new Gradient();
 				string[] entries = ((string)value).Split(new[] { ListSeparator }, StringSplitOptions.None);
 				foreach (var entryText in entries)
 				{
 					var p = entryText.Split(new[] { EntrySeparator });
 
-					if (p.Length == 3 && p[0] == "lin")
+					if (p.Length == 2)
 					{
-						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
-						var entry = new CurveEntry(position);
-						curve.Add(entry);
-					}
-
-					if (p.Length == 7 && p[1] == "bez")
-					{
-						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
-						var left = new Vector2(Convert.ToSingle(p[3], culture), Convert.ToSingle(p[4], culture));
-						var right = new Vector2(Convert.ToSingle(p[5], culture), Convert.ToSingle(p[6], culture));
-						var entry = new CurveEntry(position, left, right);
-						curve.Add(entry);
+						var position = Convert.ToSingle(p[0], culture);
+						var color = (Color)TypeDescriptor.GetConverter(typeof(Color)).ConvertFromString(context, culture, p[1]);
+						var entry = new GradientEntry(position, color);
+						gradient.Add(entry);
 					}
 				}
 
-				return curve;
+				return gradient;
 			}
 
 			return base.ConvertFrom(context, culture, value);
@@ -59,24 +51,14 @@ namespace MG.Framework.Converters
 		{
 			if (destinationType == typeof(string))
 			{
-				var curve = (Curve)value;
+				var gradient = (Gradient)value;
 				var builder = new StringBuilder();
-				int count = curve.Count;
-				foreach (var entry in curve)
+				int count = gradient.Count;
+				foreach (var entry in gradient)
 				{
-					switch (entry.Type)
-					{
-						case CurveEntry.EntryType.Linear:
-							builder.Append("lin");
-							break;
-						case CurveEntry.EntryType.Bezier:
-							builder.Append("bez");
-							break;
-					}
+					builder.Append(entry.Position.ToString(culture));
 					builder.Append(EntrySeparator);
-					builder.Append(entry.Value.X.ToString(culture));
-					builder.Append(EntrySeparator);
-					builder.Append(entry.Value.Y.ToString(culture));
+					builder.Append(TypeDescriptor.GetConverter(typeof(Color)).ConvertToString(context, culture, entry.Color));
 					count--;
 
 					if (count >= 1)
