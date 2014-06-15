@@ -6,6 +6,7 @@ using Gdk;
 using MG.Framework.Numerics;
 
 using Action = System.Action;
+using Curve = MG.Framework.Numerics.Curve;
 using Key = Gdk.Key;
 
 namespace MG.EditorCommon.HaxGraph
@@ -20,7 +21,7 @@ namespace MG.EditorCommon.HaxGraph
 			Right,
 		}
 
-		private ComplexCurve curve;
+		private Curve curve;
 		private CurveEntry hoveredEntry;
 		private CurveEntry selectedEntry;
 		private bool movingEntry;
@@ -28,7 +29,7 @@ namespace MG.EditorCommon.HaxGraph
 		
 		public event Action Changed = delegate { };
 		
-		public ComplexCurve Curve
+		public Curve Curve
 		{
 			get { return curve; }
 

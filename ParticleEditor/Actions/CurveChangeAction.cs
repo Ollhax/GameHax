@@ -9,9 +9,9 @@ namespace MG.ParticleEditor.Actions
 		private MainController controller;
 		private Model model;
 		
-		public ComplexCurve Curve;
-		private ComplexCurve oldCurve;
-		private ComplexCurve newCurve;
+		public Curve Curve;
+		private Curve oldCurve;
+		private Curve newCurve;
 
 		public CurveChangeAction(MainController controller, Model model, int definitionId, string currentParameter, string currentSubParameter)
 		{
@@ -23,8 +23,8 @@ namespace MG.ParticleEditor.Actions
 			var graphParameter = GetGraphParameter();
 			if (graphParameter != null)
 			{
-				Curve = ComplexCurve.FromInvariantString(graphParameter.Value.Get<string>());
-				oldCurve = new ComplexCurve(Curve);
+				Curve = Curve.FromInvariantString(graphParameter.Value.Get<string>());
+				oldCurve = new Curve(Curve);
 			}
 		}
 		
@@ -44,7 +44,7 @@ namespace MG.ParticleEditor.Actions
 			if (graphParameter == null) return false;
 			
 			graphParameter.Value.Set(Curve.ToString());
-			newCurve = new ComplexCurve(Curve);
+			newCurve = new Curve(Curve);
 			return true;
 		}
 

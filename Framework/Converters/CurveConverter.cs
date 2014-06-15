@@ -7,7 +7,7 @@ using MG.Framework.Numerics;
 
 namespace MG.Framework.Converters
 {
-	public class ComplexCurveConverter : TypeConverter
+	public class CurveConverter : TypeConverter
 	{
 		private const char EntrySeparator = ':';
 
@@ -25,7 +25,7 @@ namespace MG.Framework.Converters
 		{
 			if (value is string)
 			{
-				var curve = new ComplexCurve();
+				var curve = new Curve();
 				string[] entries = ((string)value).Split(new [] { culture.TextInfo.ListSeparator }, StringSplitOptions.None);
 				foreach (var entryText in entries)
 				{
@@ -58,7 +58,7 @@ namespace MG.Framework.Converters
 		{
 			if (destinationType == typeof(string))
 			{
-				var curve = (ComplexCurve)value;
+				var curve = (Curve)value;
 				var builder = new StringBuilder();
 				int count = curve.Count;
 				foreach (var entry in curve)

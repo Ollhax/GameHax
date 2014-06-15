@@ -64,7 +64,7 @@
     <Compile Include="Audio\OggStream.cs" />
     <Compile Include="Collections\OrderedDictionary.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
-    <Compile Include="Converters\ComplexCurveConverter.cs" />
+    <Compile Include="Converters\CurveConverter.cs" />
     <Compile Include="Converters\FieldPropertyDescriptor.cs" />
     <Compile Include="Converters\FilePathConverter.cs" />
     <Compile Include="Converters\MathTypeConverter.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="Input\InputTranslation.cs" />
     <Compile Include="Input\KeyModifier.cs" />
     <Compile Include="Input\Range.cs" />
-    <Compile Include="Numerics\ComplexCurve.cs" />
+    <Compile Include="Numerics\Curve.cs" />
     <Compile Include="Particle\ParticleCollection.cs" />
     <Compile Include="Particle\ParticleData.cs" />
     <Compile Include="Particle\ParticleDataArray.cs" />

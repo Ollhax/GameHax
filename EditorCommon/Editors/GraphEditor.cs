@@ -6,6 +6,8 @@ using MG.Framework.Numerics;
 
 using MonoDevelop.Components.PropertyGrid;
 
+using Curve = MG.Framework.Numerics.Curve;
+
 namespace MG.EditorCommon.Editors
 {
 	public class GraphEditor : PropertyEditorCell
@@ -17,7 +19,7 @@ namespace MG.EditorCommon.Editors
 			base.Initialize();
 
 			graph = new HaxGraph.HaxGraph();
-			graph.Curve = (ComplexCurve)Property.GetValue(Instance);
+			graph.Curve = (Curve)Property.GetValue(Instance);
 		}
 
 		public override void GetSize(int availableWidth, out int width, out int height)
@@ -98,14 +100,14 @@ namespace MG.EditorCommon.Editors
 		
 		public void Initialize(EditSession session)
 		{
-			if (session.Property.PropertyType != typeof(ComplexCurve))
+			if (session.Property.PropertyType != typeof(Curve))
 				throw new ApplicationException("Graph editor does not support editing values of type " + session.Property.PropertyType);
 		}
 		
 		object IPropertyEditor.Value
 		{
 			get { return graph.Curve; }
-			set { graph.Curve = (ComplexCurve)value; }
+			set { graph.Curve = (Curve)value; }
 		}
 
 		public event EventHandler ValueChanged;

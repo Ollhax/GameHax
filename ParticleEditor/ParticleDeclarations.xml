@@ -57,7 +57,7 @@
 						<Name>GraphEmitter</Name>
 						<PrettyName>Graph (Emitter)</PrettyName>
 						<Description></Description>
-						<Type>ComplexCurve</Type>
+						<Type>Curve</Type>
 						<DefaultValue>lin:0.0:0.0,lin:1.0:1.0</DefaultValue>
 						<!--
 						
@@ -73,7 +73,7 @@
 						<Name>GraphParticle</Name>
 						<PrettyName>Graph (Particle)</PrettyName>
 						<Description></Description>
-						<Type>ComplexCurve</Type>
+						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
 						<!--
 							EmitterLife,lin:0.0:0.0,lin:1.0:1.0

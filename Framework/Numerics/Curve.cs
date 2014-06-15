@@ -107,8 +107,8 @@ namespace MG.Framework.Numerics
 	/// <summary>
 	/// A representation of a graph curve predefined data entries that you can interpolate between.
 	/// </summary>
-	[TypeConverter(typeof(ComplexCurveConverter))]
-	public class ComplexCurve : ICollection<CurveEntry>
+	[TypeConverter(typeof(CurveConverter))]
+	public class Curve : ICollection<CurveEntry>
 	{
 		private readonly List<CurveEntry> entries = new List<CurveEntry>();
 		
@@ -150,7 +150,7 @@ namespace MG.Framework.Numerics
 		/// <summary>
 		/// Create an empty curve.
 		/// </summary>
-		public ComplexCurve()
+		public Curve()
 		{
 
 		}
@@ -159,7 +159,7 @@ namespace MG.Framework.Numerics
 		/// Create a copy of another curve.
 		/// </summary>
 		/// <param name="other">Curve to copy.</param>
-		public ComplexCurve(ComplexCurve other)
+		public Curve(Curve other)
 		{
 			ExtrapolateModeLeft = other.ExtrapolateModeLeft;
 			ExtrapolateModeRight = other.ExtrapolateModeRight;
@@ -429,7 +429,7 @@ namespace MG.Framework.Numerics
 		/// <returns>An invariant string representation.</returns>
 		public string ToInvariantString()
 		{
-			var converter = TypeDescriptor.GetConverter(typeof(ComplexCurve));
+			var converter = TypeDescriptor.GetConverter(typeof(Curve));
 
 			try
 			{
@@ -449,13 +449,13 @@ namespace MG.Framework.Numerics
 		/// </summary>
 		/// <param name="s">Source string.</param>
 		/// <returns>A new curve, or null if the conversion was unsuccessful.</returns>
-		public static ComplexCurve FromInvariantString(string s)
+		public static Curve FromInvariantString(string s)
 		{
-			var converter = TypeDescriptor.GetConverter(typeof(ComplexCurve));
+			var converter = TypeDescriptor.GetConverter(typeof(Curve));
 
 			try
 			{
-				var graph = converter.ConvertFromString(null, CultureInfo.InvariantCulture, s) as ComplexCurve;
+				var graph = converter.ConvertFromString(null, CultureInfo.InvariantCulture, s) as Curve;
 				return graph;
 			}
 			catch (Exception)

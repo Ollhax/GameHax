@@ -10,8 +10,8 @@ namespace MG.Framework.Particle
 
 		private float parameterValue;
 		private float randomValue;
-		private ComplexCurve graphEmitter;
-		private ComplexCurve graphParticle;
+		private Curve graphEmitter;
+		private Curve graphParticle;
 
 		public RandomFloat(ParticleDefinition definition, string parameterName)
 		{
@@ -39,13 +39,13 @@ namespace MG.Framework.Particle
 				ParticleDefinition.Parameter parameterGraph;
 				if (parameter.Parameters.TryGetValue("GraphEmitter", out parameterGraph))
 				{
-					graphEmitter = parameterGraph.Value.Get<ComplexCurve>();
+					graphEmitter = parameterGraph.Value.Get<Curve>();
 					if (graphEmitter.Count == 0) graphEmitter = null;
 				}
 
 				if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
 				{
-					graphParticle = parameterGraph.Value.Get<ComplexCurve>();
+					graphParticle = parameterGraph.Value.Get<Curve>();
 					if (graphParticle.Count == 0) graphParticle = null;
 				}
 			}
