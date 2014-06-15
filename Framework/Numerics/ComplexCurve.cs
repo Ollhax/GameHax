@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 
 using MG.Framework.Converters;
@@ -32,6 +33,16 @@ namespace MG.Framework.Numerics
 		public readonly Vector2 Value;
 
 		/// <summary>
+		/// The left handle used for Bezier curves.
+		/// </summary>
+		public readonly Vector2 LeftHandle;
+
+		/// <summary>
+		/// The right handle used for Bezier curves.
+		/// </summary>
+		public readonly Vector2 RightHandle;
+
+		/// <summary>
 		/// Create a linear entry.
 		/// </summary>
 		/// <param name="value">This entry's value.</param>
@@ -42,6 +53,35 @@ namespace MG.Framework.Numerics
 		}
 
 		/// <summary>
+		/// Create a bezier entry.
+		/// </summary>
+		/// <param name="value">This entry's value.</param>
+		/// <param name="leftHandle">This entry's left handle.</param>
+		/// <param name="rightHandle">This entry's right handle.</param>
+		public CurveEntry(Vector2 value, Vector2 leftHandle, Vector2 rightHandle)
+		{
+			Type = EntryType.Bezier;
+			Value = value;
+			LeftHandle = leftHandle;
+			RightHandle = rightHandle;
+		}
+
+		/// <summary>
+		/// Create a custom entry.
+		/// </summary>
+		/// <param name="type">This entry's type.</param>
+		/// <param name="value">This entry's value.</param>
+		/// <param name="leftHandle">This entry's left handle.</param>
+		/// <param name="rightHandle">This entry's right handle.</param>
+		public CurveEntry(EntryType type, Vector2 value, Vector2 leftHandle, Vector2 rightHandle)
+		{
+			Type = type;
+			Value = value;
+			LeftHandle = leftHandle;
+			RightHandle = rightHandle;
+		}
+
+		/// <summary>
 		/// Copy another entry.
 		/// </summary>
 		/// <param name="other">Entry to copy.</param>
@@ -49,6 +89,8 @@ namespace MG.Framework.Numerics
 		{
 			Type = other.Type;
 			Value = other.Value;
+			LeftHandle = other.LeftHandle;
+			RightHandle = other.RightHandle;
 		}
 
 		/// <summary>
@@ -168,10 +210,106 @@ namespace MG.Framework.Numerics
 				fraction = (x - leftEntry.Value.X) / spanX;
 			}
 
-			// TODO: Bezier curves
-			return leftEntry.Value.Y + fraction * (rightEntry.Value.Y - leftEntry.Value.Y);
-		}
+			if (leftEntry.Type == CurveEntry.EntryType.Linear && rightEntry.Type == CurveEntry.EntryType.Linear)
+			{
+				return leftEntry.Value.Y + fraction * (rightEntry.Value.Y - leftEntry.Value.Y);
+			}
+			
+			if (leftEntry.Type == CurveEntry.EntryType.Bezier && rightEntry.Type == CurveEntry.EntryType.Linear)
+			{
+				return EvaluateBezier(x, leftEntry.Value, rightEntry.Value, leftEntry.RightHandle, rightEntry.Value);
+			}
 
+			if (leftEntry.Type == CurveEntry.EntryType.Linear && rightEntry.Type == CurveEntry.EntryType.Bezier)
+			{
+				return EvaluateBezier(x, leftEntry.Value, rightEntry.Value, leftEntry.Value, rightEntry.LeftHandle);
+			}
+
+			if (leftEntry.Type == CurveEntry.EntryType.Bezier && rightEntry.Type == CurveEntry.EntryType.Bezier)
+			{
+				return EvaluateBezier(x, leftEntry.Value, rightEntry.Value, leftEntry.RightHandle, rightEntry.LeftHandle);
+			}
+
+			return 0;
+		}
+		
+		private float EvaluateBezier(float t, Vector2 start, Vector2 end, Vector2 startHandle, Vector2 endHandle)
+		{
+			// Find the time. Good enough for this, can probably be done faster in runtime by cubic root solver, or by a LUT.
+			var s = ApproximateCubicBezierParameter(t, start.X, startHandle.X, endHandle.X, end.X);
+			
+			// Find the value
+			return Bezier(s, start.Y, startHandle.Y, endHandle.Y, end.Y);
+		}
+		
+		private float ApproximateCubicBezierParameter(float x, float p0, float c0, float c1, float p1)
+		{
+			const float Verysmall = 1.0e-10f;
+			const float Epsilon = 1.0e-04f;
+			const int MaximumIterations = 100;
+			
+			if (x - p0 < Verysmall)
+				return 0.0f; 
+	
+			if (p1 - x < Verysmall)  
+				return 1.0f;
+	
+			int iterationStep = 0;
+			
+			float u = 0.0f; 
+			float v = 1.0f; 
+	
+			// Iteratively apply subdivision to approach value atX
+			while (iterationStep < MaximumIterations) 
+			{
+				// de Casteljau Subdivision. 
+				float a = (p0 + c0)*0.5f; 
+				float b = (c0 + c1)*0.5f; 
+				float c = (c1 + p1)*0.5f; 
+				float d = (a + b)*0.5f; 
+				float e = (b + c)*0.5f; 
+				float f = (d + e)*0.5f;
+				
+				// The curve point is close enough to our wanted x
+				if (Math.Abs(f - x) < Epsilon)
+				{
+					return MathTools.ClampNormal((u + v)*0.5f);
+				} 
+		
+				// Dichotomy
+				if (f < x) 
+				{ 
+					p0 = f;
+					c0 = e;
+					c1 = c;
+					u = (u + v)*0.5f;
+				}
+				else
+				{
+					c0 = a; c1 = d; p1 = f; v = (u + v) * 0.5f; 
+				} 
+		
+				iterationStep++; 
+			} 
+	
+			return MathTools.ClampNormal((u + v) * 0.5f);
+		}
+		
+		private float Bezier(float t, float p0, float c0, float c1, float p1)
+		{
+			float it = 1 - t;
+			float it2 = it * it;
+			float it3 = it2 * it;
+			float t2 = t * t;
+			float t3 = t2 * t;
+
+			return 
+				it3 * p0 +
+				3 * it2 * t * c0 + 
+				3 * it * t2 * c1 + 
+				t3 * p1;
+		}
+		
 		private int SearchForEntry(float value)
 		{
 			var min = 0;

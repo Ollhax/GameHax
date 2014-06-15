@@ -13,10 +13,18 @@ namespace MG.EditorCommon.HaxGraph
 	[System.ComponentModel.ToolboxItem(true)]
 	public class HaxGraph : DrawingArea
 	{
-		private readonly DrawingArea drawingArea;
+		enum Handle
+		{
+			None,
+			Left,
+			Right,
+		}
+
 		private ComplexCurve curve;
-		private CurveEntry currentEntry;
+		private CurveEntry hoveredEntry;
+		private CurveEntry selectedEntry;
 		private bool movingEntry;
+		private Handle movingHandle = Handle.None;
 		
 		public event Action Changed = delegate { };
 		
@@ -56,7 +64,7 @@ namespace MG.EditorCommon.HaxGraph
 			var colorBorder = new MG.Framework.Numerics.Color(204, 204, 204, 255);
 			var colorLine = new MG.Framework.Numerics.Color(255, 0, 0, 255);
 			var colorHoveredEntry = new MG.Framework.Numerics.Color(0, 240, 0, 255);
-			var colorSelectedEntry = new MG.Framework.Numerics.Color(0, 255, 0, 255);
+			var colorSelectedEntry = new MG.Framework.Numerics.Color(0, 0, 0, 255);
 
 			// Background
 			if (state == StateType.Selected)
@@ -84,14 +92,14 @@ namespace MG.EditorCommon.HaxGraph
 
 				var p = Evaluate(0, drawBounds);
 				ctx.MoveTo(p.X, p.Y);
-				ctx.LineWidth = 1.0;
+				ctx.LineWidth = 1.2;
 				SetDash(ctx, true);
 
 				var startFraction = curve.Front.Value.X;
 				var endFraction = curve.End.Value.X;
 				int part = 0;
 				
-				for (int i = 0; i < numSteps; i++)
+				for (int i = 0; i <= numSteps; i++)
 				{
 					var fraction = (float)i / numSteps;
 					
@@ -128,8 +136,52 @@ namespace MG.EditorCommon.HaxGraph
 				{
 					var b = ToScreen(entry.Value, drawBounds);
 					float size = 4;
+					float outerSize = size + 1;
 
-					SetColor(ctx, entry == currentEntry ? (movingEntry ? colorSelectedEntry : colorHoveredEntry) : colorLine);
+					var color = colorLine;
+					var outerColor = MG.Framework.Numerics.Color.Transparent;
+					if (entry == hoveredEntry)
+					{
+						color = colorHoveredEntry;
+					}
+					
+					if (entry == selectedEntry)
+					{
+						color = colorHoveredEntry;
+						outerColor = colorSelectedEntry;
+						
+						ctx.LineWidth = 1.0;
+						SetColor(ctx, outerColor);
+
+						if (entry.Type == CurveEntry.EntryType.Bezier)
+						{
+							ctx.MoveTo(b.X, b.Y);
+							p = ToScreen(entry.LeftHandle, drawBounds);
+							ctx.LineTo(p.X, p.Y);
+							ctx.Stroke();
+
+							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
+							ctx.Fill();
+														
+							ctx.MoveTo(b.X, b.Y);
+							p = ToScreen(entry.RightHandle, drawBounds);
+							ctx.LineTo(p.X, p.Y);
+							ctx.Stroke();
+
+							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
+							ctx.Fill();
+						}
+					}
+
+					if (outerColor.A != 0)
+					{
+						SetColor(ctx, outerColor);
+						ctx.Rectangle(b.X - outerSize / 2, b.Y - outerSize / 2, outerSize, outerSize);
+						ctx.LineWidth = 1.0;
+						ctx.Stroke();
+					}
+					
+					SetColor(ctx, color);
 					ctx.Rectangle(b.X - size / 2, b.Y - size / 2, size, size);
 					ctx.Fill();
 				}
@@ -137,7 +189,7 @@ namespace MG.EditorCommon.HaxGraph
 
 			ctx.Restore();
 		}
-
+		
 		private void SetColor(Cairo.Context ctx, MG.Framework.Numerics.Color color)
 		{
 			ctx.SetSourceRGBA(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0);
@@ -165,14 +217,6 @@ namespace MG.EditorCommon.HaxGraph
 			return true;
 		}
 		
-		private void DrawingAreaOnExposeEvent(object o, ExposeEventArgs args)
-		{
-			using (Cairo.Context c = Gdk.CairoHelper.Create(args.Event.Window))
-			{
-				Draw(args.Event.Window, c, drawingArea.Allocation, StateType.Selected);
-			}
-		}
-		
 		private RectangleF GraphAreaFromBounds(RectangleF bounds)
 		{
 			int padding = 3;
@@ -198,6 +242,22 @@ namespace MG.EditorCommon.HaxGraph
 			return ToScreen(new Vector2(x, y), area);
 		}
 
+		private Handle GetHandle(Vector2 screenPoint, RectangleF area)
+		{
+			if (selectedEntry == null) return Handle.None;
+			if (selectedEntry.Type != CurveEntry.EntryType.Bezier) return Handle.None;
+
+			const float distance = 4;
+
+			var p = ToScreen(selectedEntry.LeftHandle, area);
+			if ((screenPoint - p).Length() < distance) return Handle.Left;
+			
+			p = ToScreen(selectedEntry.RightHandle, area);
+			if ((screenPoint - p).Length() < distance) return Handle.Right;
+
+			return Handle.None;
+		}
+
 		private Vector2 ToScreen(Vector2 value, RectangleF area)
 		{
 			return new Vector2(area.X + value.X * area.Width, area.Y + area.Height - value.Y * area.Height);
@@ -214,15 +274,19 @@ namespace MG.EditorCommon.HaxGraph
 
 			var mousePos = new Vector2((float)evnt.X, (float)evnt.Y);
 
+			if (movingHandle != Handle.None)
+			{
+				UpdateHandlePosition(mousePos);
+			}
 			if (movingEntry)
 			{
 				UpdateEntryPosition(mousePos);
 			}
 			else
 			{
-				var oldEntry = currentEntry;
-				currentEntry = GetEntryAt(mousePos);
-				if (currentEntry != oldEntry)
+				var oldEntry = hoveredEntry;
+				hoveredEntry = GetEntryAt(mousePos);
+				if (hoveredEntry != oldEntry)
 				{
 					QueueDraw();
 				}
@@ -238,24 +302,35 @@ namespace MG.EditorCommon.HaxGraph
 
 			if (!movingEntry)
 			{
-				currentEntry = GetEntryAt(mousePos);
-				if (currentEntry != null)
+				if (movingHandle == Handle.None)
 				{
-					if (!movingEntry)
-					{
-						movingEntry = true;
-						QueueDraw();
-					}
+					movingHandle = GetHandle(mousePos, area);
 				}
-				else
+
+				if (movingHandle == Handle.None)
 				{
-					var p = FromScreen(mousePos, area);
-					var closestP = Evaluate(p.X, area);
-					
-					if (curve.Count == 0 || Math.Abs(closestP.Y - mousePos.Y) < 6)
+					selectedEntry = GetEntryAt(mousePos);
+					QueueDraw();
+
+					if (selectedEntry != null)
 					{
-						currentEntry = CreateCurveEntry(p);
-						movingEntry = true;
+						movingHandle = GetHandle(mousePos, area);
+
+						if (movingHandle == Handle.None && !movingEntry)
+						{
+							movingEntry = true;
+						}
+					}
+					else
+					{
+						var p = FromScreen(mousePos, area);
+						var closestP = Evaluate(p.X, area);
+
+						if (curve.Count == 0 || Math.Abs(closestP.Y - mousePos.Y) < 12)
+						{
+							selectedEntry = CreateCurveEntry(p);
+							movingEntry = true;
+						}
 					}
 				}
 			}
@@ -275,6 +350,12 @@ namespace MG.EditorCommon.HaxGraph
 				movingEntry = false;
 				QueueDraw();
 			}
+
+			if (movingHandle != Handle.None)
+			{
+				movingHandle = Handle.None;
+				QueueDraw();
+			}
 			
 			return true;
 		}
@@ -283,23 +364,54 @@ namespace MG.EditorCommon.HaxGraph
 		{
 			// Hack: can't get normal keypress event for some reason, so hook it up from the parent
 
-			if (currentEntry != null && (evnt.Key == Key.Delete || evnt.Key == Key.BackSpace))
+			if (selectedEntry != null && (evnt.Key == Key.Delete || evnt.Key == Key.BackSpace))
 			{
-				RemoveCurveEntry(currentEntry);
+				RemoveCurveEntry(selectedEntry);
 			}
+
+			if (selectedEntry != null && (evnt.Key == Key.b))
+			{
+				selectedEntry = SwitchCurveEntry(selectedEntry, CurveEntry.EntryType.Bezier);
+			}
+			if (selectedEntry != null && (evnt.Key == Key.n))
+			{
+				selectedEntry = SwitchCurveEntry(selectedEntry, CurveEntry.EntryType.Linear);
+			}
+		}
+
+		private void UpdateHandlePosition(Vector2 position)
+		{
+			if (selectedEntry == null) return;
+			if (movingHandle == Handle.None) return;
+
+			var area = GraphArea;
+			var leftHandle = selectedEntry.LeftHandle;
+			var rightHandle = selectedEntry.RightHandle;
+			var pos = FromScreen(position, area);
+
+			if (movingHandle == Handle.Left)
+			{
+				leftHandle = pos;
+			}
+			else
+			{
+				rightHandle = pos;
+			}
+			
+			selectedEntry = ReplaceCurveHandles(selectedEntry, leftHandle, rightHandle);
 		}
 
 		private void UpdateEntryPosition(Vector2 position)
 		{
-			if (currentEntry == null) return;
+			if (selectedEntry == null) return;
 
 			var area = GraphArea;
-			var p = ToScreen(currentEntry.Value, area);
+			var p = ToScreen(selectedEntry.Value, area);
 			if ((p - position).Length() < 0.1f) return;
 
 			p = FromScreen(position, area);
 
-			currentEntry = ReplaceCurveEntry(currentEntry, p);
+			selectedEntry = ReplaceCurveEntry(selectedEntry, p);
 		}
 		
 		private CurveEntry GetEntryAt(Vector2 screenPos)
@@ -312,7 +424,7 @@ namespace MG.EditorCommon.HaxGraph
 				var p = ToScreen(entry.Value, area);
 				var length = (p - screenPos).Length();
 
-				if (length < 8)
+				if (length < 12)
 				{
 					return entry;
 				}
@@ -337,7 +449,19 @@ namespace MG.EditorCommon.HaxGraph
 
 		private CurveEntry ReplaceCurveEntry(CurveEntry oldEntry, Vector2 position)
 		{
-			var entry = new CurveEntry(new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y)));
+			var newPos = new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y));
+			var diff = newPos - oldEntry.Value;
+
+			var entry = new CurveEntry(oldEntry.Type, newPos, diff + oldEntry.LeftHandle, diff + oldEntry.RightHandle);
+			curve.Remove(oldEntry);
+			curve.Add(entry);
+			OnCurveChange();
+			return entry;
+		}
+
+		private CurveEntry ReplaceCurveHandles(CurveEntry oldEntry, Vector2 leftHandle, Vector2 rightHandle)
+		{
+			var entry = new CurveEntry(oldEntry.Type, oldEntry.Value, leftHandle, rightHandle);
 			curve.Remove(oldEntry);
 			curve.Add(entry);
 			OnCurveChange();
@@ -348,6 +472,27 @@ namespace MG.EditorCommon.HaxGraph
 		{
 			curve.Remove(entry);
 			OnCurveChange();
+		}
+
+		private CurveEntry SwitchCurveEntry(CurveEntry oldEntry, CurveEntry.EntryType newType)
+		{
+			CurveEntry entry = null;
+			const float bezierOffset = 0.1f;
+
+			switch (newType)
+			{
+				case CurveEntry.EntryType.Linear: { entry = new CurveEntry(newType, oldEntry.Value, oldEntry.LeftHandle, oldEntry.RightHandle); } break;
+				case CurveEntry.EntryType.Bezier: { entry = new CurveEntry(newType, oldEntry.Value, oldEntry.Value - new Vector2(bezierOffset, 0.0f), oldEntry.Value + new Vector2(bezierOffset, 0.0f)); } break;
+			}
+
+			if (entry == null)
+				throw new NotImplementedException("curve entry type");
+
+			curve.Remove(oldEntry);
+			curve.Add(entry);
+			OnCurveChange();
+
+			return entry;
 		}
 	}
 }

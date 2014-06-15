@@ -31,10 +31,19 @@ namespace MG.Framework.Converters
 				{
 					var p = entryText.Split(new[] { EntrySeparator });
 
-					if (p.Length == 3)
+					if (p.Length == 3 && p[0] == "lin")
 					{
 						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
 						var entry = new CurveEntry(position);
+						curve.Add(entry);
+					}
+
+					if (p.Length == 7 && p[1] == "bez")
+					{
+						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
+						var left = new Vector2(Convert.ToSingle(p[3], culture), Convert.ToSingle(p[4], culture));
+						var right = new Vector2(Convert.ToSingle(p[5], culture), Convert.ToSingle(p[6], culture));
+						var entry = new CurveEntry(position, left, right);
 						curve.Add(entry);
 					}
 				}
