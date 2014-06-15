@@ -345,6 +345,10 @@ namespace MG.Framework.Numerics
 				int index = ~result;
 				entries.Insert(index, entry);
 			}
+			else if (result == 0)
+			{
+				entries.Insert(0, entry);
+			}
 			else
 			{
 				entries.Add(entry);

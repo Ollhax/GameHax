@@ -533,7 +533,9 @@ namespace MG.EditorCommon.HaxGraph
 
 		private CurveEntry CreateCurveEntry(Vector2 position)
 		{
-			var entry = new CurveEntry(new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y)));
+			var newPos = new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y));
+			var entry = new CurveEntry(newPos);
+			
 			curve.Add(entry);
 			OnCurveChange();
 			return entry;
@@ -542,8 +544,8 @@ namespace MG.EditorCommon.HaxGraph
 		private CurveEntry ReplaceCurveEntry(CurveEntry oldEntry, Vector2 position)
 		{
 			var newPos = new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y));
+			
 			var diff = newPos - oldEntry.Value;
-
 			var entry = new CurveEntry(oldEntry.Type, newPos, diff + oldEntry.LeftHandle, diff + oldEntry.RightHandle);
 			curve.Remove(oldEntry);
 			curve.Add(entry);
