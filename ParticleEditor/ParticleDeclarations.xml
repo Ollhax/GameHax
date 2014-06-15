@@ -2,25 +2,25 @@
 <ParticleDeclarationTable>
 	<ParticleDeclaration>
 		<Name>Basic</Name>
-		<Parameters>						
+		<Parameters>
 			<Parameter>
 				<Name>Texture</Name>
 				<Description>The texture used for this particle effect.</Description>
 				<Category>General</Category>
 				<Type>FilePath</Type>
-				<DefaultValue>weapon_laser_red.png</DefaultValue>				
+				<DefaultValue>weapon_laser_red.png</DefaultValue>
 				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
-			</Parameter>			
+			</Parameter>
 			<Parameter>
 				<Name>EmitterLife</Name>
 				<PrettyName>Emitter Life</PrettyName>
 				<Description>The duration of this particle system, in seconds. If zeroed, this emitter is disabled.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>1.0</DefaultValue>				
-				<ValueStep>0.1</ValueStep>				
-				<MinValue>0.0</MinValue>				
-			</Parameter>			
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+				<MinValue>0.0</MinValue>
+			</Parameter>
 			<Parameter>
 				<Name>EmitterLoop</Name>
 				<PrettyName>Loop Mode</PrettyName>
@@ -40,9 +40,9 @@
 				<Description>How long a particle will last, in seconds. If zeroed, particles are not created.</Description>
 				<Category>Particle</Category>
 				<Type>Single</Type>
-				<DefaultValue>1.0</DefaultValue>				
-				<ValueStep>0.1</ValueStep>				
-				<MinValue>0.0</MinValue>				
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+				<MinValue>0.0</MinValue>
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
@@ -55,36 +55,12 @@
 					</Parameter>
 					<Parameter>
 						<Name>GraphEmitter</Name>
-						<PrettyName>Graph (Emitter)</PrettyName>
-						<Description></Description>
-						<Type>Curve</Type>
-						<DefaultValue>lin:0.0:0.0,lin:1.0:1.0</DefaultValue>
-						<!--
-						
-							EmitterLife,lin:0.0:0.0,lin:1.0:1.0
-							
-							0. Dependent parameter. If zero, x ranges from [0-inf). Else, x ranges from [0-1]. Y is bounded by the depended parameter's min/max value.
-							N. Parameters:
-								lin:x,y
-								bez:x,y,lx,ly,rx,ry
-						-->
-					</Parameter>
-					<Parameter>
-						<Name>GraphParticle</Name>
-						<PrettyName>Graph (Particle)</PrettyName>
-						<Description></Description>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
-						<!--
-							EmitterLife,lin:0.0:0.0,lin:1.0:1.0
-							
-							0. Dependent parameter. If zero, x ranges from [0-inf). Else, x ranges from [0-1]. Y is bounded by the depended parameter's min/max value.
-							N. Parameters:
-								lin:x,y
-								bez:x,y,lx,ly,rx,ry
-						-->
 					</Parameter>
-				</Parameters>				
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>ParticleInfinite</Name>
@@ -100,7 +76,7 @@
 				<Description>How many particles are spawned per second.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>10.0</DefaultValue>				
+				<DefaultValue>10.0</DefaultValue>
 				<ValueStep>0.1</ValueStep>
 				<MinValue>0.0</MinValue>
 				<MaxValue>1000.0</MaxValue>
@@ -114,6 +90,13 @@
 						<ValueStep>0.1</ValueStep>
 						<MinValue>0.0</MinValue>
 					</Parameter>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
 				</Parameters>
 			</Parameter>
 			<Parameter>
@@ -122,10 +105,19 @@
 				<Description>Direction of this emitter, in degrees.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>				
+				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
-				<MaxValue>360.0</MaxValue>				
+				<MaxValue>360.0</MaxValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>Range</Name>
@@ -133,10 +125,10 @@
 				<Description>The range of the spread for this emitter, in degrees.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>360.0</DefaultValue>				
+				<DefaultValue>360.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
-				<MaxValue>360.0</MaxValue>				
+				<MaxValue>360.0</MaxValue>
 			</Parameter>
 			<Parameter>
 				<Name>OffsetX</Name>
@@ -144,7 +136,35 @@
 				<Description>Positional offset from the span location, in X direction.</Description>
 				<Category>Emitter</Category>
 				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>				
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>1.0</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>					
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>OffsetY</Name>
+				<PrettyName>Offset Y</PrettyName>
+				<Description>Positional offset from the span location, in Y direction.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
 				<Parameters>
@@ -157,26 +177,12 @@
 						<ValueStep>1.0</ValueStep>
 						<MinValue>0.0</MinValue>
 					</Parameter>
-				</Parameters>
-			</Parameter>
-			<Parameter>
-				<Name>OffsetY</Name>
-				<PrettyName>Offset Y</PrettyName>
-				<Description>Positional offset from the span location, in Y direction.</Description>
-				<Category>Emitter</Category>
-				<Type>Single</Type>
-				<DefaultValue>0.0</DefaultValue>				
-				<ValueStep>1.0</ValueStep>
-				<MinValue>0.0</MinValue>
-				<Parameters>
 					<Parameter>
-						<Name>Random</Name>
-						<PrettyName>Random(+/-)</PrettyName>
-						<Description>Amount of randomization for this parameter.</Description>
-						<Type>Single</Type>
-						<DefaultValue>0</DefaultValue>
-						<ValueStep>1.0</ValueStep>
-						<MinValue>0.0</MinValue>						
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
 					</Parameter>
 				</Parameters>
 			</Parameter>
