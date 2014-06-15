@@ -25,6 +25,7 @@ namespace MG.EditorCommon.HaxGraph
 		private CurveEntry hoveredEntry;
 		private CurveEntry selectedEntry;
 		private bool movingEntry;
+		private Handle hoveredHandle = Handle.None;
 		private Handle movingHandle = Handle.None;
 		
 		public event Action Changed = delegate { };
@@ -161,14 +162,17 @@ namespace MG.EditorCommon.HaxGraph
 							ctx.LineTo(p.X, p.Y);
 							ctx.Stroke();
 
+							SetColor(ctx, hoveredHandle == Handle.Left ? colorHoveredEntry : outerColor);
 							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
 							ctx.Fill();
-														
+
+							SetColor(ctx, outerColor);
 							ctx.MoveTo(b.X, b.Y);
 							p = ToScreen(entry.RightHandle, drawBounds);
 							ctx.LineTo(p.X, p.Y);
 							ctx.Stroke();
 
+							SetColor(ctx, hoveredHandle == Handle.Right ? colorHoveredEntry : outerColor);
 							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
 							ctx.Fill();
 						}
@@ -285,11 +289,20 @@ namespace MG.EditorCommon.HaxGraph
 			}
 			else
 			{
-				var oldEntry = hoveredEntry;
-				hoveredEntry = GetEntryAt(mousePos);
-				if (hoveredEntry != oldEntry)
+				var oldHandle = hoveredHandle;
+				hoveredHandle = GetHandle(mousePos, GraphArea);
+				if (hoveredHandle != oldHandle)
 				{
 					QueueDraw();
+				}
+				else
+				{
+					var oldEntry = hoveredEntry;
+					hoveredEntry = GetEntryAt(mousePos);
+					if (hoveredEntry != oldEntry)
+					{
+						QueueDraw();
+					}
 				}
 			}
 
