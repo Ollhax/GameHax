@@ -187,12 +187,93 @@
 				<DefaultValue>false</DefaultValue>
 			</Parameter>
 			<Parameter>
-				<Name>ParticleColor</Name>
-				<PrettyName>Particle Color</PrettyName>
+				<Name>Color</Name>
+				<PrettyName>Color</PrettyName>
 				<Description>The particle's color over time.</Description>
 				<Category>Particle</Category>
 				<Type>Gradient</Type>
 				<DefaultValue>0:255,255,255,255;1:255,255,255,0</DefaultValue>
+			</Parameter>
+			<Parameter>
+				<Name>Scale</Name>
+				<PrettyName>Scale</PrettyName>
+				<Description>Uniform particle scale over time.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ScaleX</Name>
+				<PrettyName>Scale X</PrettyName>
+				<Description>X scale over time.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ScaleY</Name>
+				<PrettyName>Scale Y</PrettyName>
+				<Description>Y scale over time.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>SortMode</Name>

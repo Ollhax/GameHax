@@ -16,6 +16,7 @@ namespace MG.Framework.Particle
 			this.particleDefinition = particleDefinition;
 		}
 
+		public abstract float LifeFractional { get; }
 		public abstract bool Alive { get; }
 		public abstract void Update(Time time);
 		public abstract int Emit();
@@ -46,7 +47,7 @@ namespace MG.Framework.Particle
 		private float emitterAge;
 		private float particleSpawnAccumulator;
 
-		public float EmitterLifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : 0; } }
+		public override float LifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : 0; } }
 		public override bool Alive { get { return paramEmitterLife > 0 && (emitterAge < paramEmitterLife || paramEmitterLoopMode == EmitterLoopMode.Infinite); } }
 
 		public BasicParticleEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
@@ -94,7 +95,7 @@ namespace MG.Framework.Particle
 				{
 					insaneCounter--;
 
-					var spawnRate = paramSpawnRate.Get(EmitterLifeFractional, 0);
+					var spawnRate = paramSpawnRate.Get(LifeFractional, 0);
 
 					if (spawnRate > 0)
 					{
@@ -124,7 +125,7 @@ namespace MG.Framework.Particle
 			var index = particleData.ActiveParticles;
 			particleData.ActiveParticles++;
 
-			var e = EmitterLifeFractional;
+			var e = LifeFractional;
 
 			particlePosition[index] = position + new Vector2(paramOffsetX.Get(e, 0), paramOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
@@ -150,7 +151,7 @@ namespace MG.Framework.Particle
 		
 		public override int Emit()
 		{
-			var e = EmitterLifeFractional;
+			var e = LifeFractional;
 
 			float range = paramRange.Get(e, 0) / 2;
 			float direction = paramDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
