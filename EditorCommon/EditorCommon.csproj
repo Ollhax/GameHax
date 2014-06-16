@@ -104,6 +104,7 @@
     <Compile Include="Editors\FilePathEditor.cs" />
     <Compile Include="Editors\FloatEditor.cs" />
     <Compile Include="Editors\IntEditor.cs" />
+    <Compile Include="Resources\Resources.cs" />
     <Compile Include="ValueListConverter.cs" />
     <Compile Include="Undo\GenericUndoableAction.cs" />
     <Compile Include="Undo\IUndoableAction.cs" />
@@ -136,6 +137,26 @@
       <LogicalName>arrow-right.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\cancel.png">
+      <LogicalName>cancel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\chart_curve.png">
+      <LogicalName>chart_curve.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\chart_curve_delete.png">
+      <LogicalName>chart_curve_delete.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\chart_line.png">
+      <LogicalName>chart_line.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\color_wheel.png">
+      <LogicalName>color_wheel.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\delete.png">
+      <LogicalName>delete.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -144,18 +165,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <EmbeddedResource Include="HaxGraph\chart_curve.png">
-      <LogicalName>chart_curve.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HaxGraph\chart_curve_delete.png">
-      <LogicalName>chart_curve_delete.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HaxGraph\chart_line.png">
-      <LogicalName>chart_line.png</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HaxGraph\cancel.png">
-      <LogicalName>cancel.png</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
 </Project>

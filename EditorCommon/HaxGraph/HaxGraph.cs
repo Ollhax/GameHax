@@ -39,11 +39,6 @@ namespace MG.EditorCommon.HaxGraph
 		}
 		
 		public event Action Changed = delegate { };
-
-		private Gdk.Pixbuf iconCurveDelete;
-		private Gdk.Pixbuf iconCurveLinear;
-		private Gdk.Pixbuf iconCurveBezier;
-		private Gdk.Pixbuf iconCurveClear;
 		
 		public Curve Curve
 		{
@@ -62,11 +57,6 @@ namespace MG.EditorCommon.HaxGraph
 		{
 			ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 255)); // Disable graying on selection
 			AddEvents((int)(EventMask.AllEventsMask));
-			
-			iconCurveDelete = Gdk.Pixbuf.LoadFromResource("chart_curve_delete.png");
-			iconCurveBezier = Gdk.Pixbuf.LoadFromResource("chart_curve.png");
-			iconCurveLinear = Gdk.Pixbuf.LoadFromResource("chart_line.png");
-			iconCurveClear = Gdk.Pixbuf.LoadFromResource("cancel.png");
 		}
 		
 		public void Draw(Gdk.Drawable window, Cairo.Context ctx, Gdk.Rectangle bounds, StateType state)
@@ -331,6 +321,7 @@ namespace MG.EditorCommon.HaxGraph
 					hoveredEntry = GetEntryAt(mousePos);
 					if (hoveredEntry != oldEntry)
 					{
+						//GdkWindow.Cursor = hoveredEntry != null ? Resources.HandCursor : null;
 						QueueDraw();
 					}
 				}
@@ -344,7 +335,7 @@ namespace MG.EditorCommon.HaxGraph
 			var mousePos = new Vector2((float)evnt.X, (float)evnt.Y);
 			if (evnt.Button == 1)
 			{
-				return LeftMousePress(mousePos);
+				return LeftMousePress(mousePos, evnt.Type == EventType.TwoButtonPress);
 			}
 			
 			if (evnt.Button == 3)
@@ -354,10 +345,18 @@ namespace MG.EditorCommon.HaxGraph
 
 			return true;
 		}
-		
-		private bool LeftMousePress(Vector2 position)
+
+		private bool LeftMousePress(Vector2 position, bool doubleClick)
 		{
 			var area = GraphArea;
+
+			//if (doubleClick && selectedEntry != null)
+			//{
+			//    movingEntry = false;
+			//    selectedEntry = SwitchCurveEntry(
+			//        selectedEntry,
+			//        selectedEntry.Type == CurveEntry.EntryType.Linear ? CurveEntry.EntryType.Bezier : CurveEntry.EntryType.Linear);
+			//}
 
 			if (!movingEntry)
 			{
@@ -385,7 +384,7 @@ namespace MG.EditorCommon.HaxGraph
 						var p = FromScreen(position, area);
 						var closestP = Evaluate(p.X, area);
 
-						if (curve.Count == 0 || Math.Abs(closestP.Y - position.Y) < 12)
+						if (curve.Count == 0 || (Math.Abs(closestP.Y - position.Y) < 12 || doubleClick))
 						{
 							selectedEntry = CreateCurveEntry(p);
 							movingEntry = true;
@@ -394,10 +393,10 @@ namespace MG.EditorCommon.HaxGraph
 				}
 			}
 
-			if (movingEntry)
-			{
-				UpdateEntryPosition(position);
-			}
+			//if (movingEntry)
+			//{
+			//    UpdateEntryPosition(position);
+			//}
 
 			return true;
 		}
@@ -413,13 +412,13 @@ namespace MG.EditorCommon.HaxGraph
 			{
 				var currentEntry = selectedEntry;
 
-				AddMenuEntry(m, "Linear", iconCurveLinear, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Linear); });
-				AddMenuEntry(m, "Bezier", iconCurveBezier, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Bezier); });
+				AddMenuEntry(m, "Linear", Resources.IconCurveLinear, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Linear); });
+				AddMenuEntry(m, "Bezier", Resources.IconCurveBezier, delegate { selectedEntry = SwitchCurveEntry(currentEntry, CurveEntry.EntryType.Bezier); });
 				m.Add(new SeparatorMenuItem());
-				AddMenuEntry(m, "Delete", iconCurveDelete, delegate { RemoveCurveEntry(currentEntry); });
+				AddMenuEntry(m, "Delete", Resources.IconCurveDelete, delegate { RemoveCurveEntry(currentEntry); });
 			}
 
-			AddMenuEntry(m, "Clear All", iconCurveClear, delegate { ClearCurve(); });
+			AddMenuEntry(m, "Clear All", Resources.IconCancel, delegate { ClearCurve(); });
 
 			m.ShowAll();
 			m.Popup();

@@ -134,7 +134,7 @@ namespace MG.EditorCommon.HaxGradient
 				SetColor(ctx, entry.Color);
 				ctx.Fill();
 
-				Color edgeColor = entry == hoveredEntry ? GetComplementary(entry.Color) : colorEntry;
+				Color edgeColor = entry == hoveredEntry ? GetComplementary1(entry.Color) : GetComplementary2(entry.Color);
 
 				ctx.Rectangle(slice.X, slice.Y, slice.Width, slice.Height);
 				ctx.LineWidth = 1;
@@ -153,12 +153,37 @@ namespace MG.EditorCommon.HaxGradient
 			ctx.Restore();
 		}
 
-		private Color GetComplementary(Color color)
+		private Color GetComplementary1(Color color)
 		{
 			var c = new Color(255 - color.R, 255 - color.G, 255 - color.B, 255);
 			int darkest = 50;
+			int brightest = 255 + 255 + 255 - darkest;
 
 			if (c.R + c.G + c.B < darkest)
+			{
+				return Color.Red;
+			}
+
+			if (c.R + c.G + c.B > brightest)
+			{
+				return Color.Red;
+			}
+
+			return c;
+		}
+
+		private Color GetComplementary2(Color color)
+		{
+			var c = new Color(255 - color.B, 255 - color.G, 255 - color.R, 255);
+			int darkest = 50;
+			int brightest = 255 + 255 + 255 - darkest;
+
+			if (c.R + c.G + c.B < darkest)
+			{
+				return Color.Red;
+			}
+
+			if (c.R + c.G + c.B > brightest)
 			{
 				return Color.Red;
 			}
@@ -252,7 +277,7 @@ namespace MG.EditorCommon.HaxGradient
 			var mousePos = new Vector2((float)evnt.X, (float)evnt.Y);
 			if (evnt.Button == 1)
 			{
-				return LeftMousePress(mousePos);
+				return LeftMousePress(mousePos, evnt.Type == EventType.TwoButtonPress);
 			}
 
 			if (evnt.Button == 3)
@@ -263,10 +288,17 @@ namespace MG.EditorCommon.HaxGradient
 			return true;
 		}
 
-		private bool LeftMousePress(Vector2 position)
+		private bool LeftMousePress(Vector2 position, bool doubleClick)
 		{
 			var area = Area;
 			float value = FromScreen(position.X, area);
+
+			if (doubleClick && selectedEntry != null)
+			{
+				PickColor();
+				movingEntry = false;
+				return true;
+			}
 
 			if (!movingEntry)
 			{
@@ -284,25 +316,48 @@ namespace MG.EditorCommon.HaxGradient
 				}
 			}
 
-			if (movingEntry)
-			{
-				UpdateEntryPosition(value);
-			}
+			//if (movingEntry)
+			//{
+			//    UpdateEntryPosition(value);
+			//}
 
 			return true;
 		}
 
 		private bool RightMousePress(Vector2 position)
 		{
+			var m = new Menu();
+
 			var entry = GetEntryAt(position);
 			if (entry != null)
 			{
 				selectedEntry = entry;
 				QueueDraw();
 			}
-			
-			PickColor();
+
+			if (selectedEntry != null)
+			{
+				var currentEntry = selectedEntry;
+
+				AddMenuEntry(m, "Choose Color...", Resources.IconColorWheel, delegate { PickColor(); });
+				m.Add(new SeparatorMenuItem());
+				AddMenuEntry(m, "Delete", Resources.IconDelete, delegate { RemoveEntry(currentEntry); });
+			}
+
+			AddMenuEntry(m, "Clear All", Resources.IconCancel, delegate { ClearCurve(); });
+
+			m.ShowAll();
+			m.Popup();
+
 			return true;
+		}
+
+		private void AddMenuEntry(Menu menu, string text, Pixbuf icon, Action action)
+		{
+			var item = new ImageMenuItem(text);
+			item.Image = new Gtk.Image(icon);
+			item.ButtonPressEvent += delegate { action(); };
+			menu.Add(item);
 		}
 
 		protected override bool OnButtonReleaseEvent(EventButton evnt)
