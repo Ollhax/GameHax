@@ -52,9 +52,9 @@ namespace MG.Framework.Particle
 		private ParticleDefinition.Parameter paramBlendMode;
 		private bool paramParticleInfinite;
 		private Gradient paramParticleColor;
-		private RandomFloat paramScale;
-		private RandomFloat paramScaleX;
-		private RandomFloat paramScaleY;
+		private RandomFloat paramParticleScale;
+		private RandomFloat paramParticleScaleX;
+		private RandomFloat paramParticleScaleY;
 
 		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
 		{
@@ -80,10 +80,10 @@ namespace MG.Framework.Particle
 			paramSortMode = Definition.Parameters["SortMode"];
 			paramBlendMode = Definition.Parameters["BlendMode"];
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
-			paramParticleColor = Definition.Parameters["Color"].Value.Get<Gradient>();
-			paramScale = Definition.GetFloatParameter("Scale");
-			paramScaleX = Definition.GetFloatParameter("ScaleX");
-			paramScaleY = Definition.GetFloatParameter("ScaleY");
+			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
+			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
+			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
+			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
 
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
@@ -215,9 +215,9 @@ namespace MG.Framework.Particle
 				var l = particleLife[index];
 				var lifeFraction = a / l;
 				var color = paramParticleColor.Evaluate(lifeFraction);
-				var s = paramScale.Get(emitter.LifeFractional, lifeFraction);
-				var sx = paramScaleX.Get(emitter.LifeFractional, lifeFraction);
-				var sy = paramScaleY.Get(emitter.LifeFractional, lifeFraction);
+				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
+				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
+				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
 				
 				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, 0), color, particleTexture.Size / 2, 0);
 			}

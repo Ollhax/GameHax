@@ -36,9 +36,9 @@ namespace MG.Framework.Particle
 		private EmitterLoopMode paramEmitterLoopMode;
 		private float paramEmitterLife;
 		private RandomFloat paramParticleLife;
-		private RandomFloat paramSpawnRate;
-		private RandomFloat paramOffsetX;
-		private RandomFloat paramOffsetY;
+		private RandomFloat paramEmitterSpawnRate;
+		private RandomFloat paramEmitterOffsetX;
+		private RandomFloat paramEmitterOffsetY;
 		private List<Vector2> particlePosition;
 		private List<Vector2> particleVelocity;
 		private List<float> particleLife;
@@ -59,9 +59,9 @@ namespace MG.Framework.Particle
 			particleAge = particleData.Get<float>("Age");
 
 			paramParticleLife = particleDefinition.GetFloatParameter("ParticleLife");
-			paramSpawnRate = particleDefinition.GetFloatParameter("SpawnRate");
-			paramOffsetX = particleDefinition.GetFloatParameter("OffsetX");
-			paramOffsetY = particleDefinition.GetFloatParameter("OffsetY");
+			paramEmitterSpawnRate = particleDefinition.GetFloatParameter("EmitterSpawnRate");
+			paramEmitterOffsetX = particleDefinition.GetFloatParameter("EmitterOffsetX");
+			paramEmitterOffsetY = particleDefinition.GetFloatParameter("EmitterOffsetY");
 		}
 
 		public override void Reload()
@@ -95,7 +95,7 @@ namespace MG.Framework.Particle
 				{
 					insaneCounter--;
 
-					var spawnRate = paramSpawnRate.Get(LifeFractional, 0);
+					var spawnRate = paramEmitterSpawnRate.Get(LifeFractional, 0);
 
 					if (spawnRate > 0)
 					{
@@ -127,7 +127,7 @@ namespace MG.Framework.Particle
 
 			var e = LifeFractional;
 
-			particlePosition[index] = position + new Vector2(paramOffsetX.Get(e, 0), paramOffsetY.Get(e, 0));
+			particlePosition[index] = position + new Vector2(paramEmitterOffsetX.Get(e, 0), paramEmitterOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
 			particleAge[index] = 0;
 			particleLife[index] = paramParticleLife.Get(e, 0);
@@ -145,8 +145,8 @@ namespace MG.Framework.Particle
 		public PointEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
 		{
-			paramDirection = particleDefinition.GetFloatParameter("Direction");
-			paramRange = particleDefinition.GetFloatParameter("Range");
+			paramDirection = particleDefinition.GetFloatParameter("EmitterDirection");
+			paramRange = particleDefinition.GetFloatParameter("EmitterRange");
 		}
 		
 		public override int Emit()

@@ -35,7 +35,7 @@
 				</ValueList>
 			</Parameter>			
 			<Parameter>
-				<Name>SpawnRate</Name>
+				<Name>EmitterSpawnRate</Name>
 				<PrettyName>Spawn Rate</PrettyName>
 				<Description>How many particles are spawned per second.</Description>
 				<Category>Emitter</Category>
@@ -64,7 +64,7 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>Direction</Name>
+				<Name>EmitterDirection</Name>
 				<PrettyName>Direction</PrettyName>
 				<Description>Direction of this emitter, in degrees.</Description>
 				<Category>Emitter</Category>
@@ -84,7 +84,7 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>Range</Name>
+				<Name>EmitterRange</Name>
 				<PrettyName>Range</PrettyName>
 				<Description>The range of the spread for this emitter, in degrees.</Description>
 				<Category>Emitter</Category>
@@ -95,7 +95,7 @@
 				<MaxValue>360.0</MaxValue>
 			</Parameter>
 			<Parameter>
-				<Name>OffsetX</Name>
+				<Name>EmitterOffsetX</Name>
 				<PrettyName>Offset X</PrettyName>
 				<Description>Positional offset from the span location, in X direction.</Description>
 				<Category>Emitter</Category>
@@ -123,7 +123,7 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>OffsetY</Name>
+				<Name>EmitterOffsetY</Name>
 				<PrettyName>Offset Y</PrettyName>
 				<Description>Positional offset from the span location, in Y direction.</Description>
 				<Category>Emitter</Category>
@@ -180,14 +180,14 @@
 			</Parameter>
 			<Parameter>
 				<Name>ParticleInfinite</Name>
-				<PrettyName>Infinite Particles</PrettyName>
+				<PrettyName>Infinite Life</PrettyName>
 				<Description>If true, particles do not die after exceeding their life time.</Description>
 				<Category>Particle</Category>
 				<Type>Boolean</Type>
 				<DefaultValue>false</DefaultValue>
 			</Parameter>
 			<Parameter>
-				<Name>Color</Name>
+				<Name>ParticleColor</Name>
 				<PrettyName>Color</PrettyName>
 				<Description>The particle's color over time.</Description>
 				<Category>Particle</Category>
@@ -195,7 +195,7 @@
 				<DefaultValue>0:255,255,255,255;1:255,255,255,0</DefaultValue>
 			</Parameter>
 			<Parameter>
-				<Name>Scale</Name>
+				<Name>ParticleScale</Name>
 				<PrettyName>Scale</PrettyName>
 				<Description>Uniform particle scale over time.</Description>
 				<Category>Particle</Category>
@@ -222,7 +222,7 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>ScaleX</Name>
+				<Name>ParticleScaleX</Name>
 				<PrettyName>Scale X</PrettyName>
 				<Description>X scale over time.</Description>
 				<Category>Particle</Category>
@@ -249,7 +249,7 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>ScaleY</Name>
+				<Name>ParticleScaleY</Name>
 				<PrettyName>Scale Y</PrettyName>
 				<Description>Y scale over time.</Description>
 				<Category>Particle</Category>
