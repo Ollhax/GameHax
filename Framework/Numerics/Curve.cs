@@ -11,7 +11,7 @@ namespace MG.Framework.Numerics
 	/// <summary>
 	/// An entry in the curve.
 	/// </summary>
-	public class CurveEntry : IComparer<CurveEntry>
+	public class CurveEntry : IComparable<CurveEntry>
 	{
 		/// <summary>
 		/// The type of entry determines how values are interpolated between this entry and its neighbours.
@@ -94,13 +94,14 @@ namespace MG.Framework.Numerics
 		}
 
 		/// <summary>
-		/// Compare these two entries.
+		/// Compare this entry to another entry.
 		/// </summary>
-		/// <param name="a">The first entry.</param>
-		/// <param name="b">The second entry.</param>
-		public int Compare(CurveEntry a, CurveEntry b)
+		/// <param name="a">The entry to compare against.</param>
+		public int CompareTo(CurveEntry other)
 		{
-			return a.Value.X.CompareTo(b.Value.X);
+			//return Value.X.CompareTo(other.Value.X); Doesn't work on mono...
+			if (Value.X == other.Value.X) return 0;
+			return Value.X < other.Value.X ? -1 : 1;
 		}
 	}
 
@@ -339,7 +340,7 @@ namespace MG.Framework.Numerics
 		/// <param name="entry">Entry to add.</param>
 		public void Add(CurveEntry entry)
 		{
-			var result = entries.BinarySearch(entry, entry);
+			var result = entries.BinarySearch(entry);
 			if (result < 0)
 			{
 				int index = ~result;
