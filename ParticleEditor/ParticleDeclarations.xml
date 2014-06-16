@@ -192,7 +192,7 @@
 				<Description>The particle's color over time.</Description>
 				<Category>Particle</Category>
 				<Type>Gradient</Type>
-				<DefaultValue>0:255,255,255,255;1:255,0,0,255</DefaultValue>
+				<DefaultValue>0:255,255,255,255;1:255,255,255,0</DefaultValue>
 			</Parameter>
 			<Parameter>
 				<Name>SortMode</Name>
