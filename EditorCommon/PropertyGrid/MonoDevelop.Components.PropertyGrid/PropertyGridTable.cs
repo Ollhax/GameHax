@@ -59,6 +59,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		const int PropertyLeftPadding = 10;
 		const int PropertyContentLeftPadding = 8;
 		const int PropertyIndent = 8;
+		int PropertyContentRightPadding = 0;
 		static readonly Cairo.Color LabelBackgroundColor = new Cairo.Color (250d/255d, 250d/255d, 250d/255d);
 		static readonly Cairo.Color DividerColor = new Cairo.Color (217d/255d, 217d/255d, 217d/255d);
 		static readonly Cairo.Color CategoryLabelColor = new Cairo.Color (128d/255d, 128d/255d, 128d/255d);
@@ -103,6 +104,8 @@ namespace MonoDevelop.Components.PropertyGrid
 			discloseUp = Gdk.Pixbuf.LoadFromResource ("disclose-arrow-up.png");
 			arrowLeft = Gdk.Pixbuf.LoadFromResource("arrow-left.png");
 			arrowRight = Gdk.Pixbuf.LoadFromResource("arrow-right.png");
+
+			PropertyContentRightPadding = MG.Framework.Utility.Platform.IsMac ? 10 : 0;
 		}
 
 		protected override void OnDestroyed ()
@@ -434,7 +437,8 @@ namespace MonoDevelop.Components.PropertyGrid
 					var cell = GetCell (r);
 					cell.GetSize (Allocation.Width - dividerX, out w, out eh);
 					eh = Math.Max (h + PropertyTopBottomPadding * 2, eh);
-					r.EditorBounds = new Gdk.Rectangle (dividerX + PropertyContentLeftPadding, y, Allocation.Width - dividerX - PropertyContentLeftPadding, eh);
+
+					r.EditorBounds = new Gdk.Rectangle (dividerX + PropertyContentLeftPadding, y, Allocation.Width - dividerX - PropertyContentLeftPadding - PropertyContentRightPadding, eh);
 					y += eh;
 				}
 				if (r.ChildRows != null && (r.Expanded || r.AnimatingExpand)) {
@@ -459,6 +463,19 @@ namespace MonoDevelop.Components.PropertyGrid
 				ctx.Rectangle (dx, 0, Allocation.Width - dx, Allocation.Height);
 				ctx.SetSourceRGB (1, 1, 1);
 				ctx.Fill ();
+
+				if (PropertyContentRightPadding > 0)
+				{
+					ctx.Rectangle(Allocation.Width - PropertyContentRightPadding, 0, PropertyContentRightPadding, Allocation.Height);
+					ctx.SetSourceColor (LabelBackgroundColor);
+					ctx.Fill();
+
+					ctx.MoveTo (Allocation.Width - PropertyContentRightPadding + 0.5, 0);
+					ctx.RelLineTo (0, Allocation.Height);
+					ctx.SetSourceColor (DividerColor);
+					ctx.Stroke ();
+				}
+
 				ctx.MoveTo (dx + 0.5, 0);
 				ctx.RelLineTo (0, Allocation.Height);
 				ctx.SetSourceColor (DividerColor);
