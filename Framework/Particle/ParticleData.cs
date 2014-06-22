@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MG.Framework.Particle
 {
@@ -59,6 +60,8 @@ namespace MG.Framework.Particle
 		/// <returns>The newly created list of attributes.</returns>
 		public List<T> Register<T>(string attribute)
 		{
+			if (attributes.ContainsKey(attribute)) throw new ArgumentException("Attribute already registered: " + attribute);
+
 			var data = new GenericDataArray(typeof(T), MaxParticles);
 			attributes[attribute] = data;
 			return data.Get<T>();
@@ -86,6 +89,20 @@ namespace MG.Framework.Particle
 			{
 				var array = kvp.Value;
 				array.Move(source, destination);
+			}
+		}
+
+		/// <summary>
+		/// Shuffle all attributes one index forward or backward.
+		/// </summary>
+		/// <param name="start">Start index of attributes to move.</param>
+		/// <param name="end">End index of attributes to move.</param>
+		public void Shuffle(int start, int end)
+		{
+			foreach (var kvp in attributes)
+			{
+				var array = kvp.Value;
+				array.Shuffle(start, end);
 			}
 		}
 	}

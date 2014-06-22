@@ -20,36 +20,12 @@ namespace MG.Framework.Particle
 		private ParticleManager particleManager;
 		private Texture2D particleTexture;
 		private List<float> particleAge;
-		private List<int> particleSortIndex;
 		
-		class CompareLeastAgeFirst : IComparer<int>
-		{
-			public List<float> ParticleAge;
-
-			int IComparer<int>.Compare(int x, int y)
-			{
-				return ParticleAge[y].CompareTo(ParticleAge[x]);
-			}
-		}
-
-		class ComparisonMostAgeFirst : IComparer<int>
-		{
-			public List<float> ParticleAge;
-
-			int IComparer<int>.Compare(int x, int y)
-			{
-				return ParticleAge[x].CompareTo(ParticleAge[y]);
-			}
-		}
-		
-		private CompareLeastAgeFirst compareLeastAgeFirst;
-		private ComparisonMostAgeFirst comparisonMostAgeFirst;
 		private ParticleData particleData = new ParticleData(64);
 		private ParticleEmitter emitter;
 		
 		private ParticleDefinition.Parameter paramTexture;
-		private ParticleDefinition.Parameter paramSortMode;
-		private ParticleDefinition.Parameter paramBlendMode;
+		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private Gradient paramParticleColor;
 		private RandomFloat paramParticleScale;
@@ -65,20 +41,15 @@ namespace MG.Framework.Particle
 			particleData.Register<Vector2>("Position");
 			particleData.Register<Vector2>("Velocity");
 			particleData.Register<float>("Life");
-			particleSortIndex = particleData.Register<int>("SortIndex");
 			particleAge = particleData.Register<float>("Age");
 			
-			compareLeastAgeFirst = new CompareLeastAgeFirst { ParticleAge = particleAge };
-			comparisonMostAgeFirst = new ComparisonMostAgeFirst { ParticleAge = particleAge };
-
 			emitter = new PointEmitter(particleData, particleDefinition);
 		}
 		
 		public void Reload()
 		{
 			paramTexture = Definition.Parameters["Texture"];
-			paramSortMode = Definition.Parameters["SortMode"];
-			paramBlendMode = Definition.Parameters["BlendMode"];
+			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
@@ -156,7 +127,7 @@ namespace MG.Framework.Particle
 
 				if (!paramParticleInfinite && particleAge[i] >= particleLife[i])
 				{
-					Destroy(i);
+					emitter.Destroy(i);
 				}
 				else
 				{
@@ -178,41 +149,23 @@ namespace MG.Framework.Particle
 		public void Draw(RenderContext renderContext, Matrix transform)
 		{
 			var quadBatch = renderContext.QuadBatch;
-			var blendMode = (BlendMode)paramBlendMode.Value.Get<int>();
-
-			// TODO: Figure out the best blending mode
-			if (blendMode == BlendMode.BlendmodeAlpha)
-			{
-				blendMode = BlendMode.BlendmodeNonPremultiplied;
-			}
-
-			quadBatch.Begin(transform, blendMode);
 			
-			for (int i = 0; i < particleSortIndex.Count; i++)
+			// TODO: Figure out the best blending mode
+			if (paramBlendMode == BlendMode.BlendmodeAlpha)
 			{
-				particleSortIndex[i] = i;
+				paramBlendMode = BlendMode.BlendmodeNonPremultiplied;
 			}
 
-			var sortMode = blendMode == BlendMode.BlendmodeAdditive ? ParticleSortMode.Unsorted : (ParticleSortMode)paramSortMode.Value.Get<int>();
-			if (sortMode == ParticleSortMode.NewestOnTop)
-			{
-				particleSortIndex.Sort(0, ActiveParticles, compareLeastAgeFirst);
-			}
-			else if (sortMode == ParticleSortMode.OldestOnTop)
-			{
-				particleSortIndex.Sort(0, ActiveParticles, comparisonMostAgeFirst);
-			}
+			quadBatch.Begin(transform, paramBlendMode);
 			
 			var particlePosition = particleData.Get<Vector2>("Position");
 			var particleLife = particleData.Get<float>("Life");
 
 			for (int i = 0; i < particleData.ActiveParticles; i++)
 			{
-				var index = particleSortIndex[i];
-				
-				var p = particlePosition[index];
-				var a = particleAge[index];
-				var l = particleLife[index];
+				var p = particlePosition[i];
+				var a = particleAge[i];
+				var l = particleLife[i];
 				var lifeFraction = a / l;
 				var color = paramParticleColor.Evaluate(lifeFraction);
 				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
@@ -229,12 +182,6 @@ namespace MG.Framework.Particle
 			{
 				system.Draw(renderContext, childTransform);
 			}
-		}
-		
-		private void Destroy(int index)
-		{
-			particleData.Move(particleData.ActiveParticles - 1, index);
-			particleData.ActiveParticles--;
 		}
 	}
 }

@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 
+using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Utility;
 
@@ -20,6 +23,7 @@ namespace MG.Framework.Particle
 		public abstract bool Alive { get; }
 		public abstract void Update(Time time);
 		public abstract int Emit();
+		public abstract void Destroy(int index);
 		public abstract void Clear();
 		public abstract void Reload();
 	}
@@ -35,6 +39,8 @@ namespace MG.Framework.Particle
 
 		private EmitterLoopMode paramEmitterLoopMode;
 		private float paramEmitterLife;
+		private BlendMode paramBlendMode;
+		private ParticleSortMode paramSortMode;
 		private RandomFloat paramParticleLife;
 		private RandomFloat paramEmitterSpawnRate;
 		private RandomFloat paramEmitterOffsetX;
@@ -46,9 +52,14 @@ namespace MG.Framework.Particle
 
 		private float emitterAge;
 		private float particleSpawnAccumulator;
-
+		
 		public override float LifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : 0; } }
 		public override bool Alive { get { return paramEmitterLife > 0 && (emitterAge < paramEmitterLife || paramEmitterLoopMode == EmitterLoopMode.Infinite); } }
+		
+		private ParticleSortMode SortMode
+		{
+			get { return paramBlendMode == BlendMode.BlendmodeAdditive ? ParticleSortMode.Unsorted : paramSortMode; }
+		}
 
 		public BasicParticleEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
@@ -68,6 +79,8 @@ namespace MG.Framework.Particle
 		{
 			paramEmitterLife = particleDefinition.Parameters["EmitterLife"].Value.Get<float>();
 			paramEmitterLoopMode = (EmitterLoopMode)particleDefinition.Parameters["EmitterLoop"].Value.Get<int>();
+			paramBlendMode = (BlendMode)particleDefinition.Parameters["BlendMode"].Value.Get<int>();
+			paramSortMode = (ParticleSortMode)particleDefinition.Parameters["SortMode"].Value.Get<int>();
 		}
 
 		public override void Clear()
@@ -119,6 +132,21 @@ namespace MG.Framework.Particle
 			}
 		}
 
+		public override void Destroy(int index)
+		{
+			var sortMode = SortMode;
+
+			if (sortMode != ParticleSortMode.Unsorted)
+			{
+				particleData.Shuffle(particleData.ActiveParticles - 1, index);
+				particleData.ActiveParticles--;
+				return;
+			}
+
+			particleData.Move(particleData.ActiveParticles - 1, index);
+			particleData.ActiveParticles--;
+		}
+		
 		protected int EmitInternal(Vector2 position, Vector2 velocity, float life)
 		{
 			if (particleData.ActiveParticles + 1 >= particleData.MaxParticles) particleData.Resize();
@@ -126,11 +154,58 @@ namespace MG.Framework.Particle
 			particleData.ActiveParticles++;
 
 			var e = LifeFractional;
+			float newParticleLife = paramParticleLife.Get(e, 0);
+			var sortMode = SortMode;
 
+			if (sortMode == ParticleSortMode.OldestOnTop)
+			{
+				index = 0;
+				for (int i = 0; i < particleData.ActiveParticles - 1; i++)
+				{
+					if (particleAge[i] < newParticleLife)
+					{
+						index = i;
+						break;
+					}
+				}
+				particleData.Shuffle(index, particleData.ActiveParticles - 1);
+			}
+			else if (sortMode == ParticleSortMode.NewestOnTop)
+			{
+				index = particleData.ActiveParticles - 1;
+				for (int i = particleData.ActiveParticles - 1; i >= 0; i--)
+				{
+					if (particleAge[i] < newParticleLife)
+					{
+						index = i;
+						break;
+					}
+				}
+				particleData.Shuffle(index, particleData.ActiveParticles - 1);
+			}
+			
 			particlePosition[index] = position + new Vector2(paramEmitterOffsetX.Get(e, 0), paramEmitterOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
 			particleAge[index] = 0;
-			particleLife[index] = paramParticleLife.Get(e, 0);
+			particleLife[index] = newParticleLife;
+			
+			//if (sortMode != ParticleSortMode.Unsorted)
+			//{
+			//    float last = particleAge[0];
+			//    string s = "";
+			//    for (int i = 0; i < particleData.ActiveParticles; i++)
+			//    {
+			//        s += particleAge[i].ToString("0.00", CultureInfo.InvariantCulture) + "  ";
+
+			//        if ((sortMode == ParticleSortMode.NewestOnTop && particleAge[i] > last) ||
+			//            (sortMode == ParticleSortMode.OldestOnTop && particleAge[i] < last))
+			//        {
+			//            Debug.WriteLine("out of order!");
+			//        }
+			//    }
+			//    Debug.WriteLine(s);
+			//}
+			
 			return index;
 		}
 	}
