@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using MG.Framework.Numerics;
 
@@ -115,6 +116,39 @@ namespace MG.Framework.Particle
 			var floatList = data as List<float>; if (floatList != null) { floatList[to] = floatList[from]; return; }
 			var vector2List = data as List<Vector2>; if (vector2List != null) { vector2List[to] = vector2List[from]; return; }
 			var intList = data as List<int>; if (intList != null) { intList[to] = intList[from]; return; }
+		}
+
+		/// <summary>
+		/// Move a range of entries in this list one step forward or backward in the list.
+		/// </summary>
+		/// <param name="start">Start index.</param>
+		/// <param name="end">End index.</param>		
+		public void Shuffle(int start, int end)
+		{
+			var direction = start < end ? 1 : -1;
+			var s = end - direction;
+			var e = start - direction;
+			
+			var floatList = data as List<float>; 
+			if (floatList != null)
+			{
+				for (int i = s; i != e; i -= direction) floatList[i + direction] = floatList[i];
+				return;
+			}
+
+			var vector2List = data as List<Vector2>;
+			if (vector2List != null)
+			{
+				for (int i = s; i != e; i -= direction) vector2List[i + direction] = vector2List[i];
+				return;
+			}
+
+			var intList = data as List<int>;
+			if (intList != null)
+			{
+				for (int i = s; i != e; i -= direction) intList[i + direction] = intList[i];
+				return;
+			}
 		}
 
 		private int currentSize;
