@@ -89,12 +89,13 @@ namespace MG.ParticleEditorWindow
 			window = new GtkWindow(title);
 			window.DeleteEvent += WindowOnDeleteEvent;
 			window.Destroyed += (sender, args) => Closed.Invoke();
-			
+
+			window.Icon = Pixbuf.LoadFromResource("icon.png");
 			window.Name = title;
 			window.WindowPosition = WindowPosition.CenterOnParent;
 			window.DefaultWidth = 1280;
 			window.DefaultHeight = 720;
-
+			
 			// Subcomponents
 			RenderView = new RenderView();
 			TreeView = new TreeView();
