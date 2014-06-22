@@ -9,8 +9,10 @@ namespace MG.ParticleEditor
 		{
 			Framework.Framework.Initialize("Main", "");
 			Application.Init("Particle Editor", args);
+
+			var file = args.Length > 0 ? args[0] : "";
 			
-			using (var mainController = new MainController())
+			using (var mainController = new MainController(file))
 			{
 				Application.Run();
 			}

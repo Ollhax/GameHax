@@ -7,10 +7,11 @@ namespace MG.ParticleEditor.Controllers
 {
 	class DocumentController
 	{
+		public const string ProjectFileExtension = ".peproj";
+
 		private MainController controller;
 		private Model model;
-		private const string projectExtension = ".peproj";
-		private const string projectFilters = "Particle Editor Projects (*" + projectExtension + ")|*" + projectExtension + "|All files (*.*)|*.*";
+		private const string projectFilters = "Particle Editor Projects (*" + ProjectFileExtension + ")|*" + ProjectFileExtension + "|All files (*.*)|*.*";
 
 		public event Action NewDocument = delegate { };
 		public event Action OpenDocument = delegate { };
@@ -36,17 +37,23 @@ namespace MG.ParticleEditor.Controllers
 			var result = controller.ShowOpenDialog("Open Particle Editor Project...", projectFilters, "");
 			if (result.Accepted)
 			{
-				if (!Close()) return;
-
-				model.Clear();
-				model.DefinitionTable.Load(result.SelectedPath);
-				model.DocumentFile = result.SelectedPath;
-				controller.UpdateTree = true;
-				controller.UpdateTitle = true;
-				Log.Info("Opened project: " + result.SelectedPath);
-
-				OpenDocument.Invoke();
+				Open(result.SelectedPath);
 			}
+		}
+
+		public bool Open(string file)
+		{
+			if (!Close()) return false;
+
+			model.Clear();
+			model.DefinitionTable.Load(file);
+			model.DocumentFile = file;
+			controller.UpdateTree = true;
+			controller.UpdateTitle = true;
+			Log.Info("Opened project: " + file);
+
+			OpenDocument.Invoke();
+			return true;
 		}
 
 		public bool Close()
@@ -95,9 +102,9 @@ namespace MG.ParticleEditor.Controllers
 			if (result.Accepted)
 			{
 				var outputFile = result.SelectedPath;
-				if (!outputFile.HasExtension(projectExtension) && result.FilterIndex == 0)
+				if (!outputFile.HasExtension(ProjectFileExtension) && result.FilterIndex == 0)
 				{
-					outputFile = outputFile.ChangeExtension(projectExtension);
+					outputFile = outputFile.ChangeExtension(ProjectFileExtension);
 				}
 
 				return Save(outputFile);

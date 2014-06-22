@@ -88,9 +88,8 @@ namespace MG.ParticleEditor.Controllers
 
 		public void OnNewDocument()
 		{
-			model.DefinitionIdCounter = 1;
-			model.DocumentOpen = true;
-			
+			OnChangeDocument();
+
 			if (model.DeclarationTable.DeclarationsList.Count > 0)
 			{
 				var decl = model.DeclarationTable.DeclarationsList[0];
@@ -100,9 +99,16 @@ namespace MG.ParticleEditor.Controllers
 
 		public void OnOpenDocument()
 		{
+			OnChangeDocument();
+			
+			AssignIds(model.DefinitionTable.Definitions);
+			controller.SelectDefinition = 1;
+		}
+
+		private void OnChangeDocument()
+		{
 			model.DefinitionIdCounter = 1;
 			model.DocumentOpen = true;
-			AssignIds(model.DefinitionTable.Definitions);
 		}
 
 		private void AssignIds(ParticleCollection collection)

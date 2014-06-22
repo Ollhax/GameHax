@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 using MG.EditorCommon;
+using MG.EditorCommon.FileAssociation;
 using MG.EditorCommon.Undo;
 using MG.Framework.Assets;
 using MG.Framework.Particle;
@@ -56,8 +58,15 @@ namespace MG.ParticleEditor.Controllers
 			return window.ShowOpenDialog(title, filters, startPath);
 		}
 
-		public MainController()
+		public MainController(string file)
 		{
+			if (!FileAssociation.IsAssociated(DocumentController.ProjectFileExtension))
+			{
+				var application = System.Reflection.Assembly.GetExecutingAssembly().Location;
+				var icon = Path.GetDirectoryName(application) + "\\icon.ico";
+				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleEditor", "Particle Editor Project file.", icon, application);
+			}
+			
 			window = new MainWindow("");
 			window.Closing += WindowOnClosing;
 			window.Closed += WindowOnClosed;
@@ -89,7 +98,15 @@ namespace MG.ParticleEditor.Controllers
 			
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
-			documentController.New();
+
+			if (string.IsNullOrEmpty(file))
+			{
+				documentController.New();
+			}
+			else
+			{
+				documentController.Open(file);
+			}
 
 			AfterUndo();
 
