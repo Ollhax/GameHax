@@ -29,19 +29,22 @@ namespace MG.ParticleHax
 					mainController.New();
 				}
 
-				ApplicationEvents.OpenDocuments += delegate (object sender, ApplicationDocumentEventArgs e)
+				if (Framework.Utility.Platform.IsMac)
 				{
-					if (mainController != null && e.Documents != null && e.Documents.Count > 0)
+					ApplicationEvents.OpenDocuments += delegate(object sender, ApplicationDocumentEventArgs e)
 					{
-						foreach (var d in e.Documents)
+						if (mainController != null && e.Documents != null && e.Documents.Count > 0)
 						{
-							mainController.Open(d.Key);
-							break;
+							foreach (var d in e.Documents)
+							{
+								mainController.Open(d.Key);
+								break;
+							}
 						}
-					}
 
-					e.Handled = true;
-				};
+						e.Handled = true;
+					};
+				}
 
 				Application.Run();
 			}
