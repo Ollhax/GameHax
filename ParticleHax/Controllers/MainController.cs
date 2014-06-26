@@ -32,7 +32,9 @@ namespace MG.ParticleHax.Controllers
 		public bool UpdateParticleSystem;
 		public int SelectDefinition;
 		public string SelectParameter;
-		
+
+		public DocumentController DocumentController { get { return documentController; } }
+
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
 		{
 			window.ShowMessage(message, messageType);
@@ -116,16 +118,6 @@ namespace MG.ParticleHax.Controllers
 			Log.Info("Done creating MainController.");
 		}
 
-		public void New()
-		{
-			documentController.New();
-		}
-
-		public void Open(string file)
-		{
-			documentController.Open(file);
-		}
-		
 		private void Update()
 		{
 			if (!renderController.Loaded) return;

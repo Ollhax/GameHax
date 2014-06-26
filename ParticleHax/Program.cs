@@ -7,8 +7,6 @@ namespace MG.ParticleHax
 {
 	class MainClass
 	{
-		private static MainController mainController;
-
 		public static void Main(string[] args)
 		{
 			const string applicationName = "ParticleHax";
@@ -18,15 +16,15 @@ namespace MG.ParticleHax
 
 			var file = args.Length > 0 ? args[0] : "";
 			
-			using (mainController = new MainController())
+			using (var mainController = new MainController())
 			{
 				if (!string.IsNullOrEmpty(file))
 				{
-					mainController.Open(file);
+					mainController.DocumentController.Open(file);
 				}
 				else
 				{
-					mainController.New();
+					mainController.DocumentController.New();
 				}
 
 				if (Framework.Utility.Platform.IsMac)
@@ -37,12 +35,20 @@ namespace MG.ParticleHax
 						{
 							foreach (var d in e.Documents)
 							{
-								mainController.Open(d.Key);
+								mainController.DocumentController.Open(d.Key);
 								break;
 							}
 						}
 
 						e.Handled = true;
+					};
+
+					ApplicationEvents.Quit += delegate(object sender, ApplicationQuitEventArgs e)
+					{
+						if (mainController != null)
+						{
+							e.UserCancelled = !mainController.DocumentController.Close();
+						}
 					};
 				}
 
