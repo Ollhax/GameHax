@@ -36,6 +36,11 @@ namespace MG.Framework.Assets
 				assetLoaders.Add(loader.GetAssetType(), loader);
 			}
 		}
+
+		public FilePath GetFullPath(FilePath assetPath)
+		{
+			return Path.Combine(RootDirectory, assetPath);
+		}
 		
 		public void Update()
 		{
@@ -70,10 +75,11 @@ namespace MG.Framework.Assets
 			AssetWatcher watcher;
 			if (!watchers.TryGetValue(assetCanonicalDirectoryPath, out watcher))
 			{
+				Log.Info("Creating watcher for directory: " + assetCanonicalDirectoryPath);
 				watcher = new AssetWatcher(RootDirectory, assetCanonicalDirectoryPath);
 				watchers.Add(assetCanonicalDirectoryPath, watcher);
 			}
-			
+
 			// Check cache
 			object cachedAsset;
 			if (cachedAssets.TryGetValue(assetName, out cachedAsset))
@@ -83,9 +89,11 @@ namespace MG.Framework.Assets
 					return (T)cachedAsset;
 				}
 			}
-			
+
 			// Try loading
 			var fullPath = Path.Combine(baseLocation, RootDirectory, assetName);
+			Log.Info("Loading " + typeof(T).Name + " from file " + fullPath);
+
 			var obj = LoadInternal<T>(fullPath);
 			if (obj != null)
 			{
@@ -93,6 +101,7 @@ namespace MG.Framework.Assets
 				return (T)obj;
 			}
 
+			Log.Info("- Failure!");
 			return ret;
 		}
 		

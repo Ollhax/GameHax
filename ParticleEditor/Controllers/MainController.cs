@@ -60,25 +60,34 @@ namespace MG.ParticleEditor.Controllers
 
 		public MainController(string file)
 		{
+			var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			var binaryDir = Path.GetDirectoryName(binaryPath);
+			Log.Info("Location: " + binaryPath);
+			Log.Info("Save Location: " + Framework.Framework.SaveDataFolder);
+
+			Environment.CurrentDirectory = binaryDir; // HACK: Set working directory to make Path.GetFullPath not crash on Mac.
+			Log.Info("Current directory: " + Environment.CurrentDirectory);
+
 			if (!FileAssociation.IsAssociated(DocumentController.ProjectFileExtension))
 			{
-				var application = System.Reflection.Assembly.GetExecutingAssembly().Location;
-				var icon = Path.GetDirectoryName(application) + "\\icon.ico";
-				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleEditor", "Particle Editor Project file.", icon, application);
+				var icon = binaryDir + "\\icon.ico";
+				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleEditor", "Particle Editor Project file.", icon, binaryPath);
 			}
-			
+
+			Log.Info("Creating window.");
 			window = new MainWindow("");
 			window.Closing += WindowOnClosing;
 			window.Closed += WindowOnClosed;
 
-			assetHandler = new AssetHandler(".");
+			Log.Info("Creating asset handler. Directory: " + binaryDir);
+			assetHandler = new AssetHandler(binaryDir);
 
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
 			model.UndoHandler.AfterStateChanged += AfterUndo;
 			model.ParticleManager = new ParticleManager(assetHandler);
 			model.DeclarationTable = new ParticleDeclarationTable();
-			model.DeclarationTable.Load("ParticleDeclarations.xml");
+			model.DeclarationTable.Load(assetHandler.GetFullPath("ParticleDeclarations.xml"));
 			model.DefinitionTable = new ParticleDefinitionTable();
 			
 			documentController = new DocumentController(this, model);
@@ -112,6 +121,8 @@ namespace MG.ParticleEditor.Controllers
 
 			Application.Update += Update;
 			startStopwatch.Start();
+
+			Log.Info("Done creating MainController.");
 		}
 		
 		private void Update()
@@ -199,7 +210,7 @@ namespace MG.ParticleEditor.Controllers
 		private void UpdateTitleInternal()
 		{
 			var title = new StringBuilder();
-			title.Append("Particle Editor");
+			title.Append("ParticleHax");
 
 			if (model.DocumentOpen)
 			{

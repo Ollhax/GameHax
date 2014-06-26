@@ -4,6 +4,7 @@ using MG.Framework.Assets;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Utility;
+using System;
 
 namespace MG.Framework.Particle
 {
@@ -34,6 +35,10 @@ namespace MG.Framework.Particle
 
 		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
 		{
+			if (assetHandler == null) throw new ArgumentException("assetHandler");
+			if (particleManager == null) throw new ArgumentException("particleManager");
+			if (particleDefinition == null) throw new ArgumentException("particleDefinition");
+
 			this.assetHandler = assetHandler;
 			this.particleManager = particleManager;
 			this.Definition = particleDefinition;
@@ -58,7 +63,6 @@ namespace MG.Framework.Particle
 
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
-
 			emitter.Reload();
 
 			if (Definition.Children.Count != SubSystems.Count)

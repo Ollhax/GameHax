@@ -60,11 +60,12 @@ namespace MG.Framework.Utility
 			// Create/open log file
 			try
 			{
-				logFile = File.Open(Path.Combine(path, "log " + DateTime.Now.Date.ToString("yyyy/MM/dd") + ".txt"), FileMode.Append);
+				var p = Path.Combine(path, "log " + DateTime.Now.Date.ToString("yyyy-MM-dd") + ".txt");
+				logFile = File.Open(p, FileMode.Append);
 				logWriter = new StreamWriter(logFile);
 				logWriter.WriteLine("----------------------------------------------");
 			}
-			catch (IOException ioException)
+			catch (IOException)
 			{
 				// Ignore
 			}
@@ -186,7 +187,7 @@ namespace MG.Framework.Utility
 			entry.StackTrace = new StackTrace(1, true);
 			entry.StackLevel = stackLevel;
 			entry.ThreadName = Thread.CurrentThread.Name;
-				
+
 			entries.Add(entry);
 			
 			if (logTier == LogTier.Fatal)

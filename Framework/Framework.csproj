@@ -158,6 +158,7 @@
     <Compile Include="Utility\Time.cs" />
     <Compile Include="Utility\XmlHelper.cs" />
     <Compile Include="Window\Window.cs" />
+    <Compile Include="Utility\ExceptionHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\IAssetLoader.cs" />

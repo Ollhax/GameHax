@@ -28,6 +28,7 @@ namespace MG.ParticleEditor.Controllers
 		
 		private void Load()
 		{
+			Log.Info("Done loading render view.");
 			loaded = true;
 		}
 
@@ -73,6 +74,7 @@ namespace MG.ParticleEditor.Controllers
 					model.ParticleManager.Destroy(model.ParticleSystem);
 				}
 
+				Log.Info("Creating particle system from definition: " + definition.Name);
 				model.ParticleSystem = model.ParticleManager.Create(definition);
 				UpdateParticleSystemPosition();
 			}

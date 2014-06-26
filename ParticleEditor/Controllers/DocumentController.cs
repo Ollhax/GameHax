@@ -75,9 +75,10 @@ namespace MG.ParticleEditor.Controllers
 					}
 					break;
 				}
+
+				Log.Info("Closed project.");
 			}
 
-			Log.Info("Closed project.");
 			model.Clear();
 			controller.UpdateTree = true;
 			controller.UpdateTitle = true;

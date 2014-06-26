@@ -315,7 +315,7 @@ namespace MG.Framework.Utility
 			if (!Path.IsPathRooted(absPath))
 				return absPath;
 
-			absPath = Path.GetFullPath(absPath);
+			absPath = Path.GetFullPath(absPath); // Crashes on Mono if working directory is at the root
 			baseDirectoryPath = Path.GetFullPath(baseDirectoryPath.TrimEnd(Path.DirectorySeparatorChar));
 
 			string[] bPath = baseDirectoryPath.Split(separators);
@@ -339,7 +339,6 @@ namespace MG.Framework.Utility
 				if (i + 1 < bPath.Length || aPath.Length - indx > 0)
 					result.Append(Path.DirectorySeparatorChar);
 			}
-
 
 			result.Append(String.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length - indx));
 			if (result.Length == 0)

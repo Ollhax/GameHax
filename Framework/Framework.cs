@@ -1,17 +1,21 @@
 ﻿using System.Threading;
 
 using MG.Framework.Utility;
+using System;
+using System.IO;
 
 namespace MG.Framework
 {
 	public static class Framework
 	{
+		public static FilePath SaveDataFolder { get; private set; }
+
 		private static bool initialized = false;
 
 		/// <summary>
 		/// Initialize the framework.
 		/// </summary>
-		public static void Initialize(string mainThreadName, string logPath)
+		public static void Initialize(string mainThreadName, string saveDataFolder)
 		{
 			if (initialized) return;
 			initialized = true;
@@ -21,7 +25,22 @@ namespace MG.Framework
 				Thread.CurrentThread.Name = mainThreadName;
 			}
 
-			Log.Initialize(logPath);
+			if (Platform.IsWindows)
+			{
+				SaveDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), saveDataFolder);
+			}
+			else
+			{
+				SaveDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Library", saveDataFolder);
+			}
+
+			if (!Directory.Exists(SaveDataFolder))
+			{
+				Directory.CreateDirectory(SaveDataFolder);
+			}
+
+			ExceptionHandler.Initialize();
+			Log.Initialize(SaveDataFolder);
 		}
 
 		/// <summary>

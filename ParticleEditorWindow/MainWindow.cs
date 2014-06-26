@@ -90,6 +90,7 @@ namespace MG.ParticleEditorWindow
 			window.DeleteEvent += WindowOnDeleteEvent;
 			window.Destroyed += (sender, args) => Closed.Invoke();
 
+			Log.Info("Loading window icon.");
 			window.Icon = Pixbuf.LoadFromResource("icon.png");
 			window.Name = title;
 			window.WindowPosition = WindowPosition.CenterOnParent;
@@ -153,6 +154,7 @@ namespace MG.ParticleEditorWindow
 			hpaneMain.Pack1(ParameterView.Widget, false, false);
 			ParameterView.Widget.DividerPosition = 0.35;
 
+			Log.Info("Showing window.");
 			window.ShowAll();
 		}
 

@@ -196,6 +196,8 @@ namespace MG.Framework.Graphics
 				GL.GenVertexArrays(1, out vertexArrayObject);
 				GL.BindVertexArray(vertexArrayObject);
 			}
+
+			Log.Info("GraphicsDevice initialized.");
 		}
 
 		//public static void Deinitialize()

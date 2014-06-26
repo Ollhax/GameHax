@@ -19,6 +19,10 @@ Global
 		{3F167F06-8D75-4111-882C-7239EA91F13B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F167F06-8D75-4111-882C-7239EA91F13B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F167F06-8D75-4111-882C-7239EA91F13B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0276CF6-F817-42E9-A071-7EDB4519C415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E0276CF6-F817-42E9-A071-7EDB4519C415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0276CF6-F817-42E9-A071-7EDB4519C415}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,13 +31,6 @@ Global
 		{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = ParticleEditor\ParticleEditor.csproj
@@ -224,5 +221,8 @@ Global
 		$0.StandardHeader = $31
 		$31.Text = 
 		$31.IncludeInNewFiles = True
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
