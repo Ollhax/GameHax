@@ -5,7 +5,7 @@ using MG.Framework.Particle;
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 
-namespace MG.ParticleEditor.Controllers
+namespace MG.ParticleHax.Controllers
 {
 	class RenderController
 	{

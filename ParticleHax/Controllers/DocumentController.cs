@@ -3,15 +3,15 @@
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 
-namespace MG.ParticleEditor.Controllers
+namespace MG.ParticleHax.Controllers
 {
 	class DocumentController
 	{
-		public const string ProjectFileExtension = ".peproj";
+		public const string ProjectFileExtension = ".pe";
 
 		private MainController controller;
 		private Model model;
-		private const string projectFilters = "Particle Editor Projects (*" + ProjectFileExtension + ")|*" + ProjectFileExtension + "|All files (*.*)|*.*";
+		private const string projectFilters = "ParticleHax Projects (*" + ProjectFileExtension + ")|*" + ProjectFileExtension + "|All files (*.*)|*.*";
 
 		public event Action NewDocument = delegate { };
 		public event Action OpenDocument = delegate { };
@@ -34,7 +34,7 @@ namespace MG.ParticleEditor.Controllers
 
 		public void Open()
 		{
-			var result = controller.ShowOpenDialog("Open Particle Editor Project...", projectFilters, "");
+			var result = controller.ShowOpenDialog("Open ParticleHax Project...", projectFilters, "");
 			if (result.Accepted)
 			{
 				Open(result.SelectedPath);
@@ -99,7 +99,7 @@ namespace MG.ParticleEditor.Controllers
 
 		public bool SaveAs()
 		{
-			var result = controller.ShowSaveDialog("Save Particle Editor Project...", projectFilters, model.DocumentFile);
+			var result = controller.ShowSaveDialog("Save ParticleHax Project...", projectFilters, model.DocumentFile);
 			if (result.Accepted)
 			{
 				var outputFile = result.SelectedPath;

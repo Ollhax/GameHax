@@ -5,7 +5,7 @@ using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.ParticleEditorWindow;
 
-namespace MG.ParticleEditor.Controllers
+namespace MG.ParticleHax.Controllers
 {
 	class ParameterController
 	{

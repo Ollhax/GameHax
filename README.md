@@ -4,13 +4,18 @@ GameHax
 A set of tools for multi-platform game development.
 
 Included projects:
-* ParticleEditor
+* ParticleHax
+* ParticleHaxWindow
 * Framework
 * EditorCommon
 
-ParticleEditor Project
+ParticleHax Project
 =======
 A generic particle editor.
+
+ParticleHaxWindow Project
+=======
+The GTK frontend for the particle editor.
 
 Framework Project
 =======

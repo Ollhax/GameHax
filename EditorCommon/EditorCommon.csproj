@@ -112,6 +112,11 @@
     <Compile Include="Undo\UndoableAction.cs" />
     <Compile Include="Undo\UndoableActionGroup.cs" />
     <Compile Include="Undo\UndoHandler.cs" />
+    <Compile Include="MacInterop\ApplicationEvents.cs" />
+    <Compile Include="MacInterop\Carbon.cs" />
+    <Compile Include="MacInterop\AppleEvents\Native.cs" />
+    <Compile Include="MacInterop\AppleEvent.cs" />
+    <Compile Include="MacInterop\CoreFoundation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
@@ -166,4 +171,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="MacInterop\" />
+    <Folder Include="MacInterop\AppleEvents\" />
+  </ItemGroup>
 </Project>

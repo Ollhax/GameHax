@@ -5,7 +5,7 @@ using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
 
-namespace MG.ParticleEditor
+namespace MG.ParticleHax
 {
 	class Model
 	{

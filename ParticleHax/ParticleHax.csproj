@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E0276CF6-F817-42E9-A071-7EDB4519C415}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>MG.ParticleEditor</RootNamespace>
+    <RootNamespace>MG.ParticleHax</RootNamespace>
     <AssemblyName>ParticleHax</AssemblyName>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -75,9 +75,9 @@
       <Project>{F685A568-3FF2-4B0A-8979-F96E9D0F2DBA}</Project>
       <Name>EditorCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ParticleEditorWindow\ParticleEditorWindow.csproj">
+    <ProjectReference Include="..\ParticleHaxWindow\ParticleHaxWindow.csproj">
       <Project>{4DF317F2-50C4-44F1-A481-EE98E0A4A6EF}</Project>
-      <Name>ParticleEditorWindow</Name>
+      <Name>ParticleHaxWindow</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

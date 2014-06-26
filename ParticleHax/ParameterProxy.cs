@@ -4,10 +4,10 @@ using System.ComponentModel;
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
-using MG.ParticleEditor.Actions;
-using MG.ParticleEditor.Controllers;
+using MG.ParticleHax.Actions;
+using MG.ParticleHax.Controllers;
 
-namespace MG.ParticleEditor
+namespace MG.ParticleHax
 {
 	class ParameterProxy : ICustomTypeDescriptor
 	{

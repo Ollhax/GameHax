@@ -24,5 +24,22 @@
 	<string>1.0</string>
 	<key>NSAppleScriptEnabled</key>
 	<string>NO</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>icons.icns</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>pe</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>ParticleHax Project</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+		</dict>
+	</array>
 </dict>
 </plist>

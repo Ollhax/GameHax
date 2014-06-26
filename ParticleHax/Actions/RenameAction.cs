@@ -1,8 +1,8 @@
 ﻿using System;
 
-using MG.ParticleEditor.Controllers;
+using MG.ParticleHax.Controllers;
 
-namespace MG.ParticleEditor.Actions
+namespace MG.ParticleHax.Actions
 {
 	class RenameAction : UndoableParticleAction
 	{

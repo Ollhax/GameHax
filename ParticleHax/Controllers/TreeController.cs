@@ -5,10 +5,10 @@ using MG.EditorCommon;
 using MG.EditorCommon.Undo;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
-using MG.ParticleEditor.Actions;
+using MG.ParticleHax.Actions;
 using MG.ParticleEditorWindow;
 
-namespace MG.ParticleEditor.Controllers
+namespace MG.ParticleHax.Controllers
 {
 	class TreeController
 	{
@@ -95,6 +95,8 @@ namespace MG.ParticleEditor.Controllers
 				var decl = model.DeclarationTable.DeclarationsList[0];
 				controller.SelectDefinition = CreateParticleSystem(decl.Name, false);
 			}
+
+			model.Modified = false;
 		}
 
 		public void OnOpenDocument()

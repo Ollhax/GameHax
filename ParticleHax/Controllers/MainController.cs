@@ -11,7 +11,7 @@ using MG.Framework.Particle;
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 
-namespace MG.ParticleEditor.Controllers
+namespace MG.ParticleHax.Controllers
 {
 	class MainController : IDisposable
 	{
@@ -58,7 +58,7 @@ namespace MG.ParticleEditor.Controllers
 			return window.ShowOpenDialog(title, filters, startPath);
 		}
 
-		public MainController(string file)
+		public MainController()
 		{
 			var binaryPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			var binaryDir = Path.GetDirectoryName(binaryPath);
@@ -71,7 +71,7 @@ namespace MG.ParticleEditor.Controllers
 			if (!FileAssociation.IsAssociated(DocumentController.ProjectFileExtension))
 			{
 				var icon = binaryDir + "\\icon.ico";
-				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleEditor", "Particle Editor Project file.", icon, binaryPath);
+				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleHax", "ParticleHax Project", icon, binaryPath);
 			}
 
 			Log.Info("Creating window.");
@@ -108,21 +108,22 @@ namespace MG.ParticleEditor.Controllers
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
 
-			if (string.IsNullOrEmpty(file))
-			{
-				documentController.New();
-			}
-			else
-			{
-				documentController.Open(file);
-			}
-
 			AfterUndo();
 
 			Application.Update += Update;
 			startStopwatch.Start();
 
 			Log.Info("Done creating MainController.");
+		}
+
+		public void New()
+		{
+			documentController.New();
+		}
+
+		public void Open(string file)
+		{
+			documentController.Open(file);
 		}
 		
 		private void Update()
