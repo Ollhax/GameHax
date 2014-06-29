@@ -24,6 +24,7 @@ namespace MG.Framework.Particle
 		
 		private ParticleData particleData = new ParticleData(64);
 		private ParticleEmitter emitter;
+		private bool disabled;
 		
 		private ParticleDefinition.Parameter paramTexture;
 		private BlendMode paramBlendMode;
@@ -81,6 +82,7 @@ namespace MG.Framework.Particle
 			Position = Vector2.Zero;
 			particleData.ActiveParticles = 0;
 			emitter.Clear();
+			disabled = false;
 
 			ClearChildren();
 		}
@@ -94,13 +96,30 @@ namespace MG.Framework.Particle
 			}
 			SubSystems.Clear();
 		}
-		
+
+		public bool Disabled
+		{
+			get { return disabled; }
+			set
+			{
+				disabled = value;
+				foreach (var system in SubSystems)
+				{
+					system.Disabled = true;
+				}
+			}
+		}
+
 		public bool Dead
 		{
 			get
 			{
-				if (emitter.Alive) return false;
-				if (paramParticleInfinite) return false;
+				if (!Disabled)
+				{
+					if (emitter.Alive) return false;
+					if (paramParticleInfinite) return false;
+				}
+				
 				if (particleData.ActiveParticles > 0) return false;
 
 				foreach (var system in SubSystems)
@@ -118,8 +137,11 @@ namespace MG.Framework.Particle
 				return;
 
 			((PointEmitter)emitter).Point = Position;
-			emitter.Update(time);
-
+			if (!Disabled)
+			{
+				emitter.Update(time);
+			}
+			
 			var particlePosition = particleData.Get<Vector2>("Position");
 			var particleVelocity = particleData.Get<Vector2>("Velocity");
 			var particleLife = particleData.Get<float>("Life");
