@@ -67,7 +67,7 @@ namespace MG.Framework.Assets
 		public T Load<T>(FilePath asset)
 		{
 			T ret = default(T);
-			var assetFullPath = asset.FullPath;
+			var assetFullPath = ((FilePath)(Path.Combine(RootDirectory, asset))).FullPath;
 			var assetDirectory = assetFullPath.ParentDirectory;
 			var assetCanonicalDirectoryPath = assetDirectory.CanonicalPath;
 			var assetName = assetFullPath.ToRelative(RootDirectory);

@@ -30,8 +30,10 @@ namespace MG.Framework.Utility
 				writer.WriteLine(fullExceptionText);
 			}
 
+#if !DEBUG
 			MessageBox.Show("Oops, something went very wrong! " + "Information stored in \"" + exceptionFile + "\". Please send it to ollhak@gmail.com!\n\nError:\"" + exceptionText + "\"",
 			  "Unhandled Exception", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+#endif
 
 			Framework.Deinitialize();
 		}

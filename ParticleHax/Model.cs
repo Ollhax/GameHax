@@ -16,7 +16,7 @@ namespace MG.ParticleHax
 		public ParticleDeclarationTable DeclarationTable;
 		public ParticleDefinitionTable DefinitionTable;
 		public ParticleSystem ParticleSystem;
-		public ParticleManager ParticleManager;
+		public ParticleSystemPool ParticleSystemPool;
 
 		public ParticleDefinition CurrentDefinition { get { return DefinitionTable.Definitions.GetById(CurrentDefinitionId); } }
 
@@ -30,7 +30,7 @@ namespace MG.ParticleHax
 			DocumentOpen = false;
 			DocumentFile = null;
 			DefinitionTable = new ParticleDefinitionTable();
-			ParticleManager.Clear();
+			ParticleSystemPool.Clear();
 			ParticleSystem = null;
 			UndoHandler.Clear();
 			CurrentParameter = null;

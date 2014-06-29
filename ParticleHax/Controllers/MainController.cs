@@ -87,7 +87,7 @@ namespace MG.ParticleHax.Controllers
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
 			model.UndoHandler.AfterStateChanged += AfterUndo;
-			model.ParticleManager = new ParticleManager(assetHandler);
+			model.ParticleSystemPool = new ParticleSystemPool(assetHandler);
 			model.DeclarationTable = new ParticleDeclarationTable();
 			model.DeclarationTable.Load(assetHandler.GetFullPath("ParticleDeclarations.xml"));
 			model.DefinitionTable = new ParticleDefinitionTable();

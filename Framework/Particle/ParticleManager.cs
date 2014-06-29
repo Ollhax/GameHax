@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 using MG.Framework.Assets;
 using MG.Framework.Utility;
@@ -7,44 +8,44 @@ namespace MG.Framework.Particle
 {
 	public class ParticleManager
 	{
-		private readonly AssetHandler assetHandler;
-		private readonly Dictionary<int, Pool<ParticleSystem>> particlePools = new Dictionary<int, Pool<ParticleSystem>>();
-
-		public ParticleManager(AssetHandler assetHandler)
+		private readonly Dictionary<string, ParticleDefinitionTable> particleDefinitionTables = new Dictionary<string, ParticleDefinitionTable>();
+		private readonly ParticleSystemPool particleSystemPool;
+		
+		public ParticleManager(AssetHandler assetHandler, FilePath path)
 		{
-			this.assetHandler = assetHandler;
+			particleSystemPool = new ParticleSystemPool(assetHandler);
+			
+			string[] files = Directory.GetFiles(assetHandler.GetFullPath(path), "*.pe", SearchOption.AllDirectories);
+			foreach (var file in files)
+			{
+				var name = PathHelper.GetFileNameWithoutPathOrExtension(file);
+				
+				var table = new ParticleDefinitionTable();
+				if (table.Load(file))
+				{
+					particleDefinitionTables.Add(name, table);
+				}
+			}
 		}
-
-		public ParticleSystem Create(ParticleDefinition definition)
+		
+		public ParticleSystem Create(string library, string definition)
 		{
-			var particlePool = GetPool(definition);
-			var particleSystem = particlePool.New();
-			particleSystem.Reload();
-			return particleSystem;
-		}
+			ParticleDefinitionTable table;
+			if (particleDefinitionTables.TryGetValue(library, out table))
+			{
+				var particleDefinition = table.Definitions.GetByName(definition);
+				if (particleDefinition != null)
+				{
+					return particleSystemPool.Create(particleDefinition);
+				}
+			}
 
+			return null;
+		}
+		
 		public void Destroy(ParticleSystem particleSystem)
 		{
-			var particlePool = GetPool(particleSystem.Definition);
-			particleSystem.Clear();
-			particlePool.Delete(particleSystem);
-		}
-
-		public void Clear()
-		{
-			particlePools.Clear();
-		}
-
-		private Pool<ParticleSystem> GetPool(ParticleDefinition definition)
-		{
-			// Get (or create) the pool for this type of particle
-			Pool<ParticleSystem> particlePool;
-			if (!particlePools.TryGetValue(definition.Id, out particlePool))
-			{
-				particlePool = new Pool<ParticleSystem>(8, () => new ParticleSystem(assetHandler, this, definition));
-				particlePools.Add(definition.Id, particlePool);
-			}
-			return particlePool;
+			particleSystemPool.Destroy(particleSystem);
 		}
 	}
 }

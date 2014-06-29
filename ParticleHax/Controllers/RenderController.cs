@@ -41,7 +41,7 @@ namespace MG.ParticleHax.Controllers
 				
 				if (particleSystem.Dead)
 				{
-					model.ParticleManager.Destroy(particleSystem);
+					model.ParticleSystemPool.Destroy(particleSystem);
 					model.ParticleSystem = null;
 
 					controller.StatusText = "Particle system dead.";
@@ -71,11 +71,11 @@ namespace MG.ParticleHax.Controllers
 			{
 				if (model.ParticleSystem != null)
 				{
-					model.ParticleManager.Destroy(model.ParticleSystem);
+					model.ParticleSystemPool.Destroy(model.ParticleSystem);
 				}
 
 				Log.Info("Creating particle system from definition: " + definition.Name);
-				model.ParticleSystem = model.ParticleManager.Create(definition);
+				model.ParticleSystem = model.ParticleSystemPool.Create(definition);
 				UpdateParticleSystemPosition();
 			}
 		}

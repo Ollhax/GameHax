@@ -268,32 +268,33 @@ namespace MG.Framework.Particle
 	{
 		public ParticleCollection Definitions = new ParticleCollection();
 		
-		public void Load(string file)
+		public bool Load(string file)
 		{
 			try
 			{
 				using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
-					Load(fs);
+					return Load(fs);
 				}
 			}
 			catch (Exception e)
 			{
 				Log.Error("- Error: " + e.Message);
+				return false;
 			}
 		}
 
-		public void Load(Stream stream)
+		public bool Load(Stream stream)
 		{
 			using (var xmlReader = XmlReader.Create(stream, XmlHelper.DefaultReaderSettings))
 			{
 				var document = new XmlDocument();
 				document.Load(xmlReader);
-				Load(document.DocumentElement);
+				return Load(document.DocumentElement);
 			}
 		}
 
-		public void Load(XmlNode node)
+		public bool Load(XmlNode node)
 		{
 			foreach (XmlNode child in node.ChildNodes)
 			{
@@ -303,6 +304,8 @@ namespace MG.Framework.Particle
 					Definitions.Add(definition);
 				}
 			}
+
+			return true;
 		}
 
 		public void Save(string file)

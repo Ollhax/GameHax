@@ -18,7 +18,7 @@ namespace MG.Framework.Particle
 		public List<ParticleSystem> SubSystems = new List<ParticleSystem>();
 
 		private AssetHandler assetHandler;
-		private ParticleManager particleManager;
+		private ParticleSystemPool particleSystemPool;
 		private Texture2D particleTexture;
 		private List<float> particleAge;
 		
@@ -33,14 +33,14 @@ namespace MG.Framework.Particle
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
 
-		public ParticleSystem(AssetHandler assetHandler, ParticleManager particleManager, ParticleDefinition particleDefinition)
+		public ParticleSystem(AssetHandler assetHandler, ParticleSystemPool particleSystemPool, ParticleDefinition particleDefinition)
 		{
 			if (assetHandler == null) throw new ArgumentException("assetHandler");
-			if (particleManager == null) throw new ArgumentException("particleManager");
+			if (particleSystemPool == null) throw new ArgumentException("particleSystemPool");
 			if (particleDefinition == null) throw new ArgumentException("particleDefinition");
 
 			this.assetHandler = assetHandler;
-			this.particleManager = particleManager;
+			this.particleSystemPool = particleSystemPool;
 			this.Definition = particleDefinition;
 			
 			particleData.Register<Vector2>("Position");
@@ -71,7 +71,7 @@ namespace MG.Framework.Particle
 				SubSystems.Capacity = Definition.Children.Count;
 				foreach (var child in Definition.Children)
 				{
-					SubSystems.Add(particleManager.Create(child));
+					SubSystems.Add(particleSystemPool.Create(child));
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace MG.Framework.Particle
 			foreach (var child in SubSystems)
 			{
 				child.Clear();
-				particleManager.Destroy(child);
+				particleSystemPool.Destroy(child);
 			}
 			SubSystems.Clear();
 		}
