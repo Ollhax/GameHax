@@ -1,4 +1,6 @@
-﻿using MG.Framework.Assets;
+﻿using System;
+
+using MG.Framework.Assets;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
 using MG.Framework.Particle;
@@ -13,7 +15,8 @@ namespace MG.ParticleHax.Controllers
 		private Model model;
 		private AssetHandler assetHandler;
 		private bool loaded;
-
+		private Vector2? particlePosition;
+		
 		public bool Loaded { get { return loaded; } }
 
 		public RenderController(MainController controller, Model model, AssetHandler assetHandler, RenderView renderView)
@@ -24,6 +27,7 @@ namespace MG.ParticleHax.Controllers
 
 			renderView.Load += Load;
 			renderView.Draw += Draw;
+			renderView.LeftMousePress += OnPress;
 		}
 		
 		private void Load()
@@ -76,6 +80,7 @@ namespace MG.ParticleHax.Controllers
 
 				Log.Info("Creating particle system from definition: " + definition.Name);
 				model.ParticleSystem = model.ParticleSystemPool.Create(definition);
+				particlePosition = null;
 				UpdateParticleSystemPosition();
 			}
 		}
@@ -99,7 +104,12 @@ namespace MG.ParticleHax.Controllers
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem == null) return;
 			
-			particleSystem.Position = new Vector2(Screen.PrimaryScreen.NormalizedScreenArea.Center);
+			particleSystem.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+		}
+
+		private void OnPress(Vector2 pos)
+		{
+			particlePosition = pos;
 		}
 
 		//private void ResetChildPosition(ParticleSystem parent)
