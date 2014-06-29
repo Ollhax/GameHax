@@ -47,13 +47,16 @@ namespace MG.ParticleHax.Controllers
 				{
 					model.ParticleSystemPool.Destroy(particleSystem);
 					model.ParticleSystem = null;
-
-					controller.StatusText = "Particle system dead.";
 				}
 				else
 				{
 					controller.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
 				}
+			}
+
+			if (particleSystem == null)
+			{
+				OnItemSelected(model.CurrentDefinition);
 			}
 		}
 
@@ -78,13 +81,25 @@ namespace MG.ParticleHax.Controllers
 					model.ParticleSystemPool.Destroy(model.ParticleSystem);
 				}
 
-				Log.Info("Creating particle system from definition: " + definition.Name);
-				model.ParticleSystem = model.ParticleSystemPool.Create(definition);
-				particlePosition = null;
-				UpdateParticleSystemPosition();
+				if (!Disabled(definition))
+				{
+					//Log.Info("Creating particle system from definition: " + definition.Name);
+					model.ParticleSystem = model.ParticleSystemPool.Create(definition);
+					particlePosition = null;
+					UpdateParticleSystemPosition();
+				}
+				else
+				{
+					controller.StatusText = "Particle system disabled (emitter life = 0)";
+				}
 			}
 		}
-
+		
+		private bool Disabled(ParticleDefinition definition)
+		{
+			return definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
+		}
+		
 		private void Draw(RenderContext renderContext)
 		{
 			GraphicsDevice.ClearColor = Color.CornflowerBlue;
