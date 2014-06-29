@@ -20,6 +20,10 @@ namespace MG.Framework.Particle
 		private AssetHandler assetHandler;
 		private ParticleSystemPool particleSystemPool;
 		private Texture2D particleTexture;
+		private List<Vector2> particlePosition;
+		private List<Vector2> particleVelocity;
+		private List<float> particleRotation;
+		private List<float> particleLife;
 		private List<float> particleAge;
 		
 		private ParticleData particleData = new ParticleData(64);
@@ -34,6 +38,8 @@ namespace MG.Framework.Particle
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
 
+
+
 		public ParticleSystem(AssetHandler assetHandler, ParticleSystemPool particleSystemPool, ParticleDefinition particleDefinition)
 		{
 			if (assetHandler == null) throw new ArgumentException("assetHandler");
@@ -44,9 +50,10 @@ namespace MG.Framework.Particle
 			this.particleSystemPool = particleSystemPool;
 			this.Definition = particleDefinition;
 			
-			particleData.Register<Vector2>("Position");
-			particleData.Register<Vector2>("Velocity");
-			particleData.Register<float>("Life");
+			particlePosition = particleData.Register<Vector2>("Position");
+			particleVelocity = particleData.Register<Vector2>("Velocity");
+			particleRotation = particleData.Register<float>("Rotation");
+			particleLife = particleData.Register<float>("Life");
 			particleAge = particleData.Register<float>("Age");
 			
 			emitter = new PointEmitter(particleData, particleDefinition);
@@ -61,7 +68,7 @@ namespace MG.Framework.Particle
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
-
+			
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
 			emitter.Reload();
@@ -142,10 +149,6 @@ namespace MG.Framework.Particle
 				emitter.Update(time);
 			}
 			
-			var particlePosition = particleData.Get<Vector2>("Position");
-			var particleVelocity = particleData.Get<Vector2>("Velocity");
-			var particleLife = particleData.Get<float>("Life");
-			
 			for (int i = 0; i < particleData.ActiveParticles;)
 			{
 				particlePosition[i] += particleVelocity[i] * time.ElapsedSeconds;
@@ -184,21 +187,19 @@ namespace MG.Framework.Particle
 
 			quadBatch.Begin(transform, paramBlendMode);
 			
-			var particlePosition = particleData.Get<Vector2>("Position");
-			var particleLife = particleData.Get<float>("Life");
-
 			for (int i = 0; i < particleData.ActiveParticles; i++)
 			{
 				var p = particlePosition[i];
 				var a = particleAge[i];
 				var l = particleLife[i];
+				var r = particleRotation[i];
 				var lifeFraction = a / l;
 				var color = paramParticleColor.Evaluate(lifeFraction);
 				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
 				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
 				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
 				
-				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, 0), color, particleTexture.Size / 2, 0);
+				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size / 2, 0);
 			}
 			
 			quadBatch.End();
