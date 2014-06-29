@@ -13,6 +13,8 @@ namespace MG.Framework.Particle
 		private Curve graphEmitter;
 		private Curve graphParticle;
 
+		public float BaseValue { get { return parameterValue; } }
+
 		public RandomFloat(ParticleDefinition definition, string parameterName)
 		{
 			this.definition = definition;

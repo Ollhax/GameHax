@@ -64,6 +64,27 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>EmitterCount</Name>
+				<PrettyName>Count</PrettyName>
+				<Description>The maximum number of particles to spawn. If zero, this restriction is removed.</Description>
+				<Category>Emitter</Category>
+				<Type>Int32</Type>
+				<DefaultValue>0</DefaultValue>
+				<ValueStep>1</ValueStep>
+				<MinValue>0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Int32</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>1</ValueStep>
+						<MinValue>0</MinValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>EmitterDirection</Name>
 				<PrettyName>Direction</PrettyName>
 				<Description>Direction of this emitter, in degrees.</Description>

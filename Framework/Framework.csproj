@@ -90,6 +90,7 @@
     <Compile Include="Input\Range.cs" />
     <Compile Include="Numerics\Gradient.cs" />
     <Compile Include="Numerics\Curve.cs" />
+    <Compile Include="Particle\RandomInt.cs" />
     <Compile Include="Particle\ParticleCollection.cs" />
     <Compile Include="Particle\ParticleData.cs" />
     <Compile Include="Particle\ParticleDataArray.cs" />

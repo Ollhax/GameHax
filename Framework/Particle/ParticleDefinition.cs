@@ -113,6 +113,7 @@ namespace MG.Framework.Particle
 		public ParticleDefinition Parent;
 
 		private Dictionary<string, RandomFloat> cachedFloats = new Dictionary<string, RandomFloat>();
+		private Dictionary<string, RandomInt> cachedInts = new Dictionary<string, RandomInt>();
 		
 		public void CopyFrom(ParticleDefinition other)
 		{
@@ -251,6 +252,11 @@ namespace MG.Framework.Particle
 			{
 				f.Reload();
 			}
+
+			foreach (var f in cachedInts.Values)
+			{
+				f.Reload();
+			}
 		}
 
 		internal RandomFloat GetFloatParameter(string parameterName)
@@ -260,6 +266,16 @@ namespace MG.Framework.Particle
 
 			f = new RandomFloat(this, parameterName);
 			cachedFloats.Add(parameterName, f);
+			return f;
+		}
+
+		internal RandomInt GetIntParameter(string parameterName)
+		{
+			RandomInt f;
+			if (cachedInts.TryGetValue(parameterName, out f)) return f;
+
+			f = new RandomInt(this, parameterName);
+			cachedInts.Add(parameterName, f);
 			return f;
 		}
 	}

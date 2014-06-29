@@ -42,6 +42,7 @@ namespace MG.Framework.Particle
 		private BlendMode paramBlendMode;
 		private ParticleSortMode paramSortMode;
 		private RandomFloat paramParticleLife;
+		private RandomInt paramEmitterCount;
 		private RandomFloat paramEmitterSpawnRate;
 		private RandomFloat paramEmitterOffsetX;
 		private RandomFloat paramEmitterOffsetY;
@@ -52,9 +53,20 @@ namespace MG.Framework.Particle
 
 		private float emitterAge;
 		private float particleSpawnAccumulator;
+		private int emitterCount;
+		private int emitterCountMax;
 		
 		public override float LifeFractional { get { return paramEmitterLife > 0 ? emitterAge / paramEmitterLife : 0; } }
-		public override bool Alive { get { return paramEmitterLife > 0 && (emitterAge < paramEmitterLife || paramEmitterLoopMode == EmitterLoopMode.Infinite); } }
+		public override bool Alive
+		{
+			get
+			{
+				return 
+					paramEmitterLife > 0 &&
+					(paramEmitterCount.BaseValue == 0 || emitterCount < emitterCountMax) &&
+					(emitterAge < paramEmitterLife || paramEmitterLoopMode == EmitterLoopMode.Infinite);
+			}
+		}
 		
 		private ParticleSortMode SortMode
 		{
@@ -68,8 +80,9 @@ namespace MG.Framework.Particle
 			particleVelocity = particleData.Get<Vector2>("Velocity");
 			particleLife = particleData.Get<float>("Life");
 			particleAge = particleData.Get<float>("Age");
-
+			
 			paramParticleLife = particleDefinition.GetFloatParameter("ParticleLife");
+			paramEmitterCount = particleDefinition.GetIntParameter("EmitterCount");
 			paramEmitterSpawnRate = particleDefinition.GetFloatParameter("EmitterSpawnRate");
 			paramEmitterOffsetX = particleDefinition.GetFloatParameter("EmitterOffsetX");
 			paramEmitterOffsetY = particleDefinition.GetFloatParameter("EmitterOffsetY");
@@ -81,12 +94,14 @@ namespace MG.Framework.Particle
 			paramEmitterLoopMode = (EmitterLoopMode)particleDefinition.Parameters["EmitterLoop"].Value.Get<int>();
 			paramBlendMode = (BlendMode)particleDefinition.Parameters["BlendMode"].Value.Get<int>();
 			paramSortMode = (ParticleSortMode)particleDefinition.Parameters["SortMode"].Value.Get<int>();
+			emitterCountMax = paramEmitterCount.Get(0, 0);
 		}
 
 		public override void Clear()
 		{
 			emitterAge = 0;
 			particleSpawnAccumulator = 0;
+			emitterCount = 0;
 		}
 
 		public override void Update(Time time)
@@ -110,19 +125,17 @@ namespace MG.Framework.Particle
 
 					var spawnRate = paramEmitterSpawnRate.Get(LifeFractional, 0);
 
+					float secondsPerParticle = 0;
 					if (spawnRate > 0)
 					{
-						var secondsPerParticle = 1.0f / spawnRate;
+						secondsPerParticle = 1.0f / spawnRate;
+					}
 
-						if (particleSpawnAccumulator >= secondsPerParticle)
-						{
-							Emit();
-							particleSpawnAccumulator -= secondsPerParticle;
-						}
-						else
-						{
-							break;
-						}
+					if (particleSpawnAccumulator >= secondsPerParticle && Alive)
+					{
+						Emit();
+						particleSpawnAccumulator -= secondsPerParticle;
+						emitterCount++;
 					}
 					else
 					{
