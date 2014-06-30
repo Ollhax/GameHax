@@ -234,12 +234,14 @@ namespace MG.Framework.Particle
 		
 		private RandomFloat paramDirection;
 		private RandomFloat paramRange;
+		private RandomFloat paramEmitterInitialSpeed;
 
 		public PointEmitter(ParticleData particleData, ParticleDefinition particleDefinition)
 			: base(particleData, particleDefinition)
 		{
 			paramDirection = particleDefinition.GetFloatParameter("EmitterDirection");
 			paramRange = particleDefinition.GetFloatParameter("EmitterRange");
+			paramEmitterInitialSpeed = particleDefinition.GetFloatParameter("EmitterInitialSpeed");
 		}
 		
 		public override int Emit()
@@ -249,7 +251,7 @@ namespace MG.Framework.Particle
 			float range = paramRange.Get(e, 0) / 2;
 			float direction = paramDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
 
-			return EmitInternal(Point, MathTools.FromAngle(MathTools.ToRadians(direction)) * 40, 0);
+			return EmitInternal(Point, MathTools.FromAngle(MathTools.ToRadians(direction)) * paramEmitterInitialSpeed.Get(e, 0), 0);
 		}
 	}
 }

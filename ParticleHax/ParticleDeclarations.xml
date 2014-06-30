@@ -172,6 +172,33 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>EmitterInitialSpeed</Name>
+				<PrettyName>Initial Speed</PrettyName>
+				<Description>Initial speed value.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>50.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>1.0</ValueStep>
+						<MinValue>0</MinValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>EmitterInitialRotation</Name>
 				<PrettyName>Initial Rotation</PrettyName>
 				<Description>Initial rotation value.</Description>
@@ -243,6 +270,56 @@
 				<Category>Particle</Category>
 				<Type>Gradient</Type>
 				<DefaultValue>0:255,255,255,255;1:255,255,255,0</DefaultValue>
+			</Parameter>
+			<Parameter>
+				<Name>ParticleAccelerationX</Name>
+				<PrettyName>Acceleration X</PrettyName>
+				<Description>How much the particle should accelerate in world X coordinates.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ParticleAccelerationY</Name>
+				<PrettyName>Acceleration Y</PrettyName>
+				<Description>How much the particle should accelerate in world Y coordinates.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>ParticleScale</Name>

@@ -34,12 +34,12 @@ namespace MG.Framework.Particle
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private Gradient paramParticleColor;
+		private RandomFloat paramParticleAccelerationX;
+		private RandomFloat paramParticleAccelerationY;
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
-
-
-
+		
 		public ParticleSystem(AssetHandler assetHandler, ParticleSystemPool particleSystemPool, ParticleDefinition particleDefinition)
 		{
 			if (assetHandler == null) throw new ArgumentException("assetHandler");
@@ -65,6 +65,8 @@ namespace MG.Framework.Particle
 			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
+			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
+			paramParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
@@ -151,9 +153,17 @@ namespace MG.Framework.Particle
 			
 			for (int i = 0; i < particleData.ActiveParticles;)
 			{
-				particlePosition[i] += particleVelocity[i] * time.ElapsedSeconds;
-				particleAge[i] += time.ElapsedSeconds;
+				var emitterLife = emitter.LifeFractional;
+				var lifeFraction = particleAge[i] / particleLife[i];
+				var accel = new Vector2(
+					paramParticleAccelerationX.Get(emitterLife, lifeFraction),
+					paramParticleAccelerationY.Get(emitterLife, lifeFraction));
 
+				var oldVel = particleVelocity[i];
+				particleVelocity[i] += accel * time.ElapsedSeconds;
+				particlePosition[i] += (oldVel + particleVelocity[i]) / 2 * time.ElapsedSeconds;
+				particleAge[i] += time.ElapsedSeconds;
+				
 				if (!paramParticleInfinite && particleAge[i] >= particleLife[i])
 				{
 					emitter.Destroy(i);
