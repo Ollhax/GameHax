@@ -43,6 +43,7 @@ namespace MG.Framework.Particle
 		private ParticleSortMode paramSortMode;
 		private RandomFloat paramParticleLife;
 		private RandomInt paramEmitterCount;
+		private RandomFloat paramEmitterSpawnDelay;
 		private RandomFloat paramEmitterSpawnRate;
 		private RandomFloat paramEmitterOffsetX;
 		private RandomFloat paramEmitterOffsetY;
@@ -55,6 +56,7 @@ namespace MG.Framework.Particle
 		private List<float> particleLife;
 		private List<float> particleAge;
 
+		private float emitterSpawnDelay;
 		private float emitterAge;
 		private float particleSpawnAccumulator;
 		private int emitterCount;
@@ -89,6 +91,7 @@ namespace MG.Framework.Particle
 			
 			paramParticleLife = particleDefinition.GetFloatParameter("ParticleLife");
 			paramEmitterCount = particleDefinition.GetIntParameter("EmitterCount");
+			paramEmitterSpawnDelay = particleDefinition.GetFloatParameter("EmitterSpawnDelay");
 			paramEmitterSpawnRate = particleDefinition.GetFloatParameter("EmitterSpawnRate");
 			paramEmitterOffsetX = particleDefinition.GetFloatParameter("EmitterOffsetX");
 			paramEmitterOffsetY = particleDefinition.GetFloatParameter("EmitterOffsetY");
@@ -103,6 +106,7 @@ namespace MG.Framework.Particle
 			paramBlendMode = (BlendMode)particleDefinition.Parameters["BlendMode"].Value.Get<int>();
 			paramSortMode = (ParticleSortMode)particleDefinition.Parameters["SortMode"].Value.Get<int>();
 			emitterCountMax = paramEmitterCount.Get(0, 0);
+			emitterSpawnDelay = paramEmitterSpawnDelay.Get(0, 0);
 		}
 
 		public override void Clear()
@@ -115,6 +119,12 @@ namespace MG.Framework.Particle
 		public override void Update(Time time)
 		{
 			if (paramEmitterLife <= 0) return;
+
+			if (emitterSpawnDelay > 0)
+			{
+				emitterSpawnDelay -= time.ElapsedSeconds;
+				if (emitterSpawnDelay > 0) return;
+			}
 
 			particleSpawnAccumulator += time.ElapsedSeconds;
 			emitterAge += time.ElapsedSeconds;

@@ -40,7 +40,28 @@
 					<Value Name="Infinite" Value="1"/>
 					<Value Name="Once" Value="2"/>
 				</ValueList>
-			</Parameter>			
+			</Parameter>
+			<Parameter>
+				<Name>EmitterSpawnDelay</Name>
+				<PrettyName>Spawn Delay</PrettyName>
+				<Description>How long time should pass before this emitter starts working.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
 			<Parameter>
 				<Name>EmitterSpawnRate</Name>
 				<PrettyName>Spawn Rate</PrettyName>
