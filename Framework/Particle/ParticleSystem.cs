@@ -12,11 +12,12 @@ namespace MG.Framework.Particle
 	{
 		public Vector2 Position;
 		public float Angle;
-		
+		public Vector2 Gravity;
+
 		public int ActiveParticles { get { return particleData.ActiveParticles; } }
 		public readonly ParticleDefinition Definition;
 		public List<ParticleSystem> SubSystems = new List<ParticleSystem>();
-
+		
 		private AssetHandler assetHandler;
 		private ParticleSystemPool particleSystemPool;
 		private Texture2D particleTexture;
@@ -35,9 +36,11 @@ namespace MG.Framework.Particle
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private Gradient paramParticleColor;
+		private RandomFloat paramParticleGravityScale;
 		private RandomFloat paramParticleAccelerationX;
 		private RandomFloat paramParticleAccelerationY;
 		private RandomFloat paramParticleAccelerationAngular;
+		private RandomFloat paramParticleAirResistance;
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
@@ -68,9 +71,11 @@ namespace MG.Framework.Particle
 			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
+			paramParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
 			paramParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
 			paramParticleAccelerationAngular = Definition.GetFloatParameter("ParticleAccelerationAngular");
+			paramParticleAirResistance = Definition.GetFloatParameter("ParticleAirResistance");
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
@@ -163,8 +168,23 @@ namespace MG.Framework.Particle
 					paramParticleAccelerationX.Get(emitterLife, lifeFraction),
 					paramParticleAccelerationY.Get(emitterLife, lifeFraction));
 
+				accel += Gravity * paramParticleGravityScale.Get(emitterLife, lifeFraction);
+
 				var oldVel = particleVelocity[i];
-				particleVelocity[i] += accel * time.ElapsedSeconds;
+				var vel = oldVel + accel * time.ElapsedSeconds;
+				
+				float resistance = paramParticleAirResistance.Get(emitterLife, lifeFraction);
+				if (resistance != 0)
+				{
+					var res = vel * resistance * time.ElapsedSeconds;
+					var absX = Math.Abs(vel.X);
+					var absY = Math.Abs(vel.Y);
+					res.X = MathTools.Clamp(res.X, -absX, absX);
+					res.Y = MathTools.Clamp(res.Y, -absY, absY);
+					vel -= res;
+				}
+
+				particleVelocity[i] = vel;
 				particlePosition[i] += (oldVel + particleVelocity[i]) / 2 * time.ElapsedSeconds;
 				particleRotationSpeed[i] += paramParticleAccelerationAngular.Get(emitterLife, lifeFraction) * time.ElapsedSeconds;
 				particleRotation[i] += particleRotationSpeed[i] * time.ElapsedSeconds;

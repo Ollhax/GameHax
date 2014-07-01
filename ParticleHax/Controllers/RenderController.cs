@@ -85,6 +85,7 @@ namespace MG.ParticleHax.Controllers
 				{
 					//Log.Info("Creating particle system from definition: " + definition.Name);
 					model.ParticleSystem = model.ParticleSystemPool.Create(definition);
+					model.ParticleSystem.Gravity = new Vector2(0, 100);
 					particlePosition = null;
 					UpdateParticleSystemPosition();
 				}
