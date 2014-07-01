@@ -47,9 +47,11 @@ namespace MG.Framework.Particle
 		private RandomFloat paramEmitterOffsetX;
 		private RandomFloat paramEmitterOffsetY;
 		private RandomFloat paramEmitterInitialRotation;
+		private RandomFloat paramEmitterInitialRotationSpeed;
 		private List<Vector2> particlePosition;
 		private List<Vector2> particleVelocity;
 		private List<float> particleRotation;
+		private List<float> particleRotationSpeed;
 		private List<float> particleLife;
 		private List<float> particleAge;
 
@@ -81,6 +83,7 @@ namespace MG.Framework.Particle
 			particlePosition = particleData.Get<Vector2>("Position");
 			particleVelocity = particleData.Get<Vector2>("Velocity");
 			particleRotation = particleData.Get<float>("Rotation");
+			particleRotationSpeed = particleData.Get<float>("RotationSpeed");
 			particleLife = particleData.Get<float>("Life");
 			particleAge = particleData.Get<float>("Age");
 			
@@ -90,6 +93,7 @@ namespace MG.Framework.Particle
 			paramEmitterOffsetX = particleDefinition.GetFloatParameter("EmitterOffsetX");
 			paramEmitterOffsetY = particleDefinition.GetFloatParameter("EmitterOffsetY");
 			paramEmitterInitialRotation = particleDefinition.GetFloatParameter("EmitterInitialRotation");
+			paramEmitterInitialRotationSpeed = particleDefinition.GetFloatParameter("EmitterInitialRotationSpeed");
 		}
 
 		public override void Reload()
@@ -204,6 +208,7 @@ namespace MG.Framework.Particle
 			particlePosition[index] = position + new Vector2(paramEmitterOffsetX.Get(e, 0), paramEmitterOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
 			particleRotation[index] = MathTools.ToRadians(paramEmitterInitialRotation.Get(e, 0));
+			particleRotationSpeed[index] = paramEmitterInitialRotationSpeed.Get(e, 0);
 			particleAge[index] = 0;
 			particleLife[index] = newParticleLife;
 			

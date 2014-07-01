@@ -23,6 +23,7 @@ namespace MG.Framework.Particle
 		private List<Vector2> particlePosition;
 		private List<Vector2> particleVelocity;
 		private List<float> particleRotation;
+		private List<float> particleRotationSpeed;
 		private List<float> particleLife;
 		private List<float> particleAge;
 		
@@ -36,6 +37,7 @@ namespace MG.Framework.Particle
 		private Gradient paramParticleColor;
 		private RandomFloat paramParticleAccelerationX;
 		private RandomFloat paramParticleAccelerationY;
+		private RandomFloat paramParticleAccelerationAngular;
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
@@ -53,6 +55,7 @@ namespace MG.Framework.Particle
 			particlePosition = particleData.Register<Vector2>("Position");
 			particleVelocity = particleData.Register<Vector2>("Velocity");
 			particleRotation = particleData.Register<float>("Rotation");
+			particleRotationSpeed = particleData.Register<float>("RotationSpeed");
 			particleLife = particleData.Register<float>("Life");
 			particleAge = particleData.Register<float>("Age");
 			
@@ -67,6 +70,7 @@ namespace MG.Framework.Particle
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
 			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
 			paramParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
+			paramParticleAccelerationAngular = Definition.GetFloatParameter("ParticleAccelerationAngular");
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
@@ -162,6 +166,8 @@ namespace MG.Framework.Particle
 				var oldVel = particleVelocity[i];
 				particleVelocity[i] += accel * time.ElapsedSeconds;
 				particlePosition[i] += (oldVel + particleVelocity[i]) / 2 * time.ElapsedSeconds;
+				particleRotationSpeed[i] += paramParticleAccelerationAngular.Get(emitterLife, lifeFraction) * time.ElapsedSeconds;
+				particleRotation[i] += particleRotationSpeed[i] * time.ElapsedSeconds;
 				particleAge[i] += time.ElapsedSeconds;
 				
 				if (!paramParticleInfinite && particleAge[i] >= particleLife[i])
