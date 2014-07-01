@@ -4,6 +4,13 @@
 		<Name>Basic</Name>
 		<Parameters>
 			<Parameter>
+				<Name>Description</Name>
+				<Description>Use this field to describe this particle.</Description>
+				<Category>General</Category>
+				<Type>String</Type>
+				<DefaultValue></DefaultValue>
+			</Parameter>
+			<Parameter>
 				<Name>Texture</Name>
 				<Description>The texture used for this particle effect.</Description>
 				<Category>General</Category>
