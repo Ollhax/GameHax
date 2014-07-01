@@ -35,6 +35,7 @@ namespace MG.Framework.Particle
 		private ParticleDefinition.Parameter paramTexture;
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
+		private bool paramParticleOrientToVelocity;
 		private Gradient paramParticleColor;
 		private RandomFloat paramParticleGravityScale;
 		private RandomFloat paramParticleAccelerationX;
@@ -70,6 +71,7 @@ namespace MG.Framework.Particle
 			paramTexture = Definition.Parameters["Texture"];
 			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
+			paramParticleOrientToVelocity = Definition.Parameters["ParticleOrientToVelocity"].Value.Get<bool>();
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
 			paramParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
@@ -186,8 +188,17 @@ namespace MG.Framework.Particle
 
 				particleVelocity[i] = vel;
 				particlePosition[i] += (oldVel + particleVelocity[i]) / 2 * time.ElapsedSeconds;
-				particleRotationSpeed[i] += paramParticleAccelerationAngular.Get(emitterLife, lifeFraction) * time.ElapsedSeconds;
-				particleRotation[i] += particleRotationSpeed[i] * time.ElapsedSeconds;
+
+				if (paramParticleOrientToVelocity)
+				{
+					particleRotation[i] = vel.Angle();
+				}
+				else
+				{
+					particleRotationSpeed[i] += paramParticleAccelerationAngular.Get(emitterLife, lifeFraction) * time.ElapsedSeconds;
+					particleRotation[i] += particleRotationSpeed[i] * time.ElapsedSeconds;
+				}
+				
 				particleAge[i] += time.ElapsedSeconds;
 				
 				if (!paramParticleInfinite && particleAge[i] >= particleLife[i])

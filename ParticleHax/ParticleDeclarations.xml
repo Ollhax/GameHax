@@ -326,6 +326,14 @@
 				<DefaultValue>false</DefaultValue>
 			</Parameter>
 			<Parameter>
+				<Name>ParticleOrientToVelocity</Name>
+				<PrettyName>Orient to Velocity</PrettyName>
+				<Description>If true, this particle will rotate in the direction it is moving. &lt;i&gt;This will override all other rotational settings.&lt;/i&gt;</Description>
+				<Category>Particle</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>false</DefaultValue>
+			</Parameter>
+			<Parameter>
 				<Name>ParticleColor</Name>
 				<PrettyName>Color</PrettyName>
 				<Description>The particle's color over time.</Description>
