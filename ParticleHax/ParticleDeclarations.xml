@@ -101,6 +101,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -140,6 +141,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -168,6 +170,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -195,6 +198,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -224,6 +228,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -286,6 +291,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -293,6 +299,7 @@
 						<Description>How this parameter is affected over the particle life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -311,6 +318,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -318,6 +326,7 @@
 						<Description>How this parameter is affected over the particle life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 				</Parameters>
 			</Parameter>
@@ -338,6 +347,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -365,6 +375,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -392,6 +403,7 @@
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
 						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>

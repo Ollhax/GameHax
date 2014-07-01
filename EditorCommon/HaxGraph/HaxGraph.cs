@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Gtk;
 using Gdk;
@@ -53,6 +54,15 @@ namespace MG.EditorCommon.HaxGraph
 			}
 		}
 
+		public float MinValueX = 0;
+		public float MaxValueX = 1;
+		public float MinValueY = 0;
+		public float MaxValueY = 1;
+
+		private float RangeX { get { return MaxValueX - MinValueX; } }
+		private float RangeY { get { return MaxValueY - MinValueY; } }
+		private bool HasZeroLine { get { return MinValueY < 0 && MaxValueY > 0; } }
+
 		public HaxGraph()
 		{
 			ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 255)); // Disable graying on selection
@@ -91,6 +101,18 @@ namespace MG.EditorCommon.HaxGraph
 			ctx.LineWidth = 1.0;
 			ctx.Rectangle(outerBounds.X, outerBounds.Y, outerBounds.Width, outerBounds.Height);
 			ctx.Stroke();
+
+			// Zero line
+			if (HasZeroLine)
+			{
+				var height = ToScreen(Vector2.Zero, drawBounds);
+				SetColor(ctx, colorBorder);
+				ctx.MoveTo(outerBounds.X, height.Y);
+				ctx.LineTo(outerBounds.X + outerBounds.Width, height.Y);
+				ctx.LineWidth = 1.0;
+				SetDash(ctx, true);
+				ctx.Stroke();
+			}
 			
 			//// Inner clip area
 			//ctx.Rectangle(drawBounds.X, drawBounds.Y, drawBounds.Width, drawBounds.Height);
@@ -285,14 +307,27 @@ namespace MG.EditorCommon.HaxGraph
 
 		private Vector2 ToScreen(Vector2 value, RectangleF area)
 		{
-			return new Vector2(area.X + value.X * area.Width, area.Y + area.Height - value.Y * area.Height);
+			return new Vector2(
+				area.X + ((value.X - MinValueX) / RangeX) * area.Width,
+				area.Y + area.Height - ((value.Y - MinValueY) / RangeY) * area.Height);
 		}
 
 		private Vector2 FromScreen(Vector2 screenPoint, RectangleF area)
 		{
-			return new Vector2((screenPoint.X - area.X) / area.Width, 1.0f - (screenPoint.Y - area.Y) / area.Height);
+			return new Vector2(
+				MinValueX + ((screenPoint.X - area.X) / area.Width) * RangeX,
+				MinValueY + RangeY - ((screenPoint.Y - area.Y) / area.Height) * RangeY);
 		}
-
+		
+		private Vector2 ClampValue(Vector2 value)
+		{
+			if (value.X < MinValueX) value.X = MinValueX;
+			if (value.X > MaxValueX) value.X = MaxValueX;
+			if (value.Y < MinValueY) value.Y = MinValueY;
+			if (value.Y > MaxValueY) value.Y = MaxValueY;
+			return value;
+		}
+		
 		protected override bool OnMotionNotifyEvent(EventMotion evnt)
 		{
 			if (curve == null) return true;
@@ -501,6 +536,14 @@ namespace MG.EditorCommon.HaxGraph
 			if ((p - position).Length() < 0.1f) return;
 
 			p = FromScreen(position, area);
+			
+			if (HasZeroLine)
+			{
+				if (Math.Abs(p.Y) < 0.03f * RangeY)
+				{
+					p.Y = 0;
+				}
+			}
 
 			selectedEntry = ReplaceCurveEntry(selectedEntry, p);
 		}
@@ -532,7 +575,7 @@ namespace MG.EditorCommon.HaxGraph
 
 		private CurveEntry CreateCurveEntry(Vector2 position)
 		{
-			var newPos = new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y));
+			var newPos = ClampValue(position);
 			var entry = new CurveEntry(newPos);
 			
 			curve.Add(entry);
@@ -542,7 +585,7 @@ namespace MG.EditorCommon.HaxGraph
 
 		private CurveEntry ReplaceCurveEntry(CurveEntry oldEntry, Vector2 position)
 		{
-			var newPos = new Vector2(MathTools.ClampNormal(position.X), MathTools.ClampNormal(position.Y));
+			var newPos = ClampValue(position);
 			
 			var diff = newPos - oldEntry.Value;
 			var entry = new CurveEntry(oldEntry.Type, newPos, diff + oldEntry.LeftHandle, diff + oldEntry.RightHandle);

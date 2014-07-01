@@ -20,7 +20,9 @@ namespace MG.EditorCommon
 			public Any MinValue;
 			public Any MaxValue;
 			public uint ValueDigits;
-			public string FilePathFilter; 
+			public string FilePathFilter;
+			public float CurveMin = 0;
+			public float CurveMax = 1;
 			public List<KeyValuePair<string, Any>> ValueList;
 			public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
 
@@ -37,6 +39,8 @@ namespace MG.EditorCommon
 				DefaultValue = new Any(XmlHelper.ReadString(node, "DefaultValue"), type);
 				ValueDigits = XmlHelper.ReadUInt(node, "ValueDigits", 1);
 				FilePathFilter = XmlHelper.ReadString(node, "FilePathFilter", "");
+				CurveMin = XmlHelper.ReadFloat(node, "CurveMin", CurveMin);
+				CurveMax = XmlHelper.ReadFloat(node, "CurveMax", CurveMax);
 				
 				if (XmlHelper.HasElement(node, "ValueStep"))
 				{
@@ -52,7 +56,7 @@ namespace MG.EditorCommon
 				{
 					MaxValue = new Any(XmlHelper.ReadString(node, "MaxValue"), type);
 				}
-
+				
 				var valueListNode = node["ValueList"];
 				if (valueListNode != null)
 				{

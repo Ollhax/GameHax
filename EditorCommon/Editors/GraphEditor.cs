@@ -18,8 +18,12 @@ namespace MG.EditorCommon.Editors
 		{
 			base.Initialize();
 
+			var declarationParameter = ((ParticleParameterDescriptor)Property).DeclarationParameter;
+
 			graph = new HaxGraph.HaxGraph();
 			graph.Curve = (Curve)Property.GetValue(Instance);
+			graph.MinValueY = declarationParameter.CurveMin;
+			graph.MaxValueY = declarationParameter.CurveMax;
 		}
 
 		public override void GetSize(int availableWidth, out int width, out int height)
@@ -102,6 +106,10 @@ namespace MG.EditorCommon.Editors
 		{
 			if (session.Property.PropertyType != typeof(Curve))
 				throw new ApplicationException("Graph editor does not support editing values of type " + session.Property.PropertyType);
+
+			var declarationParameter = ((ParticleParameterDescriptor)session.Property).DeclarationParameter;
+			graph.MaxValueY = declarationParameter.CurveMax;
+			graph.MinValueY = declarationParameter.CurveMin;
 		}
 		
 		object IPropertyEditor.Value
