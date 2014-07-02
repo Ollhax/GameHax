@@ -152,7 +152,7 @@ namespace MG.ParticleEditorWindow
 			// Parameter view
 			ParameterView.Widget.SetSizeRequest(150, -1);
 			hpaneMain.Pack1(ParameterView.Widget, false, false);
-			ParameterView.Widget.DividerPosition = 0.35;
+			ParameterView.Widget.DividerPosition = 0.40;
 
 			Log.Info("Showing window.");
 			window.ShowAll();
