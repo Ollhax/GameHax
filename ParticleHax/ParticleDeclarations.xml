@@ -334,6 +334,14 @@
 				<DefaultValue>false</DefaultValue>
 			</Parameter>
 			<Parameter>
+				<Name>ParticleRelativeToParent</Name>
+				<PrettyName>Relative to Parent</PrettyName>
+				<Description>If true, this particle's position will be set relative to the parent, meaning that particles will follow if the emitter moves.</Description>
+				<Category>Particle</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>false</DefaultValue>
+			</Parameter>
+			<Parameter>
 				<Name>ParticleColor</Name>
 				<PrettyName>Color</PrettyName>
 				<Description>The particle's color over time.</Description>

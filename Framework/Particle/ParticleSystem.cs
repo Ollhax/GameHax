@@ -36,6 +36,7 @@ namespace MG.Framework.Particle
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private bool paramParticleOrientToVelocity;
+		private bool paramParticleRelativeToParent;
 		private Gradient paramParticleColor;
 		private RandomFloat paramParticleGravityScale;
 		private RandomFloat paramParticleAccelerationX;
@@ -68,10 +69,13 @@ namespace MG.Framework.Particle
 		
 		public void Reload()
 		{
+			bool wasRelative = paramParticleRelativeToParent;
+
 			paramTexture = Definition.Parameters["Texture"];
 			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
 			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
 			paramParticleOrientToVelocity = Definition.Parameters["ParticleOrientToVelocity"].Value.Get<bool>();
+			paramParticleRelativeToParent = Definition.Parameters["ParticleRelativeToParent"].Value.Get<bool>();
 			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
 			paramParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
@@ -81,7 +85,12 @@ namespace MG.Framework.Particle
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
-			
+
+			if (wasRelative != paramParticleRelativeToParent)
+			{
+				particleData.ActiveParticles = 0;
+			}
+
 			var texture = paramTexture.Value.Get<FilePath>();
 			particleTexture = assetHandler.Load<Texture2D>(texture);
 			emitter.Reload();
@@ -156,7 +165,15 @@ namespace MG.Framework.Particle
 			if (time.ElapsedSeconds <= 0)
 				return;
 
-			((PointEmitter)emitter).Point = Position;
+			if (!paramParticleRelativeToParent)
+			{
+				((PointEmitter)emitter).Point = Position;
+			}
+			else
+			{
+				((PointEmitter)emitter).Point = Vector2.Zero;
+			}
+			
 			if (!Disabled)
 			{
 				emitter.Update(time);
@@ -188,7 +205,7 @@ namespace MG.Framework.Particle
 
 				particleVelocity[i] = vel;
 				particlePosition[i] += (oldVel + particleVelocity[i]) / 2 * time.ElapsedSeconds;
-
+				
 				if (paramParticleOrientToVelocity)
 				{
 					particleRotation[i] = vel.Angle();
@@ -245,6 +262,11 @@ namespace MG.Framework.Particle
 				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
 				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
 				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
+
+				if (paramParticleRelativeToParent)
+				{
+					p += Position;
+				}
 				
 				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size / 2, 0);
 			}
