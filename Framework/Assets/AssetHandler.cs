@@ -67,41 +67,48 @@ namespace MG.Framework.Assets
 		public T Load<T>(FilePath asset)
 		{
 			T ret = default(T);
-			var assetFullPath = ((FilePath)(Path.Combine(RootDirectory, asset))).FullPath;
-			var assetDirectory = assetFullPath.ParentDirectory;
-			var assetCanonicalDirectoryPath = assetDirectory.CanonicalPath;
-			var assetName = assetFullPath.ToRelative(RootDirectory);
+			
+			try
+			{				
+				var assetFullPath = ((FilePath)(Path.Combine(RootDirectory, asset))).FullPath;
+				var assetDirectory = assetFullPath.ParentDirectory;
+				var assetCanonicalDirectoryPath = assetDirectory.CanonicalPath;
+				var assetName = assetFullPath.ToRelative(RootDirectory);
 
-			AssetWatcher watcher;
-			if (!watchers.TryGetValue(assetCanonicalDirectoryPath, out watcher))
-			{
-				Log.Info("Creating watcher for directory: " + assetCanonicalDirectoryPath);
-				watcher = new AssetWatcher(RootDirectory, assetCanonicalDirectoryPath);
-				watchers.Add(assetCanonicalDirectoryPath, watcher);
-			}
-
-			// Check cache
-			object cachedAsset;
-			if (cachedAssets.TryGetValue(assetName, out cachedAsset))
-			{
-				if (cachedAsset is T)
+				AssetWatcher watcher;
+				if (!watchers.TryGetValue(assetCanonicalDirectoryPath, out watcher) && Directory.Exists(assetCanonicalDirectoryPath))
 				{
-					return (T)cachedAsset;
+					Log.Info("Creating watcher for directory: " + assetCanonicalDirectoryPath);
+					watcher = new AssetWatcher(RootDirectory, assetCanonicalDirectoryPath);
+					watchers.Add(assetCanonicalDirectoryPath, watcher);
+				}
+
+				// Check cache
+				object cachedAsset;
+				if (cachedAssets.TryGetValue(assetName, out cachedAsset))
+				{
+					if (cachedAsset is T)
+					{
+						return (T)cachedAsset;
+					}
+				}
+
+				// Try loading
+				var fullPath = Path.Combine(baseLocation, RootDirectory, assetName);
+				Log.Info("Loading " + typeof(T).Name + " from file " + fullPath);
+
+				var obj = LoadInternal<T>(fullPath);
+				if (obj != null)
+				{
+					cachedAssets[assetName] = obj;
+					return (T)obj;
 				}
 			}
-
-			// Try loading
-			var fullPath = Path.Combine(baseLocation, RootDirectory, assetName);
-			Log.Info("Loading " + typeof(T).Name + " from file " + fullPath);
-
-			var obj = LoadInternal<T>(fullPath);
-			if (obj != null)
+			catch (Exception e)
 			{
-				cachedAssets[assetName] = obj;
-				return (T)obj;
+				Log.Error("- Failure! Message: " + e.Message);
 			}
 
-			Log.Info("- Failure!");
 			return ret;
 		}
 		

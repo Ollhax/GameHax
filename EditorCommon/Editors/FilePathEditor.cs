@@ -14,6 +14,14 @@ namespace MG.EditorCommon.Editors
 		{
 			get { return true; }
 		}
+
+		protected override string GetValueText()
+		{
+			if (Instance == null) return "";
+			var currentValue = (FilePath)Value;
+
+			return currentValue.ToRelative(Environment.CurrentDirectory);
+		}
 		
 		public override void LaunchDialogue()
 		{

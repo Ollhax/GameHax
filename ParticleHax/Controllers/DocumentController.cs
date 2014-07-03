@@ -41,10 +41,12 @@ namespace MG.ParticleHax.Controllers
 			}
 		}
 
-		public bool Open(string file)
+		public bool Open(FilePath file)
 		{
 			if (!Close()) return false;
 
+			Environment.CurrentDirectory = file.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
+			
 			model.Clear();
 			model.DefinitionTable.Load(file);
 			model.DocumentFile = file;
@@ -116,9 +118,12 @@ namespace MG.ParticleHax.Controllers
 		private bool Save(FilePath outputFile)
 		{
 			bool success = false;
+			var oldCurrentDirectory = Environment.CurrentDirectory;
 
 			try
 			{
+				Environment.CurrentDirectory = outputFile.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
+				
 				model.DefinitionTable.Save(outputFile);
 				model.DocumentFile = outputFile;
 				model.Modified = false;
@@ -130,13 +135,15 @@ namespace MG.ParticleHax.Controllers
 			}
 			catch (Exception e)
 			{
+				Environment.CurrentDirectory = oldCurrentDirectory;
+
 				controller.ShowMessage("<b>Error on save!</b>\n\nException: " + e.Message, MainWindow.MessageType.Error);
 				Log.Error("- Error: " + e.Message);
 			}
 			
 			return success;
 		}
-
+				
 		public void Undo()
 		{
 			model.UndoHandler.Undo();

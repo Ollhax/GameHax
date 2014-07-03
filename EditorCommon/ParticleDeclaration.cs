@@ -108,7 +108,36 @@ namespace MG.EditorCommon
 					var parameter = new Parameter();
 					parameter.Load(parameterNode);
 					Parameters.Add(parameter.Name, parameter);
+
+					if (parameter.DefaultValue.IsFilePath())
+					{
+						var filePath = parameter.DefaultValue.Get<FilePath>();
+						if (!filePath.IsNullOrEmpty && !filePath.IsAbsolute)
+						{
+							parameter.DefaultValue.Set(filePath.ToAbsolute(Environment.CurrentDirectory));
+						}
+					}
 				}
+			}
+
+			ConvertRelativePathsToAbsolute(Parameters);
+		}
+
+		private void ConvertRelativePathsToAbsolute(Dictionary<string, Parameter> parameters)
+		{
+			foreach (var paramPair in parameters)
+			{
+				var parameter = paramPair.Value;
+				if (parameter.DefaultValue.IsFilePath())
+				{
+					var filePath = parameter.DefaultValue.Get<FilePath>();
+					if (!filePath.IsNullOrEmpty && !filePath.IsAbsolute)
+					{
+						parameter.DefaultValue.Set(filePath.ToAbsolute(Environment.CurrentDirectory));
+					}
+				}
+
+				ConvertRelativePathsToAbsolute(parameter.Parameters);
 			}
 		}
 	}
