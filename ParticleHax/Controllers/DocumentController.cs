@@ -55,7 +55,18 @@ namespace MG.ParticleHax.Controllers
 			Environment.CurrentDirectory = file.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
 			
 			model.Clear();
-			model.DefinitionTable.Load(file);
+
+			try
+			{
+				model.DefinitionTable.Load(file);
+			}
+			catch (Exception e)
+			{
+				controller.ShowMessage("<b>Error on load!</b>\n\nMessage: " + e.Message, MainWindow.MessageType.Error);
+				Log.Error("- Error: " + e.Message);
+				return false;
+			}
+
 			model.DocumentFile = file;
 			controller.UpdateTree = true;
 			controller.UpdateTitle = true;
@@ -144,7 +155,7 @@ namespace MG.ParticleHax.Controllers
 			{
 				Environment.CurrentDirectory = oldCurrentDirectory;
 
-				controller.ShowMessage("<b>Error on save!</b>\n\nException: " + e.Message, MainWindow.MessageType.Error);
+				controller.ShowMessage("<b>Error on save!</b>\n\nMessage: " + e.Message, MainWindow.MessageType.Error);
 				Log.Error("- Error: " + e.Message);
 			}
 			

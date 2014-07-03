@@ -66,17 +66,17 @@ namespace MG.Framework.Particle
 			
 			emitter = new PointEmitter(particleData, particleDefinition);
 		}
-		
+				
 		public void Reload()
 		{
 			bool wasRelative = paramParticleRelativeToParent;
 
-			paramTexture = Definition.Parameters["Texture"];
-			paramBlendMode = (BlendMode)Definition.Parameters["BlendMode"].Value.Get<int>();
-			paramParticleInfinite = Definition.Parameters["ParticleInfinite"].Value.Get<bool>();
-			paramParticleOrientToVelocity = Definition.Parameters["ParticleOrientToVelocity"].Value.Get<bool>();
-			paramParticleRelativeToParent = Definition.Parameters["ParticleRelativeToParent"].Value.Get<bool>();
-			paramParticleColor = Definition.Parameters["ParticleColor"].Value.Get<Gradient>();
+			paramTexture = Definition.GetParameter("Texture");
+			paramBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
+			paramParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();
+			paramParticleOrientToVelocity = Definition.GetParameter("ParticleOrientToVelocity").Value.Get<bool>();
+			paramParticleRelativeToParent = Definition.GetParameter("ParticleRelativeToParent").Value.Get<bool>();
+			paramParticleColor = Definition.GetParameter("ParticleColor").Value.Get<Gradient>();
 			paramParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			paramParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
 			paramParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");

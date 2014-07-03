@@ -128,6 +128,17 @@ namespace MG.Framework.Particle
 		private Dictionary<string, RandomFloat> cachedFloats = new Dictionary<string, RandomFloat>();
 		private Dictionary<string, RandomInt> cachedInts = new Dictionary<string, RandomInt>();
 		
+		public Parameter GetParameter(string name)
+		{
+			Parameter param;
+			if (Parameters.TryGetValue(name, out param))
+			{
+				return param;
+			}
+
+			throw new Exception("Missing particle parameter: " + name);
+		}
+
 		public void CopyFrom(ParticleDefinition other)
 		{
 			Name = other.Name;
@@ -297,19 +308,11 @@ namespace MG.Framework.Particle
 	{
 		public ParticleCollection Definitions = new ParticleCollection();
 		
-		public bool Load(string file)
+		public void Load(string file)
 		{
-			try
+			using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
-				{
-					return Load(fs);
-				}
-			}
-			catch (Exception e)
-			{
-				Log.Error("- Error: " + e.Message);
-				return false;
+				Load(fs);
 			}
 		}
 

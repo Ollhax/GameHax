@@ -3,6 +3,7 @@ using System.IO;
 
 using MG.Framework.Assets;
 using MG.Framework.Utility;
+using System;
 
 namespace MG.Framework.Particle
 {
@@ -21,9 +22,14 @@ namespace MG.Framework.Particle
 				var name = PathHelper.GetFileNameWithoutPathOrExtension(file);
 				
 				var table = new ParticleDefinitionTable();
-				if (table.Load(file))
+				try
 				{
+					table.Load(file);
 					particleDefinitionTables.Add(name, table);
+				}
+				catch (Exception e)
+				{
+					Log.Error("Error on loading particle table: " + e.Message);
 				}
 			}
 		}

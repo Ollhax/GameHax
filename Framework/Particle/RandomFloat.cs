@@ -24,32 +24,30 @@ namespace MG.Framework.Particle
 
 		public void Reload()
 		{
-			ParticleDefinition.Parameter parameter;
-			if (definition.Parameters.TryGetValue(parameterName, out parameter))
+			ParticleDefinition.Parameter parameter = definition.GetParameter(parameterName);
+			
+			parameterValue = parameter.Value.Get<float>();
+			graphEmitter = null;
+			graphParticle = null;
+			randomValue = 0;
+
+			ParticleDefinition.Parameter parameterRandom;
+			if (parameter.Parameters.TryGetValue("Random", out parameterRandom))
 			{
-				parameterValue = parameter.Value.Get<float>();
-				graphEmitter = null;
-				graphParticle = null;
-				randomValue = 0;
-				
-				ParticleDefinition.Parameter parameterRandom;
-				if (parameter.Parameters.TryGetValue("Random", out parameterRandom))
-				{
-					randomValue = parameterRandom.Value.Get<float>();
-				}
+				randomValue = parameterRandom.Value.Get<float>();
+			}
 
-				ParticleDefinition.Parameter parameterGraph;
-				if (parameter.Parameters.TryGetValue("GraphEmitter", out parameterGraph))
-				{
-					graphEmitter = parameterGraph.Value.Get<Curve>();
-					if (graphEmitter.Count == 0) graphEmitter = null;
-				}
+			ParticleDefinition.Parameter parameterGraph;
+			if (parameter.Parameters.TryGetValue("GraphEmitter", out parameterGraph))
+			{
+				graphEmitter = parameterGraph.Value.Get<Curve>();
+				if (graphEmitter.Count == 0) graphEmitter = null;
+			}
 
-				if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
-				{
-					graphParticle = parameterGraph.Value.Get<Curve>();
-					if (graphParticle.Count == 0) graphParticle = null;
-				}
+			if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
+			{
+				graphParticle = parameterGraph.Value.Get<Curve>();
+				if (graphParticle.Count == 0) graphParticle = null;
 			}
 		}
 

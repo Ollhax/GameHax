@@ -2,21 +2,27 @@
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace MG.Framework.Utility
 {
-	static class ExceptionHandler
+	public static class ExceptionHandler
 	{
 		public static void Initialize()
 		{
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 		}
 
-		private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+		public static void RaiseException(Exception ex, bool close)
 		{
-			Exception ex = (Exception)unhandledExceptionEventArgs.ExceptionObject;
+			if (ex.InnerException != null)
+			{
+				RaiseException(ex.InnerException, close);
+				return;
+			}
+
 			string exceptionText = ex.Message;
-				
+
 			var fullExceptionText = exceptionText
 				+ Environment.NewLine
 				+ "--------------" + Environment.NewLine
@@ -31,11 +37,22 @@ namespace MG.Framework.Utility
 			}
 
 #if !DEBUG
-			MessageBox.Show("Oops, something went very wrong! " + "Information stored in \"" + exceptionFile + "\". Please send it to ollhak@gmail.com!\n\nError:\"" + exceptionText + "\"",
+			MessageBox.Show("Oops, something went very wrong! " + "Information stored in \"" + exceptionFile + "\". Please send it to ollhak@gmail.com!\n\nError: " + exceptionText,
 			  "Unhandled Exception", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+#else			
+			Debug.WriteLine(fullExceptionText);
+			System.Diagnostics.Debugger.Break();
 #endif
 
-			Framework.Deinitialize();
+			if (close)
+			{
+				Framework.Deinitialize();
+			}
+		}
+
+		private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+		{
+			RaiseException((Exception)unhandledExceptionEventArgs.ExceptionObject, true);
 		}
 	}
 }
