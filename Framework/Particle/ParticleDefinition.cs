@@ -102,7 +102,7 @@ namespace MG.Framework.Particle
 
 				if (Value.IsFilePath()) // Save relative paths
 				{
-					value = Value.Get<FilePath>().ToRelative(Environment.CurrentDirectory);
+					value = Value.Get<FilePath>().ToRelative(Environment.CurrentDirectory).ToString().Replace('\\', '/'); // Don't want constant changes depending on platform
 				}
 
 				XmlHelper.Write(parameterNode, "Value", value);
