@@ -2,6 +2,7 @@
 
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
+using System.IO;
 
 namespace MG.ParticleHax.Controllers
 {
@@ -43,8 +44,14 @@ namespace MG.ParticleHax.Controllers
 
 		public bool Open(FilePath file)
 		{
-			if (!Close()) return false;
+			if (!Directory.Exists(file.ParentDirectory))
+			{
+				Log.Error("Tried to open file with non-existent folder: " + file.ParentDirectory);
+				return false;
+			}
 
+			if (!Close()) return false;
+			
 			Environment.CurrentDirectory = file.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
 			
 			model.Clear();
