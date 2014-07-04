@@ -65,16 +65,26 @@ namespace MG.ParticleHax.Actions
 			definition.Name = declaration.Name + definition.Id;
 			definition.Declaration = name;
 
-			AddParameters(declaration.Parameters, definition.Parameters);
+			AddMissingParameters(declaration.Parameters, definition.Parameters, false);
 			
 			return definition;
 		}
 
-		private void AddParameters(Dictionary<string, ParticleDeclaration.Parameter> declarationParameters, Dictionary<string, ParticleDefinition.Parameter> definitionParameters)
+		public static bool AddMissingParameters(Dictionary<string, ParticleDeclaration.Parameter> declarationParameters, Dictionary<string, ParticleDefinition.Parameter> definitionParameters, bool warnIfMissing)
 		{
+			bool hadMissing = false;
+
 			foreach (var declarationParameterPair in declarationParameters)
 			{
 				var declarationParameter = declarationParameterPair.Value;
+				if (definitionParameters.ContainsKey(declarationParameter.Name)) continue;
+
+				if (warnIfMissing)
+				{
+					Log.Warning("Added missing parameter: " + declarationParameter.Name);
+				}
+
+				hadMissing = true;
 				var definitionParameter = new ParticleDefinition.Parameter();
 
 				definitionParameter.Name = declarationParameter.Name;
@@ -82,8 +92,10 @@ namespace MG.ParticleHax.Actions
 
 				definitionParameters.Add(definitionParameter.Name, definitionParameter);
 
-				AddParameters(declarationParameter.Parameters, definitionParameter.Parameters);
+				hadMissing |= AddMissingParameters(declarationParameter.Parameters, definitionParameter.Parameters, warnIfMissing);
 			}
+
+			return hadMissing;
 		}
 	}
 }

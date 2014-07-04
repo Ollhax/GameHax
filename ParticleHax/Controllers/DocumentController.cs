@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
+using MG.EditorCommon;
+using MG.Framework.Particle;
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
 using System.IO;
+
+using MG.ParticleHax.Actions;
 
 namespace MG.ParticleHax.Controllers
 {
@@ -60,6 +65,20 @@ namespace MG.ParticleHax.Controllers
 			try
 			{
 				model.DefinitionTable.Load(file);
+				
+				// Add missing parameters
+				foreach (var defPair in model.DefinitionTable.Definitions)
+				{
+					ParticleDeclaration declaration;
+					if (model.DeclarationTable.Declarations.TryGetValue(defPair.Declaration, out declaration))
+					{
+						model.Modified |= AddAction.AddMissingParameters(declaration.Parameters, defPair.Parameters, true);
+					}
+					else
+					{
+						Log.Warning("Could not find declation: " + declaration);
+					}
+				}
 			}
 			catch (Exception e)
 			{
