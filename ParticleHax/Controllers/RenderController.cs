@@ -101,13 +101,52 @@ namespace MG.ParticleHax.Controllers
 		{
 			return definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
 		}
-		
+
+		private Color GetBackgroundColor()
+		{
+			int index = Settings.Get<int>("Background.Current");
+			return Settings.Get<Color>("Background.Color" + ((index + 1) % 10));
+		}
+
+		private void DrawCheckboard(RenderContext renderContext, Color color)
+		{
+			var colorWhite = Color.White;
+			var colorBlack = new Color(230, 230, 230, 255);
+			int size = 60;
+			var area = renderContext.ActiveScreen.NormalizedScreenArea;
+			var primitiveBatch = renderContext.PrimitiveBatch;
+
+			primitiveBatch.Begin();
+			for (int x = 0; x < area.Width / size; x++)
+			{
+				for (int y = 0; y < area.Height / size; y++)
+				{
+					bool even = (x % 2 == 0) ^ (y % 2 == 0);
+
+					primitiveBatch.DrawFilled(new RectangleF(area.X + x * size, area.Y + y * size - 1, size + 1, size + 1), even ? colorWhite : colorBlack);
+				}
+			}
+
+			if (color.A != 0)
+			{
+				primitiveBatch.DrawFilled(area, color);
+			}
+			
+			primitiveBatch.End();
+		}
+
 		private void Draw(RenderContext renderContext)
 		{
-			GraphicsDevice.ClearColor = Color.CornflowerBlue;
+			var clearColor = GetBackgroundColor();
+			GraphicsDevice.ClearColor = clearColor;
 			GraphicsDevice.Clear();
 			GraphicsDevice.SetViewport((Rectangle)renderContext.ActiveScreen.NormalizedScreenArea, renderContext.ActiveScreen);
-			
+
+			if (clearColor.A != 255)
+			{
+				DrawCheckboard(renderContext, clearColor);
+			}
+
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem != null)
 			{

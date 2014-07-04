@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+
 using EditorCommon;
+
+using GLib;
 
 using Gdk;
 
@@ -7,6 +11,8 @@ using Gtk;
 
 using MG.EditorCommon;
 using MG.Framework.Utility;
+
+using Log = MG.Framework.Utility.Log;
 
 namespace MG.ParticleEditorWindow
 {
@@ -61,6 +67,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
+		public event System.Action BackgroundColorChanged = delegate { };
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
@@ -73,6 +80,35 @@ namespace MG.ParticleEditorWindow
 		public bool RedoEnabled { get { return editRedo.Sensitive; } set { editRedo.Sensitive = value; } }
 		
 		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
+
+		public int CurrentBackgroundColorIndex
+		{
+			get
+			{
+				for (int i = 0; i < viewShowColor.Count; i++)
+				{
+					if (viewShowColor[i].Active) return i;
+				}
+
+				return 0;
+			}
+
+			set
+			{
+				if (value < 0 || value >= viewShowColor.Count) return;
+				viewShowColor[value].Active = true;
+			}
+		}
+
+		public MG.Framework.Numerics.Color GetBackgroundColor(int index)
+		{
+			return viewShowColor[index].Color;
+		}
+
+		public void SetBackgroundColor(int index, MG.Framework.Numerics.Color color)
+		{
+			viewShowColor[index].Color = color;
+		}
 
 		private class GtkWindow : Gtk.Window
 		{
@@ -283,6 +319,7 @@ namespace MG.ParticleEditorWindow
 
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
+		private List<ColorMenuItem> viewShowColor = new List<ColorMenuItem>();
 		
 		private MenuBar CreateMenu()
 		{
@@ -349,9 +386,33 @@ namespace MG.ParticleEditorWindow
 			viewShowOrigin.Activated += (sender, args) => ToggleShowOrigin.Invoke();
 			viewMenu.Append(viewShowOrigin);
 
+			var backgroundMenu = new Menu();
+			var backgroundMenuItem = new MenuItem("Background Color");
+			backgroundMenuItem.Submenu = backgroundMenu;
+			viewMenu.Append(backgroundMenuItem);
+			
+			for (int i = 0; i < 10; i++)
+			{
+				int index = ((i + 1) % 10);
+				var v = new ColorMenuItem("Color");
+				
+				v.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.Key_0 + index, ModifierType.None, AccelFlags.Visible));
+
+				if (viewShowColor.Count > 0)
+				{
+					v.Group = viewShowColor[0].Group;
+				}
+				
+				v.Activated += (sender, args) => BackgroundColorChanged.Invoke();
+				viewShowColor.Add(v);
+				backgroundMenu.Append(v);
+			}
+
+			viewShowColor[0].Active = true;
+			
 			return menuBar;
 		}
-
+		
 		private void FileExitOnActivated(object sender, EventArgs eventArgs)
 		{
 			var e = Gdk.EventHelper.New(Gdk.EventType.Delete);
