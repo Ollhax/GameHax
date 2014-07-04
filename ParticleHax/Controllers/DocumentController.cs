@@ -16,6 +16,7 @@ namespace MG.ParticleHax.Controllers
 
 		public event Action NewDocument = delegate { };
 		public event Action OpenDocument = delegate { };
+		public event Action BeforeSaveDocument = delegate { };
 		public event Action CloseDocument = delegate { };
 		
 		public DocumentController(MainController controller, Model model)
@@ -135,6 +136,8 @@ namespace MG.ParticleHax.Controllers
 
 		private bool Save(FilePath outputFile)
 		{
+			BeforeSaveDocument.Invoke();
+
 			bool success = false;
 			var oldCurrentDirectory = Environment.CurrentDirectory;
 

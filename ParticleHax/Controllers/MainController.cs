@@ -109,6 +109,7 @@ namespace MG.ParticleHax.Controllers
 			
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
+			documentController.BeforeSaveDocument += parameterController.CancelEdit;
 
 			AfterUndo();
 
