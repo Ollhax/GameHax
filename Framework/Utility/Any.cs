@@ -23,6 +23,7 @@ namespace MG.Framework.Utility
 		public Any(FilePath value) { boxedValue = value; }
 		public Any(RectangleF value) { boxedValue = value; }
 		public Any(RelativePosition2 value) { boxedValue = value; }
+		public Any(object value) { boxedValue = value; }
 		public Any(Any other)
 		{
 			CopyFrom(other);

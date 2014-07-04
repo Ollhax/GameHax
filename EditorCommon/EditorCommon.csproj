@@ -106,6 +106,7 @@
     <Compile Include="Editors\FloatEditor.cs" />
     <Compile Include="Editors\IntEditor.cs" />
     <Compile Include="Resources\Resources.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="ValueListConverter.cs" />
     <Compile Include="Undo\GenericUndoableAction.cs" />
     <Compile Include="Undo\IUndoableAction.cs" />
@@ -171,8 +172,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <Folder Include="MacInterop\" />
-    <Folder Include="MacInterop\AppleEvents\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -61,6 +61,7 @@
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ParameterController.cs" />
     <Compile Include="Controllers\RenderController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TreeController.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ParameterProxy.cs" />

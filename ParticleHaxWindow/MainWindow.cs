@@ -60,6 +60,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action EditRedo = delegate { };
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
+		public event System.Action ToggleShowOrigin = delegate { };
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
@@ -70,6 +71,8 @@ namespace MG.ParticleEditorWindow
 		public string Title { get { return window.Title; } set { window.Title = value; } }
 		public bool UndoEnabled { get { return editUndo.Sensitive; } set { editUndo.Sensitive = value; } }
 		public bool RedoEnabled { get { return editRedo.Sensitive; } set { editRedo.Sensitive = value; } }
+		
+		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
 
 		private class GtkWindow : Gtk.Window
 		{
@@ -275,9 +278,12 @@ namespace MG.ParticleEditorWindow
 		private ImageMenuItem fileExit;
 
 		private MenuItem editMenuItem;
-		private MenuItem editUndo;
-		private MenuItem editRedo;
+		private ImageMenuItem editUndo;
+		private ImageMenuItem editRedo;
 
+		private MenuItem viewMenuItem;
+		private CheckMenuItem viewShowOrigin;
+		
 		private MenuBar CreateMenu()
 		{
 			var menuBar = new MenuBar();
@@ -332,6 +338,17 @@ namespace MG.ParticleEditorWindow
 			editRedo.Activated += (sender, args) => EditRedo.Invoke();
 			editMenu.Append(editRedo);
 			
+			// View menu
+			viewMenuItem = new MenuItem("_View");
+			var viewMenu = new Menu();
+			viewMenuItem.Submenu = viewMenu;
+			menuBar.Append(viewMenuItem);
+
+			viewShowOrigin = new CheckMenuItem("Show Origin");
+			viewShowOrigin.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.e, ModifierType.ControlMask, AccelFlags.Visible));
+			viewShowOrigin.Activated += (sender, args) => ToggleShowOrigin.Invoke();
+			viewMenu.Append(viewShowOrigin);
+
 			return menuBar;
 		}
 

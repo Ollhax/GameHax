@@ -79,6 +79,7 @@ void main()
 		private Vertex2Color[] vertexStorage = new Vertex2Color[128];
 		private Matrix transform;
 		private bool hasBegun;
+		private BlendMode blendMode;
 
 		/// <summary>
 		/// Override default projection.
@@ -110,6 +111,8 @@ void main()
 			{
 				return;
 			}
+
+			RenderHelpers.SetBlendMode(blendMode);
 
 			GL.Disable(EnableCap.DepthTest);
 			GL.Disable(EnableCap.CullFace);
@@ -374,12 +377,13 @@ void main()
 			Begin(Matrix.Identity);
 		}
 
-		public void Begin(Matrix transform)
+		public void Begin(Matrix transform, BlendMode blendMode = BlendMode.BlendmodeAlpha)
 		{
 			Debug.Assert(!hasBegun, "Called Begin() twice");
 			hasBegun = true;
-
+			
 			this.transform = transform;
+			this.blendMode = blendMode;
 		}
 
 		public void End()

@@ -22,6 +22,7 @@ namespace MG.ParticleHax.Controllers
 		private RenderController renderController;
 		private TreeController treeController;
 		private ParameterController parameterController;
+		private SettingsController settingsController;
 		
 		private Stopwatch startStopwatch = new Stopwatch();
 		private Stopwatch frameStopwatch = new Stopwatch();
@@ -96,6 +97,7 @@ namespace MG.ParticleHax.Controllers
 			renderController = new RenderController(this, model, assetHandler, window.RenderView);
 			treeController = new TreeController(this, model, window.TreeView);
 			parameterController = new ParameterController(this, model, window.ParameterView);
+			settingsController = new SettingsController(window);
 			
 			window.FileNew += documentController.New;
 			window.FileOpen += documentController.Open;

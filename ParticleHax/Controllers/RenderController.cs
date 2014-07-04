@@ -1,5 +1,6 @@
 ﻿using System;
 
+using MG.EditorCommon;
 using MG.Framework.Assets;
 using MG.Framework.Graphics;
 using MG.Framework.Numerics;
@@ -106,12 +107,24 @@ namespace MG.ParticleHax.Controllers
 			GraphicsDevice.ClearColor = Color.CornflowerBlue;
 			GraphicsDevice.Clear();
 			GraphicsDevice.SetViewport((Rectangle)renderContext.ActiveScreen.NormalizedScreenArea, renderContext.ActiveScreen);
-
+			
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem != null)
 			{
 				UpdateParticleSystemPosition();
 				particleSystem.Draw(renderContext);
+			}
+
+			if (Settings.Get<bool>("Crosshair.Enable"))
+			{
+				var center = renderContext.ActiveScreen.NormalizedScreenArea.Center;
+				var length = 15.0f;
+				var color = Settings.Get<Color>("Crosshair.Color");
+
+				renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
+				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
+				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
+				renderContext.PrimitiveBatch.End();
 			}
 		}
 
