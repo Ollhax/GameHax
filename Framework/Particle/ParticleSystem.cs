@@ -212,7 +212,7 @@ namespace MG.Framework.Particle
 				}
 				else
 				{
-					particleRotationSpeed[i] += paramParticleAccelerationAngular.Get(emitterLife, lifeFraction) * time.ElapsedSeconds;
+					particleRotationSpeed[i] += MathTools.ToRadians(paramParticleAccelerationAngular.Get(emitterLife, lifeFraction)) * time.ElapsedSeconds;
 					particleRotation[i] += particleRotationSpeed[i] * time.ElapsedSeconds;
 				}
 				

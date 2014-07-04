@@ -265,8 +265,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>0.1</ValueStep>
-				<MinValue>0.0</MinValue>				
+				<ValueStep>1.0</ValueStep>
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
@@ -274,7 +273,7 @@
 						<Description>Amount of randomization for this parameter.</Description>
 						<Type>Single</Type>
 						<DefaultValue>0</DefaultValue>
-						<ValueStep>0.1</ValueStep>
+						<ValueStep>1.0</ValueStep>
 						<MinValue>0.0</MinValue>
 					</Parameter>
 					<Parameter>

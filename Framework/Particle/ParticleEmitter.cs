@@ -218,7 +218,7 @@ namespace MG.Framework.Particle
 			particlePosition[index] = position + new Vector2(paramEmitterOffsetX.Get(e, 0), paramEmitterOffsetY.Get(e, 0));
 			particleVelocity[index] = velocity;
 			particleRotation[index] = MathTools.ToRadians(paramEmitterInitialRotation.Get(e, 0));
-			particleRotationSpeed[index] = paramEmitterInitialRotationSpeed.Get(e, 0);
+			particleRotationSpeed[index] = MathTools.ToRadians(paramEmitterInitialRotationSpeed.Get(e, 0));
 			particleAge[index] = 0;
 			particleLife[index] = newParticleLife;
 			
