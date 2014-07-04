@@ -119,9 +119,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>1.0</ValueStep>
-				<MinValue>0.0</MinValue>
-				<MaxValue>360.0</MaxValue>
+				<ValueStep>1.0</ValueStep>				
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>

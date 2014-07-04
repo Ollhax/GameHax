@@ -266,7 +266,7 @@ namespace MG.Framework.Particle
 			float range = paramRange.Get(e, 0) / 2;
 			float direction = paramDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
 
-			return EmitInternal(Point, MathTools.FromAngle(MathTools.ToRadians(direction)) * paramEmitterInitialSpeed.Get(e, 0), 0);
+			return EmitInternal(Point, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * paramEmitterInitialSpeed.Get(e, 0), 0);
 		}
 	}
 }
