@@ -151,8 +151,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>1.0</ValueStep>
-				<MinValue>0.0</MinValue>
+				<ValueStep>1.0</ValueStep>				
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
@@ -180,8 +179,7 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>1.0</ValueStep>
-				<MinValue>0.0</MinValue>
+				<ValueStep>1.0</ValueStep>				
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
@@ -499,8 +497,7 @@
 						<PrettyName>Emitter Life %</PrettyName>
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
-						<DefaultValue></DefaultValue>
-						<CurveMin>-1.0</CurveMin>
+						<DefaultValue></DefaultValue>						
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -527,8 +524,7 @@
 						<PrettyName>Emitter Life %</PrettyName>
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
-						<DefaultValue></DefaultValue>
-						<CurveMin>-1.0</CurveMin>
+						<DefaultValue></DefaultValue>						
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
@@ -555,8 +551,7 @@
 						<PrettyName>Emitter Life %</PrettyName>
 						<Description>How this parameter is affected over the emitter life time.</Description>
 						<Type>Curve</Type>
-						<DefaultValue></DefaultValue>
-						<CurveMin>-1.0</CurveMin>
+						<DefaultValue></DefaultValue>						
 					</Parameter>
 					<Parameter>
 						<Name>GraphParticle</Name>
