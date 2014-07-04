@@ -13,7 +13,7 @@ namespace MG.ParticleEditorWindow
 			Gtk.Application.Init(title, ref args);			
 			GLib.Timeout.Add(33, OnUpdate);
 
-			UnhandledExceptionHandler h = new UnhandledExceptionHandler (OnException);
+			UnhandledExceptionHandler h = OnException;
 			ExceptionManager.UnhandledException += h;
 		}
 
@@ -30,9 +30,6 @@ namespace MG.ParticleEditorWindow
 		private static void OnException(UnhandledExceptionArgs args)
 		{
 			ExceptionHandler.RaiseException((Exception)args.ExceptionObject, false);
-			//ShowErrorDialog(args.ExceptionObject, args.IsTerminating);
-			//args.ExitApplication = true;
-			//throw args.ExceptionObject;
 		}
 
 		private static bool OnUpdate()

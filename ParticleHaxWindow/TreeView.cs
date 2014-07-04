@@ -250,7 +250,7 @@ namespace MG.ParticleEditorWindow
 		{
 			TreeModel model;
 			TreeIter iter;
-			if (treeView.Selection.GetSelected(out model, out iter))
+			if (treeView.Selection != null && treeView.Selection.GetSelected(out model, out iter))
 			{
 				int id = (int)model.GetValue(iter, ColumnId);
 				return id;
