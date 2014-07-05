@@ -26,13 +26,14 @@ namespace MG.Framework.Particle
 		private List<float> particleRotationSpeed;
 		private List<float> particleLife;
 		private List<float> particleAge;
-		
 		private ParticleData particleData = new ParticleData(64);
 		private ParticleEmitter emitter;
 		private bool disabled;
 		
 		private ParticleDefinition.Parameter paramTexture;
 		private Vector2 paramTextureAnchor;
+		private Vector2I paramTextureCells;
+		private float paramTextureFrameTime;
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private bool paramParticleOrientToVelocity;
@@ -47,7 +48,9 @@ namespace MG.Framework.Particle
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
-		
+
+		private int AnimationCells { get { return paramTextureCells.X * paramTextureCells.Y; } }
+
 		public ParticleSystem(AssetHandler assetHandler, ParticleSystemPool particleSystemPool, ParticleDefinition particleDefinition)
 		{
 			if (assetHandler == null) throw new ArgumentException("assetHandler");
@@ -74,6 +77,8 @@ namespace MG.Framework.Particle
 
 			paramTexture = Definition.GetParameter("Texture");
 			paramTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
+			paramTextureCells = new Vector2I(Definition.GetParameter("TextureCellsX").Value.Get<int>(), Definition.GetParameter("TextureCellsY").Value.Get<int>());
+			paramTextureFrameTime = Definition.GetParameter("TextureFrameTime").Value.Get<float>();
 			paramBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
 			paramParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();
 			paramParticleOrientToVelocity = Definition.GetParameter("ParticleOrientToVelocity").Value.Get<bool>();
@@ -306,13 +311,28 @@ namespace MG.Framework.Particle
 				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
 				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
 				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
-
+				
 				if (paramParticleRelativeToParent)
 				{
 					p += Position;
 				}
 
-				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size * paramTextureAnchor, 0);
+				var sourceArea = new RectangleF(0, 0, particleTexture.Width, particleTexture.Height);
+				var maxCells = AnimationCells;
+				var frameTime = paramTextureFrameTime;
+
+				if (maxCells > 1 && paramTextureFrameTime != 0)
+				{
+					int frame = (int)(a / paramTextureFrameTime) % maxCells;
+					int frameX = frame % paramTextureCells.X;
+					int frameY = frame / paramTextureCells.X;
+					float cellX = particleTexture.Width / (float)paramTextureCells.X;
+					float cellY = particleTexture.Height / (float)paramTextureCells.Y;
+
+					sourceArea = new RectangleF(frameX * cellX, frameY * cellY, cellX, cellY);
+				}
+
+				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), sourceArea, color, sourceArea.Size * paramTextureAnchor, QuadEffects.None, 0);
 			}
 
 			quadBatch.End();

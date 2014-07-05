@@ -13,16 +13,16 @@
 			<Parameter>
 				<Name>Texture</Name>
 				<Description>The texture used for this particle effect.</Description>
-				<Category>General</Category>
+				<Category>Texture</Category>
 				<Type>FilePath</Type>
-				<DefaultValue>weapon_laser_red.png</DefaultValue>
+				<DefaultValue>Resources/texture.png</DefaultValue>
 				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
 			</Parameter>
 			<Parameter>
 				<Name>TextureAnchorX</Name>
 				<PrettyName>Anchor X</PrettyName>
 				<Description>The anchor X position for this texture.</Description>
-				<Category>General</Category>
+				<Category>Texture</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
 				<ValueStep>0.1</ValueStep>
@@ -32,11 +32,40 @@
 				<Name>TextureAnchorY</Name>
 				<PrettyName>Anchor Y</PrettyName>
 				<Description>The anchor Y position for this texture.</Description>
-				<Category>General</Category>
+				<Category>Texture</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
 				<ValueStep>0.1</ValueStep>
 				<ValueDigits>2</ValueDigits>
+			</Parameter>
+			<Parameter>
+				<Name>TextureCellsX</Name>
+				<PrettyName>Animation Cells X</PrettyName>
+				<Description>The number of animation cells in this texture. If > 1, the texture will be split into a number of cells and be animated over time.</Description>
+				<Category>Texture</Category>
+				<Type>Int32</Type>
+				<DefaultValue>1</DefaultValue>
+				<ValueStep>1</ValueStep>
+				<MinValue>1</MinValue>
+			</Parameter>
+			<Parameter>
+				<Name>TextureCellsY</Name>
+				<PrettyName>Animation Cells Y</PrettyName>
+				<Description>The number of animation cells in this texture. If > 1, the texture will be split into a number of cells and be animated over time.</Description>
+				<Category>Texture</Category>
+				<Type>Int32</Type>
+				<DefaultValue>1</DefaultValue>
+				<ValueStep>1</ValueStep>
+				<MinValue>1</MinValue>
+			</Parameter>
+			<Parameter>
+				<Name>TextureFrameTime</Name>
+				<PrettyName>Frame Time</PrettyName>
+				<Description>The amount of time each texture cell will be displayed.</Description>
+				<Category>Texture</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.5</DefaultValue>
+				<ValueStep>0.1</ValueStep>				
 			</Parameter>
 			<Parameter>
 				<Name>EmitterLife</Name>
