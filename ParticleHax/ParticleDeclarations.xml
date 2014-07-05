@@ -26,6 +26,7 @@
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
 				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
 			</Parameter>
 			<Parameter>
 				<Name>TextureAnchorY</Name>
@@ -35,6 +36,7 @@
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
 				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
 			</Parameter>
 			<Parameter>
 				<Name>EmitterLife</Name>
