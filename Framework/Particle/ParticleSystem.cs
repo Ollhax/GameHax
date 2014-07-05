@@ -11,9 +11,8 @@ namespace MG.Framework.Particle
 	public class ParticleSystem
 	{
 		public Vector2 Position;
-		public float Angle;
 		public Vector2 Gravity;
-
+		
 		public int ActiveParticles { get { return particleData.ActiveParticles; } }
 		public readonly ParticleDefinition Definition;
 		public List<ParticleSystem> SubSystems = new List<ParticleSystem>();
@@ -103,6 +102,31 @@ namespace MG.Framework.Particle
 				{
 					SubSystems.Add(particleSystemPool.Create(child));
 				}
+			}
+			else
+			{
+				foreach (var child in SubSystems)
+				{
+					child.Reload();
+				}
+			}
+		}
+
+		public void SetPositionRecursive(Vector2 position)
+		{
+			Position = position;
+			foreach (var child in SubSystems)
+			{
+				child.SetPositionRecursive(position);
+			}
+		}
+
+		public void SetGravityRecursive(Vector2 gravity)
+		{
+			Gravity = gravity;
+			foreach (var child in SubSystems)
+			{
+				child.SetGravityRecursive(gravity);
 			}
 		}
 
@@ -241,8 +265,18 @@ namespace MG.Framework.Particle
 
 		public void Draw(RenderContext renderContext, Matrix transform)
 		{
+			DrawCurrent(renderContext, transform);
+
+			foreach (var system in SubSystems)
+			{
+				system.Draw(renderContext, transform);
+			}
+		}
+
+		public void DrawCurrent(RenderContext renderContext, Matrix transform)
+		{
 			var quadBatch = renderContext.QuadBatch;
-			
+
 			// TODO: Figure out the best blending mode
 			if (paramBlendMode == BlendMode.BlendmodeAlpha)
 			{
@@ -250,7 +284,7 @@ namespace MG.Framework.Particle
 			}
 
 			quadBatch.Begin(transform, paramBlendMode);
-			
+
 			for (int i = 0; i < particleData.ActiveParticles; i++)
 			{
 				var p = particlePosition[i];
@@ -267,17 +301,11 @@ namespace MG.Framework.Particle
 				{
 					p += Position;
 				}
-				
+
 				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size / 2, 0);
 			}
-			
-			quadBatch.End();
 
-			var childTransform = transform * MathTools.Create2DAffineMatrix(Position.X, Position.Y, 1, 1, 0);
-			foreach (var system in SubSystems)
-			{
-				system.Draw(renderContext, childTransform);
-			}
+			quadBatch.End();
 		}
 	}
 }

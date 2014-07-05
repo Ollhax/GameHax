@@ -68,6 +68,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
 		public event System.Action BackgroundColorChanged = delegate { };
+		public event System.Action ViewModeChanged = delegate { };
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
@@ -80,6 +81,24 @@ namespace MG.ParticleEditorWindow
 		public bool RedoEnabled { get { return editRedo.Sensitive; } set { editRedo.Sensitive = value; } }
 		
 		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
+
+		public int ViewMode
+		{
+			get
+			{
+				if (viewModeShowSelected.Active) return 0;
+				if (viewModeShowSelectedChildren.Active) return 1;
+				if (viewModeShowFull.Active) return 2;
+				return 0;
+			}
+
+			set
+			{
+				if (value == 0) viewModeShowSelected.Active = true;
+				else if (value == 1) viewModeShowSelectedChildren.Active = true;
+				else viewModeShowFull.Active = true;
+			}
+		}
 
 		public int CurrentBackgroundColorIndex
 		{
@@ -320,6 +339,10 @@ namespace MG.ParticleEditorWindow
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
 		private List<ColorMenuItem> viewShowColor = new List<ColorMenuItem>();
+
+		private RadioMenuItem viewModeShowSelected;
+		private RadioMenuItem viewModeShowSelectedChildren;
+		private RadioMenuItem viewModeShowFull;
 		
 		private MenuBar CreateMenu()
 		{
@@ -386,6 +409,29 @@ namespace MG.ParticleEditorWindow
 			viewShowOrigin.Activated += (sender, args) => ToggleShowOrigin.Invoke();
 			viewMenu.Append(viewShowOrigin);
 
+			// View mode submenu
+			var viewModeMenu = new Menu();
+			var viewModeMenuItem = new MenuItem("View Mode");
+			viewModeMenuItem.Submenu = viewModeMenu;
+			viewMenu.Append(viewModeMenuItem);
+
+			viewModeShowSelected = new RadioMenuItem("Selected Effect");
+			viewModeShowSelected.AddAccelerator("activate", accelerators, new AccelKey());
+			viewModeShowSelected.Activated += (sender, args) => ViewModeChanged.Invoke();
+			viewModeMenu.Append(viewModeShowSelected);
+
+			viewModeShowSelectedChildren = new RadioMenuItem(viewModeShowSelected.Group, "Selected Effect + Children");
+			viewModeShowSelectedChildren.AddAccelerator("activate", accelerators, new AccelKey());
+			viewModeShowSelectedChildren.Activated += (sender, args) => ViewModeChanged.Invoke();
+			viewModeMenu.Append(viewModeShowSelectedChildren);
+
+			viewModeShowFull = new RadioMenuItem(viewModeShowSelected.Group, "Full Effect");
+			viewModeShowFull.AddAccelerator("activate", accelerators, new AccelKey());
+			viewModeShowFull.Activated += (sender, args) => ViewModeChanged.Invoke();
+			viewModeMenu.Append(viewModeShowFull);
+
+			// Background color submenu
+
 			var backgroundMenu = new Menu();
 			var backgroundMenuItem = new MenuItem("Background Color");
 			backgroundMenuItem.Submenu = backgroundMenu;
@@ -396,7 +442,7 @@ namespace MG.ParticleEditorWindow
 				int index = ((i + 1) % 10);
 				var v = new ColorMenuItem("Color");
 				
-				v.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.Key_0 + index, ModifierType.None, AccelFlags.Visible));
+				v.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.Key_0 + index, ModifierType.ControlMask, AccelFlags.Visible));
 
 				if (viewShowColor.Count > 0)
 				{

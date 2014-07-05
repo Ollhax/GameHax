@@ -17,6 +17,7 @@ namespace MG.ParticleHax.Controllers
 			float step = 1.0f / 6.0f;
 			float v = 0;
 			Settings.Set("Background.Current", 0);
+
 			Settings.Set("Background.Color1", new Color(v, v, v, 1.0f)); v += step;
 			Settings.Set("Background.Color2", new Color(v, v, v, 1.0f)); v += step;
 			Settings.Set("Background.Color3", new Color(v, v, v, 1.0f)); v += step;
@@ -30,12 +31,17 @@ namespace MG.ParticleHax.Controllers
 
 			Settings.Set("Crosshair.Enable", false);
 			Settings.Set("Crosshair.Color", new Color(1.0f, 1.0f, 1.0f, 0.5f));
+
+			Settings.Set("ViewMode", (int)(RenderController.ParticleView.FullTree));
 			
 			Settings.Load(); // Override defaults
 			Settings.Save(); // Save any missing settings
 
 			window.ViewShowOrigin = Settings.Get<bool>("Crosshair.Enable");
 			window.ToggleShowOrigin += OnToggleShowOrigin;
+
+			window.ViewMode = Settings.Get<int>("ViewMode");
+			window.ViewModeChanged += OnViewModeChanged;
 
 			window.CurrentBackgroundColorIndex = Settings.Get<int>("Background.Current");
 			window.BackgroundColorChanged += OnBackgroundColorChanged;
@@ -46,16 +52,22 @@ namespace MG.ParticleHax.Controllers
 				window.SetBackgroundColor(i, Settings.Get<Color>("Background.Color" + index));
 			}
 		}
+		
+		private void OnToggleShowOrigin()
+		{
+			Settings.Set("Crosshair.Enable", window.ViewShowOrigin);
+			Settings.Save();
+		}
+
+		private void OnViewModeChanged()
+		{
+			Settings.Set("ViewMode", window.ViewMode);
+			Settings.Save();
+		}
 
 		private void OnBackgroundColorChanged()
 		{
 			Settings.Set("Background.Current", window.CurrentBackgroundColorIndex);
-			Settings.Save();
-		}
-
-		private void OnToggleShowOrigin()
-		{
-			Settings.Set("Crosshair.Enable", window.ViewShowOrigin);
 			Settings.Save();
 		}
 	}

@@ -12,13 +12,26 @@ namespace MG.ParticleHax.Controllers
 {
 	class RenderController
 	{
+		public enum ParticleView
+		{
+			Selected,
+			SubTree,
+			FullTree
+		}
+
 		private MainController controller;
 		private Model model;
 		private AssetHandler assetHandler;
 		private bool loaded;
 		private Vector2? particlePosition;
+		private ParticleView lastViewMode = ParticleView.FullTree;
 		
 		public bool Loaded { get { return loaded; } }
+		
+		public ParticleView ViewMode
+		{
+			get { return (ParticleView)Settings.Get<int>("ViewMode"); }
+		}
 
 		public RenderController(MainController controller, Model model, AssetHandler assetHandler, RenderView renderView)
 		{
@@ -55,7 +68,7 @@ namespace MG.ParticleHax.Controllers
 				}
 			}
 
-			if (particleSystem == null)
+			if (particleSystem == null || lastViewMode != ViewMode)
 			{
 				OnItemSelected(model.CurrentDefinition);
 			}
@@ -75,6 +88,15 @@ namespace MG.ParticleHax.Controllers
 				return;
 			}
 
+			var viewMode = ViewMode;
+			lastViewMode = viewMode;
+			
+			if (viewMode == ParticleView.FullTree)
+			{
+				while (definition.Parent != null)
+					definition = definition.Parent;
+			}
+
 			if (model.ParticleSystem == null || definition != model.ParticleSystem.Definition)
 			{
 				if (model.ParticleSystem != null)
@@ -86,7 +108,8 @@ namespace MG.ParticleHax.Controllers
 				{
 					//Log.Info("Creating particle system from definition: " + definition.Name);
 					model.ParticleSystem = model.ParticleSystemPool.Create(definition);
-					model.ParticleSystem.Gravity = new Vector2(0, 100);
+					model.ParticleSystem.SetGravityRecursive(new Vector2(0, 100));
+					
 					particlePosition = null;
 					UpdateParticleSystemPosition();
 				}
@@ -151,19 +174,31 @@ namespace MG.ParticleHax.Controllers
 			if (particleSystem != null)
 			{
 				UpdateParticleSystemPosition();
-				particleSystem.Draw(renderContext);
+				DrawEffect(renderContext, particleSystem, ViewMode != ParticleView.Selected);
+
+				if (Settings.Get<bool>("Crosshair.Enable"))
+				{
+					var center = particleSystem.Position;
+					var length = 15.0f;
+					var color = Settings.Get<Color>("Crosshair.Color");
+
+					renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
+					renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
+					renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
+					renderContext.PrimitiveBatch.End();
+				}
 			}
+		}
 
-			if (Settings.Get<bool>("Crosshair.Enable"))
+		private void DrawEffect(RenderContext renderContext, ParticleSystem particleSystem, bool drawChildren)
+		{
+			if (drawChildren)
 			{
-				var center = renderContext.ActiveScreen.NormalizedScreenArea.Center;
-				var length = 15.0f;
-				var color = Settings.Get<Color>("Crosshair.Color");
-
-				renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
-				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
-				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
-				renderContext.PrimitiveBatch.End();
+				particleSystem.Draw(renderContext, Matrix.Identity);
+			}
+			else
+			{
+				particleSystem.DrawCurrent(renderContext, Matrix.Identity);
 			}
 		}
 
@@ -172,7 +207,7 @@ namespace MG.ParticleHax.Controllers
 			var particleSystem = model.ParticleSystem;
 			if (particleSystem == null) return;
 			
-			particleSystem.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+			particleSystem.SetPositionRecursive(new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center));
 		}
 
 		private void OnPress(Vector2 pos)

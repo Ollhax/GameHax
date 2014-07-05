@@ -277,7 +277,7 @@ namespace MG.ParticleEditorWindow
 
 				if (selectedItemPath == null)
 				{
-					treeView.Selection.UnselectAll();
+					//treeView.Selection.UnselectAll();
 				}
 				else
 				{

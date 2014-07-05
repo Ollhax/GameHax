@@ -48,7 +48,7 @@ namespace MG.ParticleEditorWindow
 			{
 				var bounds = Allocation;
 				int size = (int)(bounds.Height * 0.66f);
-				var area = new RectangleF(bounds.X + (int)(bounds.Width * 0.67f), bounds.Y + (bounds.Height - size) / 2, size, size);
+				var area = new RectangleF(bounds.X + (int)(bounds.Width * 0.53f), bounds.Y + (bounds.Height - size) / 2, size, size);
 
 				if (Color.A != 255)
 				{
