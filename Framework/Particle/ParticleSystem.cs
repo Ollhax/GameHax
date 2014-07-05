@@ -292,13 +292,13 @@ namespace MG.Framework.Particle
 		{
 			var quadBatch = renderContext.QuadBatch;
 
-			// TODO: Figure out the best blending mode
-			if (paramBlendMode == BlendMode.BlendmodeAlpha)
+			BlendMode blendMode = BlendMode.BlendmodeAlpha;
+			if (paramBlendMode == BlendMode.BlendmodeOpaque)
 			{
-				paramBlendMode = BlendMode.BlendmodeNonPremultiplied;
+				blendMode = BlendMode.BlendmodeOpaque;
 			}
 
-			quadBatch.Begin(transform, paramBlendMode);
+			quadBatch.Begin(transform, blendMode);
 
 			for (int i = 0; i < particleData.ActiveParticles; i++)
 			{
@@ -311,6 +311,19 @@ namespace MG.Framework.Particle
 				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
 				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
 				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
+
+				// TODO: Precalculate this
+				if (paramBlendMode == BlendMode.BlendmodeAlpha || paramBlendMode == BlendMode.BlendmodeAdditive)
+				{
+					color.R = (byte)((((int)color.R) * (int)color.A) / 255);
+					color.G = (byte)((((int)color.G) * (int)color.A) / 255);
+					color.B = (byte)((((int)color.B) * (int)color.A) / 255);
+
+					if (paramBlendMode == BlendMode.BlendmodeAdditive)
+					{
+						color.A = 0;
+					}
+				}
 				
 				if (paramParticleRelativeToParent)
 				{
