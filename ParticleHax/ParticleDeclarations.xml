@@ -479,6 +479,33 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>ParticleTurn</Name>
+				<PrettyName>Turn</PrettyName>
+				<Description>Rotation applied to the particle's velocity vector.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>ParticleScale</Name>
 				<PrettyName>Scale</PrettyName>
 				<Description>Uniform particle scale over time.</Description>

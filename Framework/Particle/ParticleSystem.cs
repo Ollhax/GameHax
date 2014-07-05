@@ -42,6 +42,7 @@ namespace MG.Framework.Particle
 		private RandomFloat paramParticleAccelerationY;
 		private RandomFloat paramParticleAccelerationAngular;
 		private RandomFloat paramParticleAirResistance;
+		private RandomFloat paramParticleTurn;
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
@@ -81,6 +82,7 @@ namespace MG.Framework.Particle
 			paramParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
 			paramParticleAccelerationAngular = Definition.GetFloatParameter("ParticleAccelerationAngular");
 			paramParticleAirResistance = Definition.GetFloatParameter("ParticleAirResistance");
+			paramParticleTurn = Definition.GetFloatParameter("ParticleTurn");
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
@@ -225,6 +227,12 @@ namespace MG.Framework.Particle
 					res.X = MathTools.Clamp(res.X, -absX, absX);
 					res.Y = MathTools.Clamp(res.Y, -absY, absY);
 					vel -= res;
+				}
+
+				var turn = paramParticleTurn.Get(emitterLife, lifeFraction);
+				if (turn != 0)
+				{
+					vel = vel.Rotated(MathTools.ToRadians(turn));
 				}
 
 				particleVelocity[i] = vel;
