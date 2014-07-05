@@ -24,6 +24,7 @@ namespace MG.Framework.Particle
 		private List<Vector2> particleVelocity;
 		private List<float> particleRotation;
 		private List<float> particleRotationSpeed;
+		private List<float> particleScale;
 		private List<float> particleLife;
 		private List<float> particleAge;
 		private ParticleData particleData = new ParticleData(64);
@@ -64,6 +65,7 @@ namespace MG.Framework.Particle
 			particlePosition = particleData.Register<Vector2>("Position");
 			particleVelocity = particleData.Register<Vector2>("Velocity");
 			particleRotation = particleData.Register<float>("Rotation");
+			particleScale = particleData.Register<float>("Scale");
 			particleRotationSpeed = particleData.Register<float>("RotationSpeed");
 			particleLife = particleData.Register<float>("Life");
 			particleAge = particleData.Register<float>("Age");
@@ -308,7 +310,7 @@ namespace MG.Framework.Particle
 				var r = particleRotation[i];
 				var lifeFraction = a / l;
 				var color = paramParticleColor.Evaluate(lifeFraction);
-				var s = paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
+				var s = particleScale[i] * paramParticleScale.Get(emitter.LifeFractional, lifeFraction);
 				var sx = paramParticleScaleX.Get(emitter.LifeFractional, lifeFraction);
 				var sy = paramParticleScaleY.Get(emitter.LifeFractional, lifeFraction);
 

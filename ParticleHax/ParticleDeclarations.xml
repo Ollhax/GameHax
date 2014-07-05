@@ -334,6 +334,36 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>EmitterInitialScale</Name>
+				<PrettyName>Initial Scale</PrettyName>
+				<Description>Initial scale.</Description>
+				<Category>Emitter</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.01</ValueStep>
+						<ValueDigits>2</ValueDigits>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>ParticleLife</Name>
 				<PrettyName>Particle Life</PrettyName>
 				<Description>How long a particle will last, in seconds. If zeroed, particles are not created.</Description>
