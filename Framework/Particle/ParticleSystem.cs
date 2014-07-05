@@ -32,6 +32,7 @@ namespace MG.Framework.Particle
 		private bool disabled;
 		
 		private ParticleDefinition.Parameter paramTexture;
+		private Vector2 paramTextureAnchor;
 		private BlendMode paramBlendMode;
 		private bool paramParticleInfinite;
 		private bool paramParticleOrientToVelocity;
@@ -72,6 +73,7 @@ namespace MG.Framework.Particle
 			bool wasRelative = paramParticleRelativeToParent;
 
 			paramTexture = Definition.GetParameter("Texture");
+			paramTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
 			paramBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
 			paramParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();
 			paramParticleOrientToVelocity = Definition.GetParameter("ParticleOrientToVelocity").Value.Get<bool>();
@@ -310,7 +312,7 @@ namespace MG.Framework.Particle
 					p += Position;
 				}
 
-				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size / 2, 0);
+				quadBatch.Draw(particleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), color, particleTexture.Size * paramTextureAnchor, 0);
 			}
 
 			quadBatch.End();

@@ -19,6 +19,24 @@
 				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
 			</Parameter>
 			<Parameter>
+				<Name>TextureAnchorX</Name>
+				<PrettyName>Anchor X</PrettyName>
+				<Description>The anchor X position for this texture.</Description>
+				<Category>General</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.5</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+			</Parameter>
+			<Parameter>
+				<Name>TextureAnchorY</Name>
+				<PrettyName>Anchor Y</PrettyName>
+				<Description>The anchor Y position for this texture.</Description>
+				<Category>General</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.5</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+			</Parameter>
+			<Parameter>
 				<Name>EmitterLife</Name>
 				<PrettyName>Emitter Life</PrettyName>
 				<Description>The duration of this particle system, in seconds. If zeroed, this emitter is disabled.</Description>
