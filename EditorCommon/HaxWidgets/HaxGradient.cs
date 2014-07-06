@@ -11,7 +11,7 @@ using Gradient = MG.Framework.Numerics.Gradient;
 using Key = Gdk.Key;
 using Rectangle = Gdk.Rectangle;
 
-namespace MG.EditorCommon.HaxGradient
+namespace MG.EditorCommon.HaxWidgets
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public class HaxGradient : DrawingArea
@@ -61,8 +61,8 @@ namespace MG.EditorCommon.HaxGradient
 				for (int y = 0; y < area.Height / size; y++)
 				{
 					bool even = (x % 2 == 0) ^ (y % 2 == 0);
-					
-					SetColor(ctx, even ? colorWhite : colorBlack);
+
+					WidgetTools.SetColor(ctx, even ? colorWhite : colorBlack);
 					ctx.Rectangle(area.X + x * size, area.Y + y * size, size, size);
 					ctx.Fill();
 				}	
@@ -87,7 +87,7 @@ namespace MG.EditorCommon.HaxGradient
 			ctx.Clip();
 			
 			// Border
-			SetColor(ctx, state == StateType.Selected ? colorSelectedBackground : colorBorder);
+			WidgetTools.SetColor(ctx, state == StateType.Selected ? colorSelectedBackground : colorBorder);
 			//SetColor(ctx, colorBorder);
 			ctx.LineWidth = 1.0;
 			ctx.Antialias = Antialias.Default;
@@ -111,8 +111,8 @@ namespace MG.EditorCommon.HaxGradient
 			    {
 					var fraction = (i - outerBoundsThickness) / area.Width;
 					fraction = MathTools.ClampNormal(fraction);
-					
-			        SetColor(ctx, gradient.Evaluate(fraction));
+
+					WidgetTools.SetColor(ctx, gradient.Evaluate(fraction));
 
 					float x = outerBounds.Position.X + i;
 					float y = outerBounds.Position.Y;
@@ -131,21 +131,21 @@ namespace MG.EditorCommon.HaxGradient
 				ctx.Antialias = Antialias.None;
 
 				ctx.Rectangle(slice.X, slice.Y, slice.Width, slice.Height);
-				SetColor(ctx, entry.Color);
+				WidgetTools.SetColor(ctx, entry.Color);
 				ctx.Fill();
 
 				Color edgeColor = entry == hoveredEntry ? GetComplementary1(entry.Color) : GetComplementary2(entry.Color);
 
 				ctx.Rectangle(slice.X, slice.Y, slice.Width, slice.Height);
 				ctx.LineWidth = 1;
-				SetColor(ctx, edgeColor);
+				WidgetTools.SetColor(ctx, edgeColor);
 				ctx.Stroke();
 
 				if (entry == selectedEntry)
 				{
 					ctx.Rectangle(slice.X + 1, slice.Y + 1, slice.Width - 2, slice.Height - 2);
 					ctx.LineWidth = 1;
-					SetColor(ctx, edgeColor);
+					WidgetTools.SetColor(ctx, edgeColor);
 					ctx.Stroke();
 				}
 			}
@@ -239,11 +239,6 @@ namespace MG.EditorCommon.HaxGradient
 		private float FromScreen(float value, RectangleF area)
 		{
 			return (value - area.X) / area.Width;
-		}
-		
-		private void SetColor(Context ctx, Color color)
-		{
-			ctx.SetSourceRGBA(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0);
 		}
 		
 		protected override bool OnMotionNotifyEvent(EventMotion evnt)

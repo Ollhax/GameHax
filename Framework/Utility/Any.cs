@@ -16,6 +16,7 @@ namespace MG.Framework.Utility
 		public Any(Tween value) { boxedValue = value; }
 		public Any(Color value) { boxedValue = value; }
 		public Any(Curve value) { boxedValue = value; }
+		public Any(Noise value) { boxedValue = value; }
 		public Any(string value) { boxedValue = value; }		
 		public Any(Vector2 value) { boxedValue = value; }
 		public Any(Vector2I value) { boxedValue = value; }
@@ -37,6 +38,7 @@ namespace MG.Framework.Utility
 			else if (nameOfType == typeof(Tween).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Tween)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(Color).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Color)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(Curve).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Curve)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
+			else if (nameOfType == typeof(Noise).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Noise)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(string).Name) boxedValue = valueAsString;
 			else if (nameOfType == typeof(Vector2).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Vector2)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
 			else if (nameOfType == typeof(Vector2I).Name) boxedValue = System.ComponentModel.TypeDescriptor.GetConverter(typeof(Vector2I)).ConvertFromString(null, CultureInfo.InvariantCulture, valueAsString);
@@ -55,6 +57,7 @@ namespace MG.Framework.Utility
 			else if (other.boxedValue is Tween) boxedValue = (Tween)(other.boxedValue);
 			else if (other.boxedValue is Color) boxedValue = (Color)(other.boxedValue);
 			else if (other.boxedValue is Curve) boxedValue = new Curve((Curve)(other.boxedValue));
+			else if (other.boxedValue is Noise) boxedValue = new Noise((Noise)(other.boxedValue));
 			else if (other.boxedValue is string) boxedValue = ((string)other.boxedValue).Clone();
 			else if (other.boxedValue is Vector2) boxedValue = (Vector2)(other.boxedValue);
 			else if (other.boxedValue is Vector2I) boxedValue = (Vector2I)(other.boxedValue);
@@ -77,6 +80,7 @@ namespace MG.Framework.Utility
 		public Tween Get(Tween defaultValue) { if (boxedValue is Tween) return (Tween)boxedValue; return defaultValue; }
 		public Color Get(Color defaultValue) { if (boxedValue is Color) return (Color)boxedValue; return defaultValue; }
 		public Curve Get(Curve defaultValue) { if (boxedValue is Curve) return (Curve)boxedValue; return defaultValue; }
+		public Noise Get(Noise defaultValue) { if (boxedValue is Noise) return (Noise)boxedValue; return defaultValue; }
 		public string Get(string defaultValue) { if (boxedValue is string) return (string)boxedValue; return defaultValue; }
 		public Vector2 Get(Vector2 defaultValue) { if (boxedValue is Vector2) return (Vector2)boxedValue; return defaultValue; }
 		public Vector2I Get(Vector2I defaultValue) { if (boxedValue is Vector2I) return (Vector2I)boxedValue; return defaultValue; }
@@ -96,6 +100,7 @@ namespace MG.Framework.Utility
 		public bool IsTween() { return boxedValue is Tween; }
 		public bool IsColor() { return boxedValue is Color; }
 		public bool IsCurve() { return boxedValue is Curve; }
+		public bool IsNoise() { return boxedValue is Noise; }
 		public bool IsString() { return boxedValue is string; }
 		public bool IsVector2() { return boxedValue is Vector2; }
 		public bool IsVector2I() { return boxedValue is Vector2I; }

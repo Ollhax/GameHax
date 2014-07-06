@@ -75,6 +75,7 @@ namespace MG.EditorCommon
 			if (DefinitionParameter.Value.IsFilePath()) return new FilePathEditor();
 			if (DefinitionParameter.Value.IsCurve()) return new GraphEditor();
 			if (DefinitionParameter.Value.IsGradient()) return new GradientEditor();
+			if (DefinitionParameter.Value.IsNoise()) return new NoiseEditor();
 
 			return base.GetEditor(editorBaseType);
 		}

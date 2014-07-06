@@ -54,13 +54,16 @@
     <Reference Include="Mono.Posix" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editors\NoiseEditor.cs" />
     <Compile Include="Editors\GradientEditor.cs" />
     <Compile Include="Editors\GraphEditor.cs" />
     <Compile Include="FileAssociation\FileAssociation.cs" />
     <Compile Include="GtkTools.cs" />
     <Compile Include="HaxGLWidget\GLWidget.cs" />
     <Compile Include="HaxGLWidget\HaxGLWidget.cs" />
-    <Compile Include="HaxGradient\HaxGradient.cs" />
+    <Compile Include="HaxWidgets\HaxGradient.cs" />
+    <Compile Include="HaxWidgets\HaxNoise.cs" />
+    <Compile Include="HaxWidgets\WidgetTools.cs" />
     <Compile Include="NonExpandableObjectConverter.cs" />
     <Compile Include="ParticleDeclaration.cs" />
     <Compile Include="ParticleSubParameterConverter.cs" />
@@ -100,7 +103,7 @@
     <Compile Include="PropertyGrid\MonoDevelop.Components\HslColor.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Components\PangoCairoHelper.cs" />
     <Compile Include="PropertyGrid\MonoDevelop.Ide\MessageService.cs" />
-    <Compile Include="HaxGraph\HaxGraph.cs" />
+    <Compile Include="HaxWidgets\HaxGraph.cs" />
     <Compile Include="ParticleParameterDescriptor.cs" />
     <Compile Include="Editors\FilePathEditor.cs" />
     <Compile Include="Editors\FloatEditor.cs" />

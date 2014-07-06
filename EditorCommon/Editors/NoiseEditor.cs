@@ -3,16 +3,15 @@
 using Gtk;
 
 using MG.EditorCommon.HaxWidgets;
+using MG.Framework.Numerics;
 
 using MonoDevelop.Components.PropertyGrid;
 
-using Curve = MG.Framework.Numerics.Curve;
-
 namespace MG.EditorCommon.Editors
 {
-	public class GraphEditor : PropertyEditorCell
+	public class NoiseEditor : PropertyEditorCell
 	{
-		private HaxGraph graph;
+		private HaxNoise noiseGraph;
 
 		protected override void Initialize()
 		{
@@ -20,10 +19,10 @@ namespace MG.EditorCommon.Editors
 
 			var declarationParameter = ((ParticleParameterDescriptor)Property).DeclarationParameter;
 
-			graph = new HaxGraph();
-			graph.Curve = (Curve)Property.GetValue(Instance);
-			graph.MinValueY = declarationParameter.CurveMin;
-			graph.MaxValueY = declarationParameter.CurveMax;
+			noiseGraph = new HaxNoise();
+			noiseGraph.Noise = (Noise)Property.GetValue(Instance);
+			noiseGraph.MinValueY = declarationParameter.CurveMin;
+			noiseGraph.MaxValueY = declarationParameter.CurveMax;
 		}
 
 		public override void GetSize(int availableWidth, out int width, out int height)
@@ -34,39 +33,39 @@ namespace MG.EditorCommon.Editors
 
 		public override void Render(Gdk.Drawable window, Cairo.Context ctx, Gdk.Rectangle bounds, StateType state)
 		{
-			graph.Draw(window, ctx, bounds, state);
+			noiseGraph.Draw(window, ctx, bounds, state);
 			//base.Render(window, ctx, bounds, state);
 		}
 
 		protected override IPropertyEditor CreateEditor(Gdk.Rectangle cell_area, Gtk.StateType state)
 		{
-			return new GraphPropertyEditor();
+			return new NoisePropertyEditor();
 		}
 	}
 
-	public class GraphPropertyEditor : Gtk.Bin, IPropertyEditor
+	public class NoisePropertyEditor : Gtk.Bin, IPropertyEditor
 	{
-		private HaxGraph graph;
+		private HaxNoise noiseGraph;
 		private int pad = 0;
-		
-		public GraphPropertyEditor()
+
+		public NoisePropertyEditor()
 		{
-			graph = new HaxGraph();
-			graph.Changed += GraphOnChanged;
+			noiseGraph = new HaxNoise();
+			noiseGraph.Changed += GraphOnChanged;
 
-			KeyPressEvent += OnKeyPressEvent;
+			//KeyPressEvent += OnKeyPressEvent;
 
-			Add(graph);
+			Add(noiseGraph);
 			ShowAll();
 			
 			SizeRequested += OnSizeRequested;
 			SizeAllocated += OnSizeAllocated;
 		}
 
-		private void OnKeyPressEvent(object o, KeyPressEventArgs args)
-		{
-			graph.KeyPress(args.Event);
-		}
+		//private void OnKeyPressEvent(object o, KeyPressEventArgs args)
+		//{
+		//    noiseGraph.KeyPress(args.Event);
+		//}
 
 		private void GraphOnChanged()
 		{
@@ -75,12 +74,12 @@ namespace MG.EditorCommon.Editors
 
 		void OnSizeRequested(object o, SizeRequestedArgs args)
 		{
-			if (graph != null)
+			if (noiseGraph != null)
 			{
 				int width = args.Requisition.Width;
 				int height = args.Requisition.Height;
 
-				graph.GetSizeRequest(out width, out height);
+				noiseGraph.GetSizeRequest(out width, out height);
 				if (width == -1 || height == -1)
 					width = height = 80;
 				SetSizeRequest(width + pad * 2, height + pad * 2);
@@ -89,7 +88,7 @@ namespace MG.EditorCommon.Editors
 
 		void OnSizeAllocated(object o, SizeAllocatedArgs args)
 		{
-			if (graph != null)
+			if (noiseGraph != null)
 			{
 				Gdk.Rectangle mine = args.Allocation;
 				Gdk.Rectangle his = mine;
@@ -98,24 +97,24 @@ namespace MG.EditorCommon.Editors
 				his.Y += pad;
 				his.Width -= pad * 2;
 				his.Height -= pad * 2;
-				graph.SizeAllocate(his);
+				noiseGraph.SizeAllocate(his);
 			}
 		}
 		
 		public void Initialize(EditSession session)
 		{
-			if (session.Property.PropertyType != typeof(Curve))
-				throw new ApplicationException("Graph editor does not support editing values of type " + session.Property.PropertyType);
+			if (session.Property.PropertyType != typeof(Noise))
+				throw new ApplicationException("Noise editor does not support editing values of type " + session.Property.PropertyType);
 
 			var declarationParameter = ((ParticleParameterDescriptor)session.Property).DeclarationParameter;
-			graph.MaxValueY = declarationParameter.CurveMax;
-			graph.MinValueY = declarationParameter.CurveMin;
+			noiseGraph.MaxValueY = declarationParameter.CurveMax;
+			noiseGraph.MinValueY = declarationParameter.CurveMin;
 		}
 		
 		object IPropertyEditor.Value
 		{
-			get { return graph.Curve; }
-			set { graph.Curve = (Curve)value; }
+			get { return noiseGraph.Noise; }
+			set { noiseGraph.Noise = (Noise)value; }
 		}
 
 		public event EventHandler ValueChanged;

@@ -49,9 +49,12 @@ namespace MG.Framework.Particle
 		private RandomFloat paramParticleScale;
 		private RandomFloat paramParticleScaleX;
 		private RandomFloat paramParticleScaleY;
+		private RandomFloat paramParticleTurbulenceStrength;
+		private RandomFloat paramParticleTurbulenceScale;
+		private RandomFloat paramParticleTurbulenceSpeed;
 
 		private int AnimationCells { get { return paramTextureCells.X * paramTextureCells.Y; } }
-
+		
 		public ParticleSystem(AssetHandler assetHandler, ParticleSystemPool particleSystemPool, ParticleDefinition particleDefinition)
 		{
 			if (assetHandler == null) throw new ArgumentException("assetHandler");
@@ -95,6 +98,9 @@ namespace MG.Framework.Particle
 			paramParticleScale = Definition.GetFloatParameter("ParticleScale");
 			paramParticleScaleX = Definition.GetFloatParameter("ParticleScaleX");
 			paramParticleScaleY = Definition.GetFloatParameter("ParticleScaleY");
+			paramParticleTurbulenceStrength = Definition.GetFloatParameter("ParticleTurbulenceStrength");
+			paramParticleTurbulenceScale = Definition.GetFloatParameter("ParticleTurbulenceScale");
+			paramParticleTurbulenceSpeed = Definition.GetFloatParameter("ParticleTurbulenceSpeed");
 
 			if (wasRelative != paramParticleRelativeToParent)
 			{
@@ -195,8 +201,12 @@ namespace MG.Framework.Particle
 			}
 		}
 
+		private double totalTime;
+
 		public void Update(Time time)
 		{
+			totalTime = time.TotalElapsedSeconds;
+
 			if (time.ElapsedSeconds <= 0)
 				return;
 
@@ -242,6 +252,17 @@ namespace MG.Framework.Particle
 				if (turn != 0)
 				{
 					vel = vel.Rotated(MathTools.ToRadians(turn));
+				}
+
+				var turbulence = paramParticleTurbulenceStrength.Get(emitterLife, lifeFraction);
+				if (turbulence != 0)
+				{
+					var v = SampleTurbulence(
+						particlePosition[i],
+						paramParticleTurbulenceScale.Get(emitterLife, lifeFraction), 
+						paramParticleTurbulenceSpeed.Get(emitterLife, lifeFraction));
+
+					vel += v * turbulence;
 				}
 
 				particleVelocity[i] = vel;
@@ -292,6 +313,23 @@ namespace MG.Framework.Particle
 
 		public void DrawCurrent(RenderContext renderContext, Matrix transform)
 		{
+			//var primitiveBatch = renderContext.PrimitiveBatch;
+			//primitiveBatch.Begin();
+			//var turbulence = 1;
+			//if (turbulence != 0)
+			//{
+			//    for (int y = 0; y < 100; y++)
+			//    {
+			//        for (int x = 0; x < 100; x++)
+			//        {
+			//            var p = new Vector2(x, y) * 10;
+			//            var v = SampleTurbulence(p) * 10;
+			//            primitiveBatch.Draw(new Line(p, p+v), Color.Red);
+			//        }
+			//    }
+			//}
+			//primitiveBatch.End();
+			
 			var quadBatch = renderContext.QuadBatch;
 
 			BlendMode blendMode = BlendMode.BlendmodeAlpha;
@@ -351,6 +389,22 @@ namespace MG.Framework.Particle
 			}
 
 			quadBatch.End();
+		}
+
+		private Vector2 SampleTurbulence(Vector2 position, float scale, float speed)
+		{
+			float d = scale;
+			float s = 1.0f;
+			float t = (float)totalTime * speed;
+			float x = position.X * d;
+			float y = position.Y * d;
+			
+			float tl = NoiseTools.BasicNoise(x - s, y - s, t);
+			float tr = NoiseTools.BasicNoise(x + s, y - s, t);
+			float bl = NoiseTools.BasicNoise(x - s, y + s, t);
+			float br = NoiseTools.BasicNoise(x + s, y + s, t);
+
+			return new Vector2((tl + bl) - (tr + br), (tl + tr) - (bl + br));
 		}
 	}
 }

@@ -226,6 +226,14 @@
 						<DefaultValue></DefaultValue>
 						<CurveMin>-1.0</CurveMin>
 					</Parameter>
+					<!--<Parameter>
+						<Name>Noise</Name>
+						<PrettyName>Noise</PrettyName>
+						<Description>How much noise should affect this value over time.</Description>
+						<Type>Noise</Type>
+						<DefaultValue>0;3;10;1;0.5;0</DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>-->
 				</Parameters>
 			</Parameter>
 			<Parameter>
@@ -254,6 +262,14 @@
 						<DefaultValue></DefaultValue>
 						<CurveMin>-1.0</CurveMin>
 					</Parameter>
+					<!--<Parameter>
+						<Name>Noise</Name>
+						<PrettyName>Noise</PrettyName>
+						<Description>How much noise should affect this value over time.</Description>
+						<Type>Noise</Type>
+						<DefaultValue>0;3;10;1;0.5;0</DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>-->
 				</Parameters>
 			</Parameter>
 			<Parameter>
@@ -674,6 +690,87 @@
 					</Parameter>
 				</Parameters>
 			</Parameter>
+			<Parameter>
+				<Name>ParticleTurbulenceStrength</Name>
+				<PrettyName>Turbulence</PrettyName>
+				<Description>Controls how much the turbulence affects the particle's velocity.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.1</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>						
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ParticleTurbulenceScale</Name>
+				<PrettyName>Turbulence Scale</PrettyName>
+				<Description>The scale of the turbulence "bubbles".</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>								
+				<DefaultValue>0.01</DefaultValue>
+				<ValueStep>0.001</ValueStep>
+				<ValueDigits>3</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>						
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ParticleTurbulenceSpeed</Name>
+				<PrettyName>Turbulence Speed</PrettyName>
+				<Description>Turbulence time scale.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>1</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0.0</MinValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>						
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			
+			
 			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>

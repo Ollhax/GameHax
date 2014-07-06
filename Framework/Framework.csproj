@@ -64,6 +64,7 @@
     <Compile Include="Audio\OggStream.cs" />
     <Compile Include="Collections\OrderedDictionary.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Converters\NoiseConverter.cs" />
     <Compile Include="Converters\GradientConverter.cs" />
     <Compile Include="Converters\CurveConverter.cs" />
     <Compile Include="Converters\FieldPropertyDescriptor.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Input\InputTranslation.cs" />
     <Compile Include="Input\KeyModifier.cs" />
     <Compile Include="Input\Range.cs" />
+    <Compile Include="Numerics\Noise.cs" />
     <Compile Include="Numerics\Gradient.cs" />
     <Compile Include="Numerics\Curve.cs" />
     <Compile Include="Particle\ParticleHelpers.cs" />
@@ -132,7 +134,7 @@
     <Compile Include="Numerics\MathTools.cs" />
     <Compile Include="Numerics\MathTools.Test.cs" />
     <Compile Include="Numerics\Matrix.cs" />
-    <Compile Include="Numerics\Noise.cs" />
+    <Compile Include="Numerics\NoiseTools.cs" />
     <Compile Include="Numerics\Polygon.cs" />
     <Compile Include="Numerics\Polygon.Test.cs" />
     <Compile Include="Numerics\Randomizer.cs" />

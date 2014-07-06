@@ -1,4 +1,7 @@
-﻿using MG.Framework.Numerics;
+﻿using System;
+using System.Diagnostics;
+
+using MG.Framework.Numerics;
 
 namespace MG.Framework.Particle
 {
@@ -12,6 +15,9 @@ namespace MG.Framework.Particle
 		private float randomValue;
 		private Curve graphEmitter;
 		private Curve graphParticle;
+		private Noise noise;
+		private float noiseBase;
+		private Stopwatch noiseStart;
 
 		public float BaseValue { get { return parameterValue; } }
 
@@ -29,6 +35,7 @@ namespace MG.Framework.Particle
 			parameterValue = parameter.Value.Get<float>();
 			graphEmitter = null;
 			graphParticle = null;
+			noise = null;
 			randomValue = 0;
 
 			ParticleDefinition.Parameter parameterRandom;
@@ -44,10 +51,12 @@ namespace MG.Framework.Particle
 				if (graphEmitter.Count == 0) graphEmitter = null;
 			}
 
-			if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
+			ParticleDefinition.Parameter parameterNoise;
+			if (parameter.Parameters.TryGetValue("Noise", out parameterNoise))
 			{
-				graphParticle = parameterGraph.Value.Get<Curve>();
-				if (graphParticle.Count == 0) graphParticle = null;
+				noise = parameterNoise.Value.Get<Noise>();
+				noiseBase = MathTools.Random().NextFloat(0, 1000);
+				noiseStart = Stopwatch.StartNew();
 			}
 		}
 
@@ -58,7 +67,6 @@ namespace MG.Framework.Particle
 			if (randomValue != 0)
 			{
 				v += MathTools.Random().NextFloat(-randomValue, randomValue);
-
 			}
 
 			if (graphEmitter != null)
@@ -69,6 +77,11 @@ namespace MG.Framework.Particle
 			if (graphParticle != null)
 			{
 				v *= graphParticle.Evaluate(particleLifeFraction);
+			}
+
+			if (noise != null)
+			{
+				v *= noise.Evaluate((float)noiseStart.Elapsed.TotalSeconds + noiseBase);
 			}
 
 			return v;

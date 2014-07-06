@@ -11,7 +11,7 @@ using Curve = MG.Framework.Numerics.Curve;
 using Key = Gdk.Key;
 using Rectangle = Gdk.Rectangle;
 
-namespace MG.EditorCommon.HaxGraph
+namespace MG.EditorCommon.HaxWidgets
 {
 	[System.ComponentModel.ToolboxItem(true)]
 	public class HaxGraph : DrawingArea
@@ -82,22 +82,22 @@ namespace MG.EditorCommon.HaxGraph
 			ctx.Rectangle(outerBounds.X, outerBounds.Y, outerBounds.Width, outerBounds.Height);
 			ctx.Clip();
 
-			var colorSelectedBackground = new MG.Framework.Numerics.Color(240, 240, 255, 255);
-			var colorBorder = new MG.Framework.Numerics.Color(204, 204, 204, 255);
-			var colorLine = new MG.Framework.Numerics.Color(255, 0, 0, 255);
-			var colorHoveredEntry = new MG.Framework.Numerics.Color(0, 240, 0, 255);
-			var colorSelectedEntry = new MG.Framework.Numerics.Color(0, 0, 0, 255);
+			var colorSelectedBackground = WidgetTools.ColorSelectedBackground;
+			var colorBorder = WidgetTools.ColorBorder;
+			var colorLine = WidgetTools.ColorLine;
+			var colorHoveredEntry = WidgetTools.ColorHoveredEntry;
+			var colorSelectedEntry = WidgetTools.ColorSelectedEntry;
 
 			// Background
 			if (state == StateType.Selected)
 			{
-				SetColor(ctx, colorSelectedBackground);
+				WidgetTools.SetColor(ctx, colorSelectedBackground);
 				ctx.Rectangle(outerBounds.X, outerBounds.Y, outerBounds.Width, outerBounds.Height);
 				ctx.Fill();
 			}
 			
 			// Border
-			SetColor(ctx, colorBorder);
+			WidgetTools.SetColor(ctx, colorBorder);
 			ctx.LineWidth = 1.0;
 			ctx.Rectangle(outerBounds.X, outerBounds.Y, outerBounds.Width, outerBounds.Height);
 			ctx.Stroke();
@@ -106,11 +106,11 @@ namespace MG.EditorCommon.HaxGraph
 			if (HasZeroLine)
 			{
 				var height = ToScreen(Vector2.Zero, drawBounds);
-				SetColor(ctx, colorBorder);
+				WidgetTools.SetColor(ctx, colorBorder);
 				ctx.MoveTo(outerBounds.X, height.Y);
 				ctx.LineTo(outerBounds.X + outerBounds.Width, height.Y);
 				ctx.LineWidth = 1.0;
-				SetDash(ctx, true);
+				WidgetTools.SetDash(ctx, true);
 				ctx.Stroke();
 			}
 			
@@ -120,14 +120,14 @@ namespace MG.EditorCommon.HaxGraph
 			
 			if (curve.Count > 0)
 			{
-				SetColor(ctx, colorLine);
+				WidgetTools.SetColor(ctx, colorLine);
 				
 				int numSteps = (int)drawBounds.Width;
 
 				var p = Evaluate(0, drawBounds);
 				ctx.MoveTo(p.X, p.Y);
 				ctx.LineWidth = 1.2;
-				SetDash(ctx, true);
+				WidgetTools.SetDash(ctx, true);
 
 				var startFraction = curve.Front.Value.X;
 				var endFraction = curve.End.Value.X;
@@ -142,7 +142,7 @@ namespace MG.EditorCommon.HaxGraph
 						p = ToScreen(curve.Front.Value, drawBounds);
 						ctx.LineTo(p.X, p.Y);
 						ctx.Stroke();
-						SetDash(ctx, false);												
+						WidgetTools.SetDash(ctx, false);												
 						ctx.MoveTo(p.X, p.Y);
 
 						part++;
@@ -153,7 +153,7 @@ namespace MG.EditorCommon.HaxGraph
 						p = ToScreen(curve.End.Value, drawBounds);
 						ctx.LineTo(p.X, p.Y);
 						ctx.Stroke();
-						SetDash(ctx, true);
+						WidgetTools.SetDash(ctx, true);
 						ctx.MoveTo(p.X, p.Y);
 
 						part++;
@@ -164,7 +164,7 @@ namespace MG.EditorCommon.HaxGraph
 				}
 
 				ctx.Stroke();
-				SetDash(ctx, false);
+				WidgetTools.SetDash(ctx, false);
 
 				foreach (var entry in curve)
 				{
@@ -185,7 +185,7 @@ namespace MG.EditorCommon.HaxGraph
 						outerColor = colorSelectedEntry;
 						
 						ctx.LineWidth = 1.0;
-						SetColor(ctx, outerColor);
+						WidgetTools.SetColor(ctx, outerColor);
 
 						if (entry.Type == CurveEntry.EntryType.Bezier)
 						{
@@ -194,17 +194,17 @@ namespace MG.EditorCommon.HaxGraph
 							ctx.LineTo(p.X, p.Y);
 							ctx.Stroke();
 
-							SetColor(ctx, hoveredHandle == Handle.Left ? colorHoveredEntry : outerColor);
+							WidgetTools.SetColor(ctx, hoveredHandle == Handle.Left ? colorHoveredEntry : outerColor);
 							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
 							ctx.Fill();
 
-							SetColor(ctx, outerColor);
+							WidgetTools.SetColor(ctx, outerColor);
 							ctx.MoveTo(b.X, b.Y);
 							p = ToScreen(entry.RightHandle, drawBounds);
 							ctx.LineTo(p.X, p.Y);
 							ctx.Stroke();
 
-							SetColor(ctx, hoveredHandle == Handle.Right ? colorHoveredEntry : outerColor);
+							WidgetTools.SetColor(ctx, hoveredHandle == Handle.Right ? colorHoveredEntry : outerColor);
 							ctx.Arc(p.X, p.Y, 2, 0, 2 * Math.PI);
 							ctx.Fill();
 						}
@@ -212,13 +212,13 @@ namespace MG.EditorCommon.HaxGraph
 
 					if (outerColor.A != 0)
 					{
-						SetColor(ctx, outerColor);
+						WidgetTools.SetColor(ctx, outerColor);
 						ctx.Rectangle(b.X - outerSize / 2, b.Y - outerSize / 2, outerSize, outerSize);
 						ctx.LineWidth = 1.0;
 						ctx.Stroke();
 					}
 					
-					SetColor(ctx, color);
+					WidgetTools.SetColor(ctx, color);
 					ctx.Rectangle(b.X - size / 2, b.Y - size / 2, size, size);
 					ctx.Fill();
 				}
@@ -227,24 +227,6 @@ namespace MG.EditorCommon.HaxGraph
 			ctx.Restore();
 		}
 		
-		private void SetColor(Cairo.Context ctx, MG.Framework.Numerics.Color color)
-		{
-			ctx.SetSourceRGBA(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0);
-		}
-		
-		private void SetDash(Cairo.Context ctx, bool enabled)
-		{
-			if (enabled)
-			{
-				ctx.SetDash(new double[] { 4, 4 }, 1);
-				ctx.LineCap = Cairo.LineCap.Butt;
-			}
-			else
-			{
-				ctx.SetDash(new double[] { }, 0);
-			}
-		}
-
 		protected override bool OnExposeEvent(EventExpose evnt)
 		{
 			using (Cairo.Context c = Gdk.CairoHelper.Create(evnt.Window))

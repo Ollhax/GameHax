@@ -2,6 +2,7 @@
 
 using Gtk;
 
+using MG.EditorCommon.HaxWidgets;
 using MG.Framework.Numerics;
 
 using MonoDevelop.Components.PropertyGrid;
@@ -10,13 +11,13 @@ namespace MG.EditorCommon.Editors
 {
 	public class GradientEditor : PropertyEditorCell
 	{
-		private HaxGradient.HaxGradient gradient;
+		private HaxGradient gradient;
 
 		protected override void Initialize()
 		{
 			base.Initialize();
 
-			gradient = new HaxGradient.HaxGradient();
+			gradient = new HaxGradient();
 			gradient.Gradient = (Gradient)Property.GetValue(Instance);
 		}
 
@@ -39,12 +40,12 @@ namespace MG.EditorCommon.Editors
 
 	public class GradientPropertyEditor : Gtk.Bin, IPropertyEditor
 	{
-		private HaxGradient.HaxGradient gradient;
+		private HaxGradient gradient;
 		private int pad = 0;
 
 		public GradientPropertyEditor()
 		{
-			gradient = new HaxGradient.HaxGradient();
+			gradient = new HaxGradient();
 			gradient.Changed += OnChanged;
 			
 			KeyPressEvent += OnKeyPressEvent;
