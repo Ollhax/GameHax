@@ -11,7 +11,7 @@ namespace MG.ParticleEditorWindow
 		public static void Init(string title, string[] args)
 		{
 			Gtk.Application.Init(title, ref args);			
-			GLib.Timeout.Add(33, OnUpdate);
+			GLib.Timeout.Add(20, OnUpdate);
 
 			UnhandledExceptionHandler h = OnException;
 			ExceptionManager.UnhandledException += h;
