@@ -190,6 +190,15 @@
 				<ValueStep>1.0</ValueStep>
 				<MinValue>0.0</MinValue>
 				<MaxValue>360.0</MaxValue>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>EmitterOffsetX</Name>
