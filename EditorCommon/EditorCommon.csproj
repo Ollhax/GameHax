@@ -118,6 +118,7 @@
     <Compile Include="MacInterop\AppleEvents\Native.cs" />
     <Compile Include="MacInterop\AppleEvent.cs" />
     <Compile Include="MacInterop\CoreFoundation.cs" />
+    <Compile Include="HaxGLWidget\Class.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">

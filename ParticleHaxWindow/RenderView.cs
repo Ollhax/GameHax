@@ -20,37 +20,42 @@ namespace MG.ParticleEditorWindow
 
 		private bool pressed;
 
-		internal HaxGLWidget Widget;
+		private HaxGLWidget glWidget;
+		internal Widget Widget { get { return glWidget; } }
 		
 		public RenderView()
 		{
-			Widget = new HaxGLWidget();
-			Widget.Name = "MainGL";
-			Widget.SingleBuffer = false;
-			Widget.ColorBPP = 0;
-			Widget.AccumulatorBPP = 0;
-			Widget.DepthBPP = 0;
-			Widget.StencilBPP = 0;
-			Widget.Samples = 0;
-			Widget.Stereo = false;
-			Widget.GlVersionMajor = 2;
-			Widget.GlVersionMinor = 1;
-			Widget.Events |= EventMask.ButtonPressMask | EventMask.ButtonReleaseMask | EventMask.ButtonMotionMask;
-			Widget.ButtonPressEvent += OnButtonPressEvent;
-			Widget.ButtonReleaseEvent += OnButtonReleaseEvent;
-			Widget.MotionNotifyEvent += OnMotionNotifyEvent;
+			glWidget = new HaxGLWidget();
+			glWidget.Name = "MainGL";
+			glWidget.SingleBuffer = false;
+			glWidget.ColorBPP = 0;
+			glWidget.AccumulatorBPP = 0;
+			glWidget.DepthBPP = 0;
+			glWidget.StencilBPP = 0;
+			glWidget.Samples = 0;
+			glWidget.Stereo = false;
+			glWidget.GlVersionMajor = 2;
+			glWidget.GlVersionMinor = 1;
+			glWidget.Load += () => Load();
+			glWidget.Draw += context => Draw(context);
 
-			Widget.Load += () => Load();
-			Widget.Draw += context => Draw(context);
+			glWidget.Events |= EventMask.ButtonPressMask | EventMask.ButtonReleaseMask | EventMask.ButtonMotionMask;
+			glWidget.ButtonPressEvent += OnButtonPressEvent;
+			glWidget.ButtonReleaseEvent += OnButtonReleaseEvent;
+			glWidget.MotionNotifyEvent += OnMotionNotifyEvent;
+
+			// We do not get mac mouse events, so hook up our "alternative solution":
+			// Bug report: https://bugzilla.gnome.org/show_bug.cgi?id=730415
+			glWidget.MacMouseDown += OnLeftMouseDown;
+			glWidget.MacMouseDragged += OnLeftMouseDragged;
+			glWidget.MacMouseUp += OnLeftMouseUp;
 		}
-		
+
 		private void OnButtonPressEvent(object o, ButtonPressEventArgs args)
 		{
 			if (args.Event.Button == 1)
 			{
-				pressed = true;
-				var mousePos = new Vector2((float)args.Event.X, (float)args.Event.Y);
-				LeftMousePress.Invoke(mousePos);
+				OnLeftMouseDown(new Vector2((float)args.Event.X, (float)args.Event.Y));
 			}
 		}
 
@@ -58,17 +63,32 @@ namespace MG.ParticleEditorWindow
 		{
 			if (args.Event.Button == 1)
 			{
-				pressed = false;
+				OnLeftMouseUp(new Vector2((float)args.Event.X, (float)args.Event.Y));
 			}
 		}
 
 		private void OnMotionNotifyEvent(object o, MotionNotifyEventArgs args)
 		{
+			OnLeftMouseDragged(new Vector2((float)args.Event.X, (float)args.Event.Y));
+		}
+
+		private void OnLeftMouseDown(Vector2 pos)
+		{
+			pressed = true;
+			LeftMousePress.Invoke(pos);
+		}
+
+		private void OnLeftMouseDragged(Vector2 pos)
+		{
 			if (pressed)
 			{
-				var mousePos = new Vector2((float)args.Event.X, (float)args.Event.Y);
-				LeftMousePress.Invoke(mousePos);
+				LeftMousePress.Invoke(pos);
 			}
+		}
+
+		private void OnLeftMouseUp(Vector2 pos)
+		{
+			pressed = false;
 		}
 
 		public void Refresh()

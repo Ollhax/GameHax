@@ -33,6 +33,7 @@ namespace Gtk
 	{
 		IGraphicsContext graphicsContext;
 		static int graphicsContextCount;
+		uint uniqueId = 1;
 
 		/// <summary>Use a single buffer versus a double buffer.</summary>
 		[Browsable(true)]
@@ -197,8 +198,19 @@ namespace Gtk
 					// For now, just create a NSView in place and use that instead. 
 					// Needs some care updating when resizing, hiding, etc, but seems to work.
 					// (I'd guess this is pretty much what gdk_window_ensure_native() does internally.)
-					nsView = SendIntPtr(SendIntPtr(objc_getClass("NSView"), sel_registerName("alloc")), sel_registerName("initWithFrame:"), new RectangleF(0, 0, 100, 100));
+
+					var customView = Class.AllocateClass("CustomNSView" + uniqueId++, "NSView");
+					//Class.RegisterMethod(windowClass, new WindowKeyDownDelegate(WindowKeyDown), "keyDown:", "v@:@");
+					//Class.RegisterMethod(customView, new OnHitTestDelegate(OnHitTest), "hitTest:", "@@:{NSPoint=ff}");
+					Class.RegisterMethod(customView, new OnMouseDownDelegate(OnMouseDown), "mouseDown:", "v@:@");
+					Class.RegisterMethod(customView, new OnMouseDraggedDelegate(OnMouseDragged), "mouseDragged:", "v@:@");
+					Class.RegisterMethod(customView, new OnMouseUpDelegate(OnMouseUp), "mouseUp:", "v@:@");
+
+					Class.RegisterClass(customView);
+
+					nsView = SendIntPtr(SendIntPtr(customView, sel_registerName("alloc")), sel_registerName("initWithFrame:"), new RectangleF(0, 0, 100, 100));
 					SendVoid(contentView, sel_registerName("addSubview:"), nsView);
+
 
 //					bool native = gdk_window_ensure_native(GdkWindow.Handle);
 //					if (!native)
@@ -336,6 +348,43 @@ namespace Gtk
 			return true;
 		}
 
+		delegate IntPtr OnHitTestDelegate(IntPtr self, IntPtr cmd, PointF point);
+		delegate void OnMouseDownDelegate(IntPtr self, IntPtr cmd, IntPtr eventId);
+		delegate void OnMouseDraggedDelegate(IntPtr self, IntPtr cmd, IntPtr eventId);
+		delegate void OnMouseUpDelegate(IntPtr self, IntPtr cmd, IntPtr eventId);
+
+		private IntPtr OnHitTest(IntPtr self, IntPtr cmd, PointF point)
+		{
+			return IntPtr.Zero;
+		}
+
+		MG.Framework.Numerics.Vector2 GetMousePos(IntPtr self, IntPtr cmd, IntPtr eventId)
+		{
+			PointF p = SendPoint(eventId, sel_registerName("locationInWindow"));
+			p = SendPoint(nsView, sel_registerName("convertPoint:fromView:"), p, IntPtr.Zero);
+			p.Y = (float)Allocation.Height - p.Y;
+			return new MG.Framework.Numerics.Vector2(p.X, p.Y);
+		}
+
+		public event Action<MG.Framework.Numerics.Vector2> MacMouseDown = delegate {};
+		public event Action<MG.Framework.Numerics.Vector2> MacMouseDragged = delegate {};
+		public event Action<MG.Framework.Numerics.Vector2> MacMouseUp = delegate {};
+
+		void OnMouseDown(IntPtr self, IntPtr cmd, IntPtr eventId)
+		{
+			MacMouseDown(GetMousePos(self, cmd, eventId));
+		}
+
+		void OnMouseDragged(IntPtr self, IntPtr cmd, IntPtr eventId)
+		{
+			MacMouseDragged(GetMousePos(self, cmd, eventId));
+		}
+
+		void OnMouseUp(IntPtr self, IntPtr cmd, IntPtr eventId)
+		{
+			MacMouseUp(GetMousePos(self, cmd, eventId));
+		}
+
 		[SuppressUnmanagedCodeSecurity, DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
 
@@ -366,6 +415,12 @@ namespace Gtk
 		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
 		extern static void SendVoid(IntPtr receiver, IntPtr selector, bool bool1);
 
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static PointF SendPoint(IntPtr receiver, IntPtr selector);
+
+		[SuppressUnmanagedCodeSecurity, DllImport(mac_objc_name, EntryPoint="objc_msgSend")]
+		extern static PointF SendPoint(IntPtr receiver, IntPtr selector, PointF point1, IntPtr intPtr1);
+
 		[Serializable]
 		struct RectangleF
 		{
@@ -380,6 +435,19 @@ namespace Gtk
 				Y = y;
 				Width = width;
 				Height = height;
+			}
+		}
+
+		[Serializable]
+		struct PointF
+		{
+			public float X;
+			public float Y;
+
+			public PointF(float x, float y)
+			{
+				X = x;
+				Y = y;
 			}
 		}
 
