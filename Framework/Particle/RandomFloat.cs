@@ -50,6 +50,12 @@ namespace MG.Framework.Particle
 				graphEmitter = parameterGraph.Value.Get<Curve>();
 				if (graphEmitter.Count == 0) graphEmitter = null;
 			}
+			
+			if (parameter.Parameters.TryGetValue("GraphParticle", out parameterGraph))
+			{
+				graphParticle = parameterGraph.Value.Get<Curve>();
+				if (graphParticle.Count == 0) graphParticle = null;
+			}
 
 			ParticleDefinition.Parameter parameterNoise;
 			if (parameter.Parameters.TryGetValue("Noise", out parameterNoise))
