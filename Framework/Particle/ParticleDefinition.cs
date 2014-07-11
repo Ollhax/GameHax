@@ -36,12 +36,7 @@ namespace MG.Framework.Particle
 			{
 				Name = XmlHelper.ReadString(node, "Name");
 				Value = new Any(XmlHelper.ReadString(node, "Value"), XmlHelper.ReadString(node, "Type"));
-
-				if (Value.IsFilePath()) // Paths are saved in relative format, convert to absolute format internally
-				{
-					Value.Set(Value.Get<FilePath>().ToAbsolute(Environment.CurrentDirectory));
-				}
-
+				
 				var parametersNode = node.SelectSingleNode("Parameters");
 				if (parametersNode != null)
 				{
@@ -97,15 +92,7 @@ namespace MG.Framework.Particle
 
 				XmlHelper.Write(parameterNode, "Name", Name);
 				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
-
-				var value = Value.ToString();
-
-				if (Value.IsFilePath()) // Save relative paths
-				{
-					value = Value.Get<FilePath>().ToRelative(Environment.CurrentDirectory).ToString().Replace('\\', '/'); // Don't want constant changes depending on platform
-				}
-
-				XmlHelper.Write(parameterNode, "Value", value);
+				XmlHelper.Write(parameterNode, "Value", Value.ToString());
 				
 				var parametersNode = document.CreateElement("Parameters");
 				parameterNode.AppendChild(parametersNode);

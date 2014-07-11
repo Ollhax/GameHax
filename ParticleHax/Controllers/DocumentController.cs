@@ -58,13 +58,14 @@ namespace MG.ParticleHax.Controllers
 
 			if (!Close()) return false;
 			
-			Environment.CurrentDirectory = file.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
-			
 			model.Clear();
 
 			try
 			{
 				model.DefinitionTable.Load(file);
+
+				// Convert path parameters
+				ToAbsolutePath(file.ParentDirectory);
 				
 				// Add missing parameters
 				foreach (var defPair in model.DefinitionTable.Definitions)
@@ -79,6 +80,8 @@ namespace MG.ParticleHax.Controllers
 						Log.Warning("Could not find declation: " + declaration);
 					}
 				}
+
+				Environment.CurrentDirectory = file.ParentDirectory;
 			}
 			catch (Exception e)
 			{
@@ -95,7 +98,7 @@ namespace MG.ParticleHax.Controllers
 			OpenDocument.Invoke();
 			return true;
 		}
-
+		
 		public bool Close()
 		{
 			if (model.Modified)
@@ -158,12 +161,10 @@ namespace MG.ParticleHax.Controllers
 			BeforeSaveDocument.Invoke();
 
 			bool success = false;
-			var oldCurrentDirectory = Environment.CurrentDirectory;
+			ToRelativePath(outputFile.ParentDirectory);
 
 			try
 			{
-				Environment.CurrentDirectory = outputFile.ParentDirectory; // Tentatively set the current directory so that paths can be set correctly
-				
 				model.DefinitionTable.Save(outputFile);
 				model.DocumentFile = outputFile;
 				model.Modified = false;
@@ -172,15 +173,16 @@ namespace MG.ParticleHax.Controllers
 				success = true;
 
 				Log.Info("Saved to file " + outputFile);
+				Environment.CurrentDirectory = outputFile.ParentDirectory;
 			}
 			catch (Exception e)
 			{
-				Environment.CurrentDirectory = oldCurrentDirectory;
-
 				controller.ShowMessage("<b>Error on save!</b>\n\nMessage: " + e.Message, MainWindow.MessageType.Error);
 				Log.Error("- Error: " + e.Message);
 			}
-			
+
+			ToAbsolutePath(Environment.CurrentDirectory);
+
 			return success;
 		}
 				
@@ -192,6 +194,51 @@ namespace MG.ParticleHax.Controllers
 		public void Redo()
 		{
 			model.UndoHandler.Redo();
+		}
+
+		private void ToAbsolutePath(string directory)
+		{
+			foreach (var d in model.DefinitionTable.Definitions)
+			{
+				ToAbsolutePath(directory, d.Parameters);
+			}
+		}
+
+		private void ToRelativePath(string directory)
+		{
+			foreach (var d in model.DefinitionTable.Definitions)
+			{
+				ToRelativePath(directory, d.Parameters);
+			}
+		}
+
+		private void ToAbsolutePath(string directory, Dictionary<string, ParticleDefinition.Parameter> parameters)
+		{
+			foreach (var param in parameters)
+			{
+				var v = param.Value.Value;
+				if (v.IsFilePath()) // Paths are saved in relative format, convert to absolute format internally
+				{
+					v.Set((FilePath)v.Get<FilePath>().ToAbsolute(directory));
+				}
+
+				ToAbsolutePath(directory, param.Value.Parameters);
+			}
+		}
+
+		private void ToRelativePath(string directory, Dictionary<string, ParticleDefinition.Parameter> parameters)
+		{
+			foreach (var param in parameters)
+			{
+				var v = param.Value.Value;
+				
+				if (v.IsFilePath()) // Save relative paths
+				{
+					v.Set((FilePath)v.Get<FilePath>().ToRelative(directory).ToString().Replace('\\', '/')); // Don't want constant changes depending on platform
+				}
+
+				ToRelativePath(directory, param.Value.Parameters);
+			}
 		}
 	}
 }
