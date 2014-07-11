@@ -106,11 +106,15 @@ namespace MG.ParticleHax.Controllers
 
 				if (!Disabled(definition))
 				{
+					if (model.ParticleSystem != null && definition != model.ParticleSystem.Definition)
+					{
+						particlePosition = null;
+					}
+
 					//Log.Info("Creating particle system from definition: " + definition.Name);
 					model.ParticleSystem = model.ParticleSystemPool.Create(definition);
 					model.ParticleSystem.SetGravityRecursive(new Vector2(0, 100));
 					
-					particlePosition = null;
 					UpdateParticleSystemPosition();
 				}
 				else
@@ -175,18 +179,18 @@ namespace MG.ParticleHax.Controllers
 			{
 				UpdateParticleSystemPosition();
 				DrawEffect(renderContext, particleSystem, ViewMode != ParticleView.Selected);
+			}
 
-				if (Settings.Get<bool>("Crosshair.Enable"))
-				{
-					var center = particleSystem.Position;
-					var length = 15.0f;
-					var color = Settings.Get<Color>("Crosshair.Color");
+			if (Settings.Get<bool>("Crosshair.Enable") && (particlePosition != null || particleSystem != null))
+			{
+				var center = particlePosition ?? particleSystem.Position;
+				var length = 15.0f;
+				var color = Settings.Get<Color>("Crosshair.Color");
 
-					renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
-					renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
-					renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
-					renderContext.PrimitiveBatch.End();
-				}
+				renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
+				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
+				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
+				renderContext.PrimitiveBatch.End();
 			}
 		}
 
