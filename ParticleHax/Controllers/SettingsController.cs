@@ -29,7 +29,7 @@ namespace MG.ParticleHax.Controllers
 			Settings.Set("Background.Color9", Color.CornflowerBlue);
 			Settings.Set("Background.Color0", Color.Transparent);
 
-			Settings.Set("Crosshair.Enable", false);
+			Settings.Set("Crosshair.Enable", true);
 			Settings.Set("Crosshair.Color", new Color(1.0f, 1.0f, 1.0f, 0.5f));
 
 			Settings.Set("ViewMode", (int)(RenderController.ParticleView.FullTree));
