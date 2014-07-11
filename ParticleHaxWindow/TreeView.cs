@@ -338,6 +338,14 @@ namespace MG.ParticleEditorWindow
 		private void AddMenuEntry(ContextMenu.Entry entry, Menu parentMenu)
 		{
 			var item = new MenuItem(entry.Text);
+			var label = item.Child as Label;
+
+			if (label != null)
+			{
+				label.UseUnderline = false;
+				label.UseMarkup = false;
+			}
+			
 			if (entry.Action != null)
 			{
 				item.ButtonPressEvent += delegate { entry.Action(); };
