@@ -169,7 +169,6 @@ namespace MG.ParticleHax.Controllers
 				model.DocumentFile = outputFile;
 				model.Modified = false;
 				controller.UpdateTitle = true;
-				controller.UpdateTree = true;
 				success = true;
 
 				Log.Info("Saved to file " + outputFile);
