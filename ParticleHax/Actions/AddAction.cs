@@ -77,20 +77,22 @@ namespace MG.ParticleHax.Actions
 			foreach (var declarationParameterPair in declarationParameters)
 			{
 				var declarationParameter = declarationParameterPair.Value;
-				if (definitionParameters.ContainsKey(declarationParameter.Name)) continue;
+				ParticleDefinition.Parameter definitionParameter;
 
-				if (warnIfMissing)
+				if (!definitionParameters.TryGetValue(declarationParameter.Name, out definitionParameter))
 				{
-					Log.Warning("Added missing parameter: " + declarationParameter.Name);
+					if (warnIfMissing)
+					{
+						Log.Warning("Added missing parameter: " + declarationParameter.Name);
+					}
+
+					hadMissing = true;
+					definitionParameter = new ParticleDefinition.Parameter();
+					definitionParameter.Name = declarationParameter.Name;
+					definitionParameter.Value = new Any(declarationParameter.DefaultValue);
+
+					definitionParameters.Add(definitionParameter.Name, definitionParameter);
 				}
-
-				hadMissing = true;
-				var definitionParameter = new ParticleDefinition.Parameter();
-
-				definitionParameter.Name = declarationParameter.Name;
-				definitionParameter.Value = new Any(declarationParameter.DefaultValue);
-
-				definitionParameters.Add(definitionParameter.Name, definitionParameter);
 
 				hadMissing |= AddMissingParameters(declarationParameter.Parameters, definitionParameter.Parameters, warnIfMissing);
 			}
