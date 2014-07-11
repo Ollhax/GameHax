@@ -696,7 +696,7 @@
 				<Description>Controls how much the turbulence affects the particle's velocity.</Description>
 				<Category>Particle</Category>
 				<Type>Single</Type>
-				<DefaultValue>1.0</DefaultValue>
+				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>0.1</ValueStep>
 				<Parameters>
 					<Parameter>
