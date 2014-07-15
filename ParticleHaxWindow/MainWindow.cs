@@ -270,7 +270,16 @@ namespace MG.ParticleEditorWindow
 		{
 			var dialog = new FileChooserDialog(title, window, action);
 			dialog.AddButton(Stock.Cancel, Gtk.ResponseType.Cancel);
-			dialog.AddButton(Stock.Save, Gtk.ResponseType.Ok);
+
+			if (action == FileChooserAction.Save)
+			{
+				dialog.AddButton(Stock.Save, Gtk.ResponseType.Ok);
+			}
+			else
+			{
+				dialog.AddButton(Stock.Open, Gtk.ResponseType.Ok);
+			}
+			
 			dialog.SelectFilename(startPath);
 
 			var filters = GtkTools.ParseFilterString(filter);
