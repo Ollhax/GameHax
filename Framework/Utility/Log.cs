@@ -42,24 +42,24 @@ namespace MG.Framework.Utility
 		internal static void Initialize(string logFilePath)
 		{
 			var path = Path.Combine(logFilePath, "Logs");
-
-			// Creates the log directory
-			Directory.CreateDirectory(path);
-
-			// Remove old / too big logs
-			string[] logs = Directory.GetFiles(path, "*txt");
-
-			FileInfo logInfo;
-			for (int i = 0; i < logs.Length; i++)
-			{
-				logInfo = new FileInfo(logs[i]);
-				if (logInfo.Length >= MaxLogSize || logInfo.CreationTime < DateTime.Now.AddDays(-MaxLogAge))
-					logInfo.Delete();
-			}
-
-			// Create/open log file
+			
 			try
 			{
+				// Creates the log directory
+				Directory.CreateDirectory(path);
+
+				// Remove old / too big logs
+				string[] logs = Directory.GetFiles(path, "*txt");
+
+				FileInfo logInfo;
+				for (int i = 0; i < logs.Length; i++)
+				{
+					logInfo = new FileInfo(logs[i]);
+					if (logInfo.Length >= MaxLogSize || logInfo.CreationTime < DateTime.Now.AddDays(-MaxLogAge))
+						logInfo.Delete();
+				}
+
+				// Create/open log file
 				var p = Path.Combine(path, "log " + DateTime.Now.Date.ToString("yyyy-MM-dd") + ".txt");
 				logFile = File.Open(p, FileMode.Append);
 				logWriter = new StreamWriter(logFile);

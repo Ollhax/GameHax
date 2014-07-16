@@ -36,6 +36,9 @@
     <Reference Include="NVorbis">
       <HintPath>Externals\NVorbis\NVorbis.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>Externals\OpenTK\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -47,9 +50,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="nunit.framework">
       <HintPath>Externals\NUnit\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>Externals\OpenTK\OpenTK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

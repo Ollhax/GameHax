@@ -411,7 +411,7 @@ void main()
 			entry.Origin = origin;
 			entry.SpriteEffects = effects;
 			entry.Transform =
-				Matrix.CreateScale(targetRectangle.Width / bounds.Width, targetRectangle.Height / bounds.Height, 1.0f) *
+				Matrix.CreateScale(targetRectangle.Width / entry.SourceRect.Width, targetRectangle.Height / entry.SourceRect.Height, 1.0f) *
 				Matrix.CreateTranslation(targetRectangle.X, targetRectangle.Y, 0);
 
 			currentBatch.Entries.Add(entry);

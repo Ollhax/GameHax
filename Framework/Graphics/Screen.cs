@@ -109,17 +109,6 @@ namespace MG.Framework.Graphics
 		{
 			screenSize = size;
 			
-			// Unscaled projection
-			//if (desktop != null)
-			//{
-			//    desktop.Area = new RectangleF(0, 0, size.X, size.Y);
-			//}
-
-			//if (clientComponents != null)
-			//{
-			//    UpdateProjection((Vector2)size, Vector2.Zero);
-			//}
-
 			var s = (Vector2)size;
 			var aspectRatio = s.Y > 0 ? s.X / s.Y : 0;
 			var desiredRatio = VirtualScreenSize.X / VirtualScreenSize.Y;

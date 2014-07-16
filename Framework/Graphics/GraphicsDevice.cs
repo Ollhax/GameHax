@@ -34,15 +34,6 @@ namespace MG.Framework.Graphics
 		}
 
 		/// <summary>
-		/// Get the current viewport.
-		/// </summary>
-		/// <returns>The current viewport.</returns>
-		public static Rectangle GetViewport()
-		{
-			return viewport;
-		}
-
-		/// <summary>
 		/// Set the viewport.
 		/// </summary>
 		/// <param name="viewport"></param>
@@ -55,6 +46,8 @@ namespace MG.Framework.Graphics
 				throw new ArgumentException("Invalid viewport.");
 			}
 
+			viewport = (Rectangle)screen.VirtualToScreen((RectangleF)viewport);
+
 			if (GraphicsDevice.viewport.Equals(viewport))
 			{
 				return;
@@ -62,8 +55,7 @@ namespace MG.Framework.Graphics
 
 			RenderQueue.Flush(); // Render batches should use the render settings at the start of the batch
 			GraphicsDevice.viewport = viewport;
-
-			viewport = (Rectangle)screen.VirtualToScreen((RectangleF)viewport);
+			
 			GL.Viewport(viewport.X, screen.ScreenSize.Y - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
 		}
 

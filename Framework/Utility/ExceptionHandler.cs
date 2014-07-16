@@ -10,7 +10,9 @@ namespace MG.Framework.Utility
 	{
 		public static void Initialize()
 		{
+#if !DEBUG
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+#endif
 		}
 
 		public static void RaiseException(Exception ex, bool close)
@@ -36,13 +38,8 @@ namespace MG.Framework.Utility
 				writer.WriteLine(fullExceptionText);
 			}
 
-#if !DEBUG
 			MessageBox.Show("Oops, something went very wrong! " + "Information stored in \"" + exceptionFile + "\". Please send it to ollhak@gmail.com!\n\nError: " + exceptionText,
 			  "Unhandled Exception", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-#else			
-			Debug.WriteLine(fullExceptionText);
-			System.Diagnostics.Debugger.Break();
-#endif
 
 			if (close)
 			{
