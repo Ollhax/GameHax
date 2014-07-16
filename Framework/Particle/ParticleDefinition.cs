@@ -320,6 +320,7 @@ namespace MG.Framework.Particle
 				if (child.Name == "ParticleSystem")
 				{
 					var definition = new ParticleDefinition(child);
+					definition.Id = Definitions.Count + 1;
 					Definitions.Add(definition);
 				}
 			}

@@ -102,8 +102,6 @@ namespace MG.ParticleHax.Controllers
 		public void OnOpenDocument()
 		{
 			OnChangeDocument();
-			
-			AssignIds(model.DefinitionTable.Definitions);
 			controller.SelectDefinition = 1;
 		}
 
@@ -112,16 +110,7 @@ namespace MG.ParticleHax.Controllers
 			model.DefinitionIdCounter = 1;
 			model.DocumentOpen = true;
 		}
-
-		private void AssignIds(ParticleCollection collection)
-		{
-			foreach (var p in collection)
-			{
-				p.Id = model.DefinitionIdCounter++;
-				AssignIds(p.Children);
-			}
-		}
-
+		
 		private void OnItemSelected(int id)
 		{
 			var def = model.DefinitionTable.Definitions.GetById(id);
