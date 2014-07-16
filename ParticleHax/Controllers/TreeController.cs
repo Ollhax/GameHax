@@ -107,8 +107,26 @@ namespace MG.ParticleHax.Controllers
 
 		private void OnChangeDocument()
 		{
-			model.DefinitionIdCounter = 1;
+			model.DefinitionIdCounter = GetHighestId(model.DefinitionTable.Definitions, 0) + 1;
+			//Log.Info("Start ID: " + model.DefinitionIdCounter);
+
 			model.DocumentOpen = true;
+		}
+
+		private int GetHighestId(ParticleCollection particleCollection, int highest)
+		{
+			foreach (var particle in particleCollection)
+			{
+				if (particle.Id > highest) highest = particle.Id;
+				var v = GetHighestId(particle.Children, highest);
+
+				if (v > highest)
+				{
+					highest = v;
+				}
+			}
+
+			return highest;
 		}
 		
 		private void OnItemSelected(int id)
