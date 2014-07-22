@@ -10,6 +10,7 @@ namespace MG.Framework.Collections
 	/// </summary>
 	/// <typeparam name="TKey">Key type.</typeparam>
 	/// <typeparam name="TValue">Value type</typeparam>
+	[Serializable]
 	public class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 	{
 		private const int DefaultCapacity = 0;

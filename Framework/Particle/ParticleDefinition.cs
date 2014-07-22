@@ -14,7 +14,7 @@ namespace MG.Framework.Particle
 			public string Name;
 			public Any Value;
 			public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
-
+			
 			public Parameter()
 			{
 
@@ -36,7 +36,7 @@ namespace MG.Framework.Particle
 			{
 				Name = XmlHelper.ReadString(node, "Name");
 				Value = new Any(XmlHelper.ReadString(node, "Value"), XmlHelper.ReadString(node, "Type"));
-
+				
 				var parametersNode = node.SelectSingleNode("Parameters");
 				if (parametersNode != null)
 				{
@@ -93,7 +93,7 @@ namespace MG.Framework.Particle
 				XmlHelper.Write(parameterNode, "Name", Name);
 				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
 				XmlHelper.Write(parameterNode, "Value", Value.ToString());
-
+				
 				var parametersNode = document.CreateElement("Parameters");
 				parameterNode.AppendChild(parametersNode);
 
@@ -114,7 +114,7 @@ namespace MG.Framework.Particle
 
 		private Dictionary<string, RandomFloat> cachedFloats = new Dictionary<string, RandomFloat>();
 		private Dictionary<string, RandomInt> cachedInts = new Dictionary<string, RandomInt>();
-
+		
 		public Parameter GetParameter(string name)
 		{
 			Parameter param;
@@ -173,7 +173,7 @@ namespace MG.Framework.Particle
 				if (!other.Parameters.TryGetValue(param.Key, out otherParam)) return false;
 				if (!param.Value.Equals(otherParam)) return false;
 			}
-
+			
 			return true;
 		}
 
@@ -294,7 +294,7 @@ namespace MG.Framework.Particle
 	public class ParticleDefinitionTable
 	{
 		public ParticleCollection Definitions = new ParticleCollection();
-
+		
 		public void Load(string file)
 		{
 			using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -364,7 +364,7 @@ namespace MG.Framework.Particle
 
 			var tableNode = document.CreateElement("ParticleSystemTable");
 			node.AppendChild(tableNode);
-
+			
 			foreach (var child in Definitions)
 			{
 				child.Save(tableNode);
