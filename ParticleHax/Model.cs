@@ -15,8 +15,8 @@ namespace MG.ParticleHax
 		public int CurrentDefinitionId;
 		public ParticleDeclarationTable DeclarationTable;
 		public ParticleDefinitionTable DefinitionTable;
-		public ParticleSystem ParticleSystem;
-		public ParticleSystemPool ParticleSystemPool;
+		public ParticleEffect ParticleEffect;
+		public ParticleEffectPool ParticleEffectPool;
 
 		public ParticleDefinition CurrentDefinition { get { return DefinitionTable.Definitions.GetById(CurrentDefinitionId); } }
 
@@ -30,8 +30,8 @@ namespace MG.ParticleHax
 			DocumentOpen = false;
 			DocumentFile = null;
 			DefinitionTable = new ParticleDefinitionTable();
-			ParticleSystemPool.Clear();
-			ParticleSystem = null;
+			ParticleEffectPool.Clear();
+			ParticleEffect = null;
 			UndoHandler.Clear();
 			CurrentParameter = null;
 			CurrentSubParameter = null;

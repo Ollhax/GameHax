@@ -6,7 +6,7 @@ using MG.Framework.Numerics;
 namespace MG.Framework.Particle
 {
 	// TODO: Move to definition-level? RandomFloats do not change per instance
-	class RandomFloat
+	public class RandomFloat
 	{
 		private readonly ParticleDefinition definition;
 		private readonly string parameterName;

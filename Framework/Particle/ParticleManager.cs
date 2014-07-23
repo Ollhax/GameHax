@@ -10,11 +10,11 @@ namespace MG.Framework.Particle
 	public class ParticleManager
 	{
 		private readonly Dictionary<string, ParticleDefinitionTable> particleDefinitionTables = new Dictionary<string, ParticleDefinitionTable>();
-		private readonly ParticleSystemPool particleSystemPool;
+		private readonly ParticleEffectPool particleEffectPool;
 		
 		public ParticleManager(AssetHandler assetHandler, FilePath path)
 		{
-			particleSystemPool = new ParticleSystemPool(assetHandler);
+			particleEffectPool = new ParticleEffectPool(assetHandler);
 			
 			string[] files = Directory.GetFiles(assetHandler.GetFullPath(path), "*.pe", SearchOption.AllDirectories);
 			foreach (var file in files)
@@ -34,7 +34,7 @@ namespace MG.Framework.Particle
 			}
 		}
 		
-		public ParticleSystem Create(string library, string definition)
+		public ParticleEffect Create(string library, string definition)
 		{
 			ParticleDefinitionTable table;
 			if (particleDefinitionTables.TryGetValue(library, out table))
@@ -42,16 +42,16 @@ namespace MG.Framework.Particle
 				var particleDefinition = table.Definitions.GetByName(definition);
 				if (particleDefinition != null)
 				{
-					return particleSystemPool.Create(particleDefinition);
+					return particleEffectPool.Create(particleDefinition);
 				}
 			}
 
 			return null;
 		}
 		
-		public void Destroy(ParticleSystem particleSystem)
+		public void Destroy(ParticleEffect particleEffect)
 		{
-			particleSystemPool.Destroy(particleSystem);
+			particleEffectPool.Destroy(particleEffect);
 		}
 	}
 }

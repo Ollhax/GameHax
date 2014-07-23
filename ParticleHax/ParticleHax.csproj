@@ -85,9 +85,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="definitions.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="icon.ico" />
     <Content Include="ParticleDeclarations.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

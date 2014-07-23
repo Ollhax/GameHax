@@ -52,23 +52,23 @@ namespace MG.ParticleHax.Controllers
 
 		public void Update(Time time)
 		{
-			var particleSystem = model.ParticleSystem;
-			if (particleSystem != null)
+			var particleEffect = model.ParticleEffect;
+			if (particleEffect != null)
 			{
-				particleSystem.Update(time);
+				ParticleSimulator.Update(particleEffect, time);
 				
-				if (particleSystem.Dead)
+				if (particleEffect.Dead)
 				{
-					model.ParticleSystemPool.Destroy(particleSystem);
-					model.ParticleSystem = null;
+					model.ParticleEffectPool.Destroy(particleEffect);
+					model.ParticleEffect = null;
 				}
 				else
 				{
-					controller.StatusText = "Particles: " + particleSystem.ActiveParticles.ToString();
+					controller.StatusText = "Particles: " + particleEffect.ParticleData.ActiveParticles.ToString();
 				}
 			}
 
-			if (particleSystem == null || lastViewMode != ViewMode)
+			if (particleEffect == null || lastViewMode != ViewMode)
 			{
 				OnItemSelected(model.CurrentDefinition);
 			}
@@ -84,7 +84,7 @@ namespace MG.ParticleHax.Controllers
 
 			if (definition == null)
 			{
-				model.ParticleSystem = null;
+				model.ParticleEffect = null;
 				return;
 			}
 
@@ -97,23 +97,23 @@ namespace MG.ParticleHax.Controllers
 					definition = definition.Parent;
 			}
 
-			if (model.ParticleSystem == null || definition != model.ParticleSystem.Definition)
+			if (model.ParticleEffect == null || definition != model.ParticleEffect.Definition)
 			{
-				if (model.ParticleSystem != null)
+				if (model.ParticleEffect != null)
 				{
-					model.ParticleSystemPool.Destroy(model.ParticleSystem);
+					model.ParticleEffectPool.Destroy(model.ParticleEffect);
 				}
 
 				if (!Disabled(definition))
 				{
-					if (model.ParticleSystem != null && definition != model.ParticleSystem.Definition)
+					if (model.ParticleEffect != null && definition != model.ParticleEffect.Definition)
 					{
 						particlePosition = null;
 					}
 
 					//Log.Info("Creating particle system from definition: " + definition.Name);
-					model.ParticleSystem = model.ParticleSystemPool.Create(definition);
-					model.ParticleSystem.SetGravityRecursive(new Vector2(0, 100));
+					model.ParticleEffect = model.ParticleEffectPool.Create(definition);
+					model.ParticleEffect.Group.Gravity = new Vector2(0, 100);
 					
 					UpdateParticleSystemPosition();
 				}
@@ -174,16 +174,16 @@ namespace MG.ParticleHax.Controllers
 				DrawCheckboard(renderContext, clearColor);
 			}
 
-			var particleSystem = model.ParticleSystem;
-			if (particleSystem != null)
+			var particleEffect = model.ParticleEffect;
+			if (particleEffect != null)
 			{
 				UpdateParticleSystemPosition();
-				DrawEffect(renderContext, particleSystem, ViewMode != ParticleView.Selected);
+				DrawEffect(renderContext, particleEffect, ViewMode != ParticleView.Selected);
 			}
 
-			if (Settings.Get<bool>("Crosshair.Enable") && (particlePosition != null || particleSystem != null))
+			if (Settings.Get<bool>("Crosshair.Enable") && (particlePosition != null || particleEffect != null))
 			{
-				var center = particlePosition ?? particleSystem.Position;
+				var center = particlePosition ?? particleEffect.Group.Position;
 				var length = 15.0f;
 				var color = Settings.Get<Color>("Crosshair.Color");
 
@@ -194,24 +194,24 @@ namespace MG.ParticleHax.Controllers
 			}
 		}
 
-		private void DrawEffect(RenderContext renderContext, ParticleSystem particleSystem, bool drawChildren)
+		private void DrawEffect(RenderContext renderContext, ParticleEffect particleEffect, bool drawChildren)
 		{
 			if (drawChildren)
 			{
-				particleSystem.Draw(renderContext, Matrix.Identity);
+				ParticleVisualizer.Draw(particleEffect, renderContext, Matrix.Identity);
 			}
 			else
 			{
-				particleSystem.DrawCurrent(renderContext, Matrix.Identity);
+				ParticleVisualizer.DrawCurrent(particleEffect, renderContext, Matrix.Identity);
 			}
 		}
 
 		private void UpdateParticleSystemPosition()
 		{
-			var particleSystem = model.ParticleSystem;
+			var particleSystem = model.ParticleEffect;
 			if (particleSystem == null) return;
 			
-			particleSystem.SetPositionRecursive(new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center));
+			particleSystem.Group.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
 		}
 
 		private void OnPress(Vector2 pos)

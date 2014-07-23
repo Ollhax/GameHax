@@ -41,7 +41,7 @@ namespace MG.Framework.Graphics
 		/// <returns></returns>
 		public static void SetViewport(Rectangle viewport, Screen screen)
 		{
-			if (viewport.X < 0 || viewport.Y < 0 || viewport.Width <= 0 || viewport.Height <= 0)
+			if (viewport.X < 0 || viewport.Y < 0 || viewport.Width < 0 || viewport.Height < 0)
 			{
 				throw new ArgumentException("Invalid viewport.");
 			}

@@ -2,7 +2,7 @@
 
 namespace MG.Framework.Particle
 {
-	class RandomInt
+	public class RandomInt
 	{
 		private readonly ParticleDefinition definition;
 		private readonly string parameterName;

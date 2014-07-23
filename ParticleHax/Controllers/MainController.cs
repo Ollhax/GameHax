@@ -71,7 +71,7 @@ namespace MG.ParticleHax.Controllers
 			Environment.CurrentDirectory = binaryDir; // HACK: Set working directory to make Path.GetFullPath not crash on Mac.
 			Log.Info("Current directory: " + Environment.CurrentDirectory);
 
-			if (!FileAssociation.IsAssociated(DocumentController.ProjectFileExtension))
+			//if (!FileAssociation.IsAssociated(DocumentController.ProjectFileExtension))
 			{
 				var icon = binaryDir + "\\icon.ico";
 				FileAssociation.Associate(DocumentController.ProjectFileExtension, "GameHax.ParticleHax", "ParticleHax Project", icon, binaryPath);
@@ -88,7 +88,7 @@ namespace MG.ParticleHax.Controllers
 			model = new Model();
 			model.UndoHandler = new UndoHandler(1000);
 			model.UndoHandler.AfterStateChanged += AfterUndo;
-			model.ParticleSystemPool = new ParticleSystemPool(assetHandler);
+			model.ParticleEffectPool = new ParticleEffectPool(assetHandler);
 			model.DeclarationTable = new ParticleDeclarationTable();
 			model.DeclarationTable.Load(assetHandler.GetFullPath("ParticleDeclarations.xml"));
 			model.DefinitionTable = new ParticleDefinitionTable();
@@ -154,10 +154,10 @@ namespace MG.ParticleHax.Controllers
 			if (UpdateParticleSystem)
 			{
 				UpdateParticleSystem = false;
-				if (model.ParticleSystem != null)
+				if (model.ParticleEffect != null)
 				{
 					model.CurrentDefinition.ReloadCache();
-					model.ParticleSystem.Reload();
+					model.ParticleEffect.Reload();
 				}		
 			}
 

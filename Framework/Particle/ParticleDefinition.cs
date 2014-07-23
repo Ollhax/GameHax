@@ -219,22 +219,22 @@ namespace MG.Framework.Particle
 		{
 			var document = node.OwnerDocument ?? (XmlDocument)node;
 
-			var particleSystemNode = document.CreateElement("ParticleSystem");
-			node.AppendChild(particleSystemNode);
+			var particleEffectNode = document.CreateElement("ParticleEffect");
+			node.AppendChild(particleEffectNode);
 
-			XmlHelper.Write(particleSystemNode, "Name", Name);
-			XmlHelper.Write(particleSystemNode, "Emitter", Emitter);
-			XmlHelper.Write(particleSystemNode, "Declaration", Declaration);
+			XmlHelper.Write(particleEffectNode, "Name", Name);
+			XmlHelper.Write(particleEffectNode, "Emitter", Emitter);
+			XmlHelper.Write(particleEffectNode, "Declaration", Declaration);
 
 			var parametersNode = document.CreateElement("Parameters");
-			particleSystemNode.AppendChild(parametersNode);
+			particleEffectNode.AppendChild(parametersNode);
 			foreach (var property in Parameters)
 			{
 				property.Value.Save(parametersNode);
 			}
 
 			var childrenNode = document.CreateElement("Children");
-			particleSystemNode.AppendChild(childrenNode);
+			particleEffectNode.AppendChild(childrenNode);
 
 			foreach (var child in Children)
 			{
@@ -317,7 +317,7 @@ namespace MG.Framework.Particle
 		{
 			foreach (XmlNode child in node.ChildNodes)
 			{
-				if (child.Name == "ParticleSystem")
+				if (child.Name == "ParticleEffect")
 				{
 					var definition = new ParticleDefinition(child);
 					Definitions.Add(definition);
@@ -362,7 +362,7 @@ namespace MG.Framework.Particle
 		{
 			var document = node.OwnerDocument ?? (XmlDocument)node;
 
-			var tableNode = document.CreateElement("ParticleSystemTable");
+			var tableNode = document.CreateElement("ParticleEffectTable");
 			node.AppendChild(tableNode);
 			
 			foreach (var child in Definitions)
