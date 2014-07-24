@@ -273,7 +273,14 @@ namespace Gtk
 			}
 			else
 			{
-				graphicsContext.MakeCurrent(windowInfo);
+				try // Hack: Fix crash when returning from sleep mode on windows, using nvidia drivers. See: http://www.opentk.com/node/2634
+				{
+					graphicsContext.MakeCurrent(windowInfo);
+				}
+				catch
+				{
+					
+				}
 			}
 
 			bool result = base.OnExposeEvent(eventExpose);
