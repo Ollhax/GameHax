@@ -70,7 +70,7 @@ namespace MG.Framework.Particle
 
 				if (particleEffect.ParamParticleOrientToVelocity)
 				{
-					particleEffect.ParticleRotation[i] = vel.Angle();
+					particleEffect.ParticleRotation[i] = vel.Angle() + MathTools.PiOver2;
 				}
 				else
 				{
