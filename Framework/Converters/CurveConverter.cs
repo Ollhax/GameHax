@@ -38,8 +38,7 @@ namespace MG.Framework.Converters
 						var entry = new CurveEntry(position);
 						curve.Add(entry);
 					}
-
-					if (p.Length == 7 && p[1] == "bez")
+					else if (p.Length == 7 && p[0] == "bez")
 					{
 						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
 						var left = new Vector2(Convert.ToSingle(p[3], culture), Convert.ToSingle(p[4], culture));
@@ -73,10 +72,26 @@ namespace MG.Framework.Converters
 							builder.Append("bez");
 							break;
 					}
+					
 					builder.Append(EntrySeparator);
 					builder.Append(entry.Value.X.ToString(culture));
 					builder.Append(EntrySeparator);
 					builder.Append(entry.Value.Y.ToString(culture));
+
+					switch (entry.Type)
+					{						
+						case CurveEntry.EntryType.Bezier:
+							builder.Append(EntrySeparator);
+							builder.Append(entry.LeftHandle.X.ToString(culture));
+							builder.Append(EntrySeparator);
+							builder.Append(entry.LeftHandle.Y.ToString(culture));
+							builder.Append(EntrySeparator);
+							builder.Append(entry.RightHandle.X.ToString(culture));
+							builder.Append(EntrySeparator);
+							builder.Append(entry.RightHandle.Y.ToString(culture));
+							break;
+					}
+					
 					count--;
 
 					if (count >= 1)
