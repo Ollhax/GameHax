@@ -23,7 +23,8 @@ namespace MG.ParticleHax.Controllers
 		private TreeController treeController;
 		private ParameterController parameterController;
 		private SettingsController settingsController;
-		
+		private bool updateBlocked;
+
 		private Stopwatch startStopwatch = new Stopwatch();
 		private Stopwatch frameStopwatch = new Stopwatch();
 		
@@ -38,27 +39,41 @@ namespace MG.ParticleHax.Controllers
 
 		public void ShowMessage(string message, MainWindow.MessageType messageType)
 		{
+			updateBlocked = true;
 			window.ShowMessage(message, messageType);
+			updateBlocked = false;
 		}
 
 		public MainWindow.ResponseType ShowMessageOkCancel(string message, MainWindow.MessageType messageType)
 		{
-			return window.ShowMessageOkCancel(message, messageType);
+			updateBlocked = true;
+			var r = window.ShowMessageOkCancel(message, messageType);
+			updateBlocked = false;
+			return r;
 		}
 
 		public MainWindow.ResponseType ShowMessageYesNoCancel(string message, MainWindow.MessageType messageType)
 		{
-			return window.ShowMessageYesNoCancel(message, messageType);
+			updateBlocked = true;
+			var r = window.ShowMessageYesNoCancel(message, messageType);
+			updateBlocked = false;
+			return r;
 		}
 
 		public MainWindow.DialogResult ShowSaveDialog(string title, string filters, FilePath startPath)
 		{
-			return window.ShowSaveDialog(title, filters, startPath);
+			updateBlocked = true;
+			var r = window.ShowSaveDialog(title, filters, startPath);
+			updateBlocked = false;
+			return r;
 		}
 
 		public MainWindow.DialogResult ShowOpenDialog(string title, string filters, FilePath startPath)
 		{
-			return window.ShowOpenDialog(title, filters, startPath);
+			updateBlocked = true;
+			var r = window.ShowOpenDialog(title, filters, startPath);
+			updateBlocked = false;
+			return r;
 		}
 
 		public MainController()
@@ -123,6 +138,7 @@ namespace MG.ParticleHax.Controllers
 
 		private void Update()
 		{
+			if (updateBlocked) return;
 			if (!renderController.Loaded) return;
 
 			float elapsedSeconds = 0;

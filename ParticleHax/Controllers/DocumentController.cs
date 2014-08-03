@@ -63,14 +63,33 @@ namespace MG.ParticleHax.Controllers
 
 			try
 			{
-				model.DefinitionTable.Load(file);
+				var xml = ParticleDefinitionTable.Open(file);
+				var version = ParticleDefinitionTable.GetVersion(xml);
+				if (version > ParticleDefinitionTable.CurrentVersion)
+				{
+					var r = controller.ShowMessageOkCancel("<b>Editor out of date!</b>\n\nThe file is saved in a newer format. You should update the editor to the newest version.\n\nContinue loading?", MainWindow.MessageType.Warning);
+
+					if (r == MainWindow.ResponseType.Cancel)
+					{
+						Close();
+						return false;
+					}
+
+					Log.Warning("- Loaded data of newer version.");
+				}
+				else if (version < ParticleDefinitionTable.CurrentVersion)
+				{
+					Log.Warning("- Loading data of older version.");
+				}
+
+				model.DefinitionTable.Load(xml);
 
 				// Convert path parameters
 				ToAbsolutePath(file.ParentDirectory);
-				
+
 				// Add missing parameters
 				AddMissingParametersRecursive(model.DefinitionTable.Definitions);
-				
+
 				Environment.CurrentDirectory = file.ParentDirectory;
 			}
 			catch (Exception e)

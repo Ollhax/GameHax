@@ -308,28 +308,43 @@ namespace MG.Framework.Particle
 
 	public class ParticleDefinitionTable
 	{
+		public const int CurrentVersion = 1;
+		
 		public ParticleCollection Definitions = new ParticleCollection();
 		
-		public void Load(string file)
+		public static XmlNode Open(string file)
 		{
 			using (FileStream fs = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				Load(fs);
+				using (var xmlReader = XmlReader.Create(fs, XmlHelper.DefaultReaderSettings))
+				{
+					var document = new XmlDocument();
+					document.Load(xmlReader);
+					return document.DocumentElement;
+				}
 			}
 		}
 
-		public bool Load(Stream stream)
+		public static int GetVersion(XmlNode node)
 		{
-			using (var xmlReader = XmlReader.Create(stream, XmlHelper.DefaultReaderSettings))
-			{
-				var document = new XmlDocument();
-				document.Load(xmlReader);
-				return Load(document.DocumentElement);
-			}
+			return XmlHelper.ReadAttributeInt(node, "Version", 0);
 		}
-
+		
+		public bool Load(string file)
+		{
+			var node = Open(file);
+			return Load(node);
+		}
+		
 		public bool Load(XmlNode node)
 		{
+			//Version = XmlHelper.ReadAttributeInt(node, "Version", Version);
+			//int fileVersion = XmlHelper.ReadAttributeInt(node, "Version", 0);
+			//if (fileVersion > Version)
+			//{
+			//    throw new ParticleVersionException("Cannot load particle of version " + fileVersion + ".\nCurrent version: " + Version);
+			//}
+
 			foreach (XmlNode child in node.ChildNodes)
 			{
 				if (child.Name == "ParticleEffect")

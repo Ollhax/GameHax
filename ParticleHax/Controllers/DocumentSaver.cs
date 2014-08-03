@@ -33,6 +33,7 @@ namespace MG.ParticleHax.Controllers
 			var document = node.OwnerDocument ?? (XmlDocument)node;
 
 			var tableNode = document.CreateElement("ParticleEffectTable");
+			tableNode.SetAttribute("Version", "1");
 			node.AppendChild(tableNode);
 			
 			foreach (var child in model.DefinitionTable.Definitions)
