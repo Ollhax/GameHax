@@ -164,7 +164,7 @@ namespace MG.Framework.Particle
 			{
 				return
 					ParamEmitterLife > 0 &&
-					(ParamEmitterCount.BaseValue == 0 || EmitterCount < EmitterCountMax) &&
+					(ParamEmitterCount.IsZero || EmitterCount < EmitterCountMax) &&
 					(EmitterAge < ParamEmitterLife || ParamEmitterLoopMode == LoopMode.Infinite);
 			}
 		}

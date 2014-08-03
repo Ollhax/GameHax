@@ -12,6 +12,8 @@ namespace MG.Framework.Particle
 
 		public int BaseValue { get { return parameterValue; } }
 
+		public bool IsZero { get { return parameterValue == 0 && randomValue == 0; } }
+
 		public RandomInt(ParticleDefinition definition, string parameterName)
 		{
 			this.definition = definition;
