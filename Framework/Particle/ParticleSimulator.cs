@@ -136,7 +136,7 @@ namespace MG.Framework.Particle
 						float range = particleEffect.ParamEmitterRange.Get(e, 0) / 2;
 						float direction = MathTools.ToDegrees(particleEffect.Rotation) + particleEffect.ParamEmitterDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
 						
-						EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), 0);
+						EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0);
 						
 						particleEffect.EmitterSpawnAccumulator -= secondsPerParticle;
 						particleEffect.EmitterCount++;
@@ -164,7 +164,7 @@ namespace MG.Framework.Particle
 			particleEffect.ParticleData.ActiveParticles--;
 		}
 		
-		private static int EmitInternal(ParticleEffect particleEffect, Vector2 position, Vector2 velocity, float life)
+		private static int EmitInternal(ParticleEffect particleEffect, Vector2 position, Vector2 velocity, float rotation, float life)
 		{
 			if (particleEffect.ParticleData.ActiveParticles + 1 >= particleEffect.ParticleData.MaxParticles) particleEffect.ParticleData.Resize();
 			var index = particleEffect.ParticleData.ActiveParticles;
@@ -203,7 +203,7 @@ namespace MG.Framework.Particle
 
 			particleEffect.ParticlePosition[index] = position + new Vector2(particleEffect.ParamEmitterOffsetX.Get(e, 0), particleEffect.ParamEmitterOffsetY.Get(e, 0));
 			particleEffect.ParticleVelocity[index] = velocity;
-			particleEffect.ParticleRotation[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0));
+			particleEffect.ParticleRotation[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0)) + rotation;
 			particleEffect.ParticleRotationSpeed[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotationSpeed.Get(e, 0));
 			particleEffect.ParticleScale[index] = particleEffect.ParamEmitterInitialScale.Get(e, 0);
 			particleEffect.ParticleAge[index] = 0;
