@@ -79,7 +79,7 @@ namespace MG.ParticleHax.Controllers
 			{
 				if (HasChange(parameter.Value, declaration.Parameters))
 				{
-					SaveParameter(model, parametersNode, parameter.Value);
+					SaveParameter(model, parametersNode, parameter.Value, declaration.Parameters);
 				}
 			}
 
@@ -100,7 +100,6 @@ namespace MG.ParticleHax.Controllers
 			ParticleDeclaration.Parameter defaultChild;
 			if (!defaults.TryGetValue(parameter.Name, out defaultChild))
 			{
-				Log.Warning("Parameter not registered in declaration: " + parameter.Name);
 				return true;
 			}
 
@@ -120,8 +119,15 @@ namespace MG.ParticleHax.Controllers
 			return false;
 		}
 		
-		private static void SaveParameter(Model model, XmlNode node, ParticleDefinition.Parameter parameter)
+		private static void SaveParameter(Model model, XmlNode node, ParticleDefinition.Parameter parameter, Dictionary<string, ParticleDeclaration.Parameter> defaults)
 		{
+			ParticleDeclaration.Parameter defaultChild;
+			if (!defaults.TryGetValue(parameter.Name, out defaultChild))
+			{
+				Log.Warning("Parameter not registered in declaration: " + parameter.Name);
+				return;
+			}
+
 			var document = node.OwnerDocument ?? (XmlDocument)node;
 
 			var parameterNode = document.CreateElement("Parameter");
@@ -133,12 +139,20 @@ namespace MG.ParticleHax.Controllers
 
 			if (parameter.Parameters.Count > 0)
 			{
-				var parametersNode = document.CreateElement("Parameters");
-				parameterNode.AppendChild(parametersNode);
-
+				XmlElement parametersNode = null;
+				
 				foreach (var childParam in parameter.Parameters)
 				{
-					SaveParameter(model, parametersNode, childParam.Value);
+					if (HasChange(childParam.Value, defaultChild.Parameters))
+					{
+						if (parametersNode == null) // Don't create the node until we know there's a child with changes.
+						{
+							parametersNode = document.CreateElement("Parameters");
+							parameterNode.AppendChild(parametersNode);
+						}
+
+						SaveParameter(model, parametersNode, childParam.Value, defaultChild.Parameters);
+					}
 				}
 			}
 		}
