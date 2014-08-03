@@ -92,7 +92,7 @@
     <Compile Include="Numerics\Noise.cs" />
     <Compile Include="Numerics\Gradient.cs" />
     <Compile Include="Numerics\Curve.cs" />
-    <Compile Include="Particle\ParticleGroup.cs" />
+    <Compile Include="Particle\ParticleCommon.cs" />
     <Compile Include="Particle\ParticleHelpers.cs" />
     <Compile Include="Particle\ParticleSimulator.cs" />
     <Compile Include="Particle\ParticleVisualizer.cs" />

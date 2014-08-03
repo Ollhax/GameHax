@@ -15,11 +15,11 @@ namespace MG.Framework.Particle
 			this.assetHandler = assetHandler;
 		}
 
-		public ParticleEffect Create(ParticleDefinition definition, ParticleGroup group = null)
+		public ParticleEffect Create(ParticleDefinition definition, ParticleCommon common = null)
 		{
 			var particlePool = GetPool(definition);
 			var particleEffect = particlePool.New();
-			particleEffect.Reload(group ?? new ParticleGroup());
+			particleEffect.Reload(common ?? new ParticleCommon());
 			
 			return particleEffect;
 		}

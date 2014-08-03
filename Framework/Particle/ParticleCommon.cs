@@ -2,7 +2,7 @@
 
 namespace MG.Framework.Particle
 {
-	public class ParticleGroup
+	public class ParticleCommon
 	{
 		public Vector2 Position;
 		public Vector2 Gravity;

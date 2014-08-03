@@ -12,26 +12,26 @@ namespace MG.Framework.Particle
 	{
 		public Vector2 Position
 		{
-			get { return group.Position; }
-			set { group.Position = value; }
+			get { return common.Position; }
+			set { common.Position = value; }
 		}
 
 		public Vector2 Gravity
 		{
-			get { return group.Gravity; }
-			set { group.Gravity = value; }
+			get { return common.Gravity; }
+			set { common.Gravity = value; }
 		}
 
 		public float Rotation
 		{
-			get { return group.Rotation; }
-			set { group.Rotation = value; }
+			get { return common.Rotation; }
+			set { common.Rotation = value; }
 		}
 
 		public bool EmitterDisabled
 		{
-			get { return group.EmitterDisabled; }
-			set { group.EmitterDisabled = value; }
+			get { return common.EmitterDisabled; }
+			set { common.EmitterDisabled = value; }
 		}
 
 		public double TimeSinceStart;
@@ -125,7 +125,7 @@ namespace MG.Framework.Particle
 		{
 			get
 			{
-				if (!group.EmitterDisabled)
+				if (!common.EmitterDisabled)
 				{
 					if (EmitterAlive) return false;
 					if (ParamParticleInfinite) return false;
@@ -160,7 +160,7 @@ namespace MG.Framework.Particle
 		
 		private AssetHandler assetHandler;
 		private ParticleEffectPool particleEffectPool;
-		private ParticleGroup group;
+		private ParticleCommon common;
 
 		public ParticleEffect(AssetHandler assetHandler, ParticleEffectPool particleEffectPool, ParticleDefinition particleDefinition)
 		{
@@ -211,12 +211,12 @@ namespace MG.Framework.Particle
 
 		public void Reload()
 		{
-			Reload(group);
+			Reload(common);
 		}
 
-		public void Reload(ParticleGroup group)
+		public void Reload(ParticleCommon common)
 		{
-			this.group = group;
+			this.common = common;
 			bool wasRelative = ParamParticleRelativeToParent;
 			
 			if (!IsGroup)
@@ -251,14 +251,14 @@ namespace MG.Framework.Particle
 				SubSystems.Capacity = Definition.Children.Count;
 				foreach (var child in Definition.Children)
 				{
-					SubSystems.Add(particleEffectPool.Create(child, group));
+					SubSystems.Add(particleEffectPool.Create(child, common));
 				}
 			}
 			else
 			{
 				foreach (var child in SubSystems)
 				{
-					child.Reload(group);
+					child.Reload(common);
 				}
 			}
 		}
