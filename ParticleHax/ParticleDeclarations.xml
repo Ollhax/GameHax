@@ -398,6 +398,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
 				<MinValue>0.0</MinValue>
 				<Parameters>
 					<Parameter>
@@ -619,7 +620,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.01</ValueStep>
-				<ValueDigits>2</ValueDigits>				
+				<ValueDigits>2</ValueDigits>
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>
@@ -696,7 +697,9 @@
 				<Category>Particle</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>0.1</ValueStep>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<MinValue>0</MinValue>
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>
@@ -719,10 +722,10 @@
 				<PrettyName>Turbulence Scale</PrettyName>
 				<Description>The scale of the turbulence "bubbles".</Description>
 				<Category>Particle</Category>
-				<Type>Single</Type>								
-				<DefaultValue>0.01</DefaultValue>
-				<ValueStep>0.001</ValueStep>
-				<ValueDigits>3</ValueDigits>
+				<Type>Single</Type>
+				<DefaultValue>1.0</DefaultValue>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
 				<MinValue>0.0</MinValue>
 				<Parameters>
 					<Parameter>

@@ -59,8 +59,8 @@ namespace MG.Framework.Particle
 					var v = SampleTurbulence(
 						particleEffect,
 						particleEffect.ParticlePosition[i],
-						particleEffect.ParamParticleTurbulenceScale.Get(emitterLife, lifeFraction),
-						particleEffect.ParamParticleTurbulenceSpeed.Get(emitterLife, lifeFraction));
+						particleEffect.ParamParticleTurbulenceScale.Get(emitterLife, lifeFraction) * 0.01f,
+						particleEffect.ParamParticleTurbulenceSpeed.Get(emitterLife, lifeFraction) * 0.1f);
 
 					vel += v * turbulence;
 				}

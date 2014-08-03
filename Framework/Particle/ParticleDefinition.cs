@@ -236,7 +236,7 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("ParticleScaleX", 1.0f);
 			RegisterDefaultParameter("ParticleScaleY", 1.0f);
 			RegisterDefaultParameter("ParticleTurbulenceStrength", 0.0f);
-			RegisterDefaultParameter("ParticleTurbulenceScale", 0.01f);
+			RegisterDefaultParameter("ParticleTurbulenceScale", 1.0f);
 			RegisterDefaultParameter("ParticleTurbulenceSpeed", 1.0f);
 			RegisterDefaultParameter("SortMode", 0);
 			RegisterDefaultParameter("BlendMode", 1);
