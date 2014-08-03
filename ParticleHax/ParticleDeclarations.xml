@@ -65,7 +65,8 @@
 				<Category>Texture</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
-				<ValueStep>0.1</ValueStep>				
+				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
 			</Parameter>
 			<Parameter>
 				<Name>EmitterLife</Name>
@@ -75,6 +76,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
 				<MinValue>0.0</MinValue>
 			</Parameter>
 			<Parameter>
@@ -97,7 +99,8 @@
 				<Category>Emitter</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
-				<ValueStep>0.1</ValueStep>
+				<ValueStep>0.01</ValueStep>
+				<ValueDigits>2</ValueDigits>
 				<MinValue>0.0</MinValue>
 				<Parameters>
 					<Parameter>
@@ -367,7 +370,6 @@
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.01</ValueStep>
 				<ValueDigits>2</ValueDigits>
-				<MinValue>0.0</MinValue>
 				<Parameters>
 					<Parameter>
 						<Name>Random</Name>
@@ -617,8 +619,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.01</ValueStep>
-				<ValueDigits>2</ValueDigits>
-				<MinValue>0.0</MinValue>
+				<ValueDigits>2</ValueDigits>				
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>
@@ -644,8 +645,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.01</ValueStep>
-				<ValueDigits>2</ValueDigits>
-				<MinValue>0.0</MinValue>
+				<ValueDigits>2</ValueDigits>				
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>
@@ -671,8 +671,7 @@
 				<Type>Single</Type>
 				<DefaultValue>1.0</DefaultValue>
 				<ValueStep>0.01</ValueStep>
-				<ValueDigits>2</ValueDigits>
-				<MinValue>0.0</MinValue>
+				<ValueDigits>2</ValueDigits>				
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>

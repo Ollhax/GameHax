@@ -247,18 +247,19 @@ namespace MG.Framework.Particle
 			Name = XmlHelper.ReadString(node, "Name");
 			Declaration = XmlHelper.ReadString(node, "Declaration");
 
+			CreateDefaults(); // Create defaults now to ensure the correct parameter order.
+
 			var parametersNode = node.SelectSingleNode("Parameters");
 			if (parametersNode != null)
 			{
 				foreach (XmlNode parameterNode in parametersNode)
 				{
 					var parameter = new Parameter(parameterNode);
+					Parameters.Remove(parameter.Name);
 					Parameters.Add(parameter.Name, parameter);
 				}
 			}
-
-			CreateDefaults();
-
+			
 			var childrenNode = node.SelectSingleNode("Children");
 			if (childrenNode != null)
 			{

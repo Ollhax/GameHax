@@ -15,8 +15,7 @@ namespace MG.EditorCommon.Editors
 		{
 			get
 			{
-				int val = (int)Convert.ChangeType(Value, typeof(int));
-				return (val != -1);
+				return true;
 			}
 		}
 
