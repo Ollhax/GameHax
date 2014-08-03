@@ -77,7 +77,7 @@ namespace MG.Framework.Particle
 
 				if (particleEffect.ParamParticleRelativeToParent)
 				{
-					p += particleEffect.Group.Position;
+					p += particleEffect.Position;
 				}
 
 				var sourceArea = new RectangleF(0, 0, particleEffect.ParticleTexture.Width, particleEffect.ParticleTexture.Height);

@@ -10,51 +10,36 @@ namespace MG.Framework.Particle
 {
 	public class ParticleEffect
 	{
+		public Vector2 Position
+		{
+			get { return group.Position; }
+			set { group.Position = value; }
+		}
+
+		public Vector2 Gravity
+		{
+			get { return group.Gravity; }
+			set { group.Gravity = value; }
+		}
+
+		public float Rotation
+		{
+			get { return group.Rotation; }
+			set { group.Rotation = value; }
+		}
+
+		public bool EmitterDisabled
+		{
+			get { return group.EmitterDisabled; }
+			set { group.EmitterDisabled = value; }
+		}
+
 		public double TimeSinceStart;
 		public float EmitterSpawnDelay;
 		public float EmitterAge;
 		public float EmitterSpawnAccumulator;
 		public int EmitterCount;
 		public int EmitterCountMax;
-
-		//public Vector2 PositionRecursive
-		//{
-		//    set
-		//    {
-		//        Position = value;
-		//        foreach (var child in SubSystems)
-		//        {
-		//            child.PositionRecursive = value;
-		//        }
-		//    }
-		//}
-
-		//public Vector2 GravityRecursive
-		//{
-		//    set
-		//    {
-		//        Gravity = value;
-		//        foreach (var child in SubSystems)
-		//        {
-		//            child.GravityRecursive = value;
-		//        }
-		//    }
-		//}
-
-		//public bool Disabled
-		//{
-		//    get { return disabled; }
-		//    set
-		//    {
-		//        disabled = value;
-		//        foreach (var system in SubSystems)
-		//        {
-		//            system.Disabled = value;
-		//        }
-		//    }
-		//}
-		
-		
 		
 		public enum LoopMode
 		{
@@ -69,8 +54,7 @@ namespace MG.Framework.Particle
 			NewestOnTop,
 			OldestOnTop,
 		}
-
-		public ParticleGroup Group;
+		
 		public readonly ParticleDefinition Definition;
 		public List<ParticleEffect> SubSystems = new List<ParticleEffect>();
 		public ParticleData ParticleData = new ParticleData(64);
@@ -141,7 +125,7 @@ namespace MG.Framework.Particle
 		{
 			get
 			{
-				if (!Group.EmitterDisabled)
+				if (!group.EmitterDisabled)
 				{
 					if (EmitterAlive) return false;
 					if (ParamParticleInfinite) return false;
@@ -171,6 +155,7 @@ namespace MG.Framework.Particle
 
 		private AssetHandler assetHandler;
 		private ParticleEffectPool particleEffectPool;
+		private ParticleGroup group;
 
 		public ParticleEffect(AssetHandler assetHandler, ParticleEffectPool particleEffectPool, ParticleDefinition particleDefinition)
 		{
@@ -215,9 +200,15 @@ namespace MG.Framework.Particle
 			ParamEmitterInitialRotationSpeed = Definition.GetFloatParameter("EmitterInitialRotationSpeed");
 			ParamEmitterInitialScale = Definition.GetFloatParameter("EmitterInitialScale");
 		}
-				
+
 		public void Reload()
 		{
+			Reload(group);
+		}
+
+		public void Reload(ParticleGroup group)
+		{
+			this.group = group;
 			bool wasRelative = ParamParticleRelativeToParent;
 
 			ParamTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
@@ -249,14 +240,14 @@ namespace MG.Framework.Particle
 				SubSystems.Capacity = Definition.Children.Count;
 				foreach (var child in Definition.Children)
 				{
-					SubSystems.Add(particleEffectPool.Create(child, Group));
+					SubSystems.Add(particleEffectPool.Create(child, group));
 				}
 			}
 			else
 			{
 				foreach (var child in SubSystems)
 				{
-					child.Reload();
+					child.Reload(group);
 				}
 			}
 		}

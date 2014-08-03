@@ -18,7 +18,7 @@ namespace MG.Framework.Particle
 
 			particleEffect.TimeSinceStart += time.ElapsedSeconds;
 
-			if (!particleEffect.Group.EmitterDisabled)
+			if (!particleEffect.EmitterDisabled)
 			{
 				UpdateEmitter(particleEffect, time);
 			}
@@ -31,7 +31,7 @@ namespace MG.Framework.Particle
 					particleEffect.ParamParticleAccelerationX.Get(emitterLife, lifeFraction),
 					particleEffect.ParamParticleAccelerationY.Get(emitterLife, lifeFraction));
 
-				accel += particleEffect.Group.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction);
+				accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction);
 
 				var oldVel = particleEffect.ParticleVelocity[i];
 				var vel = oldVel + accel * time.ElapsedSeconds;
@@ -131,10 +131,10 @@ namespace MG.Framework.Particle
 
 					if (particleEffect.EmitterSpawnAccumulator >= secondsPerParticle && particleEffect.EmitterAlive)
 					{
-						var p = particleEffect.ParamParticleRelativeToParent ? Vector2.Zero : particleEffect.Group.Position;
+						var p = particleEffect.ParamParticleRelativeToParent ? Vector2.Zero : particleEffect.Position;
 						var e = particleEffect.LifeFractional;
 						float range = particleEffect.ParamEmitterRange.Get(e, 0) / 2;
-						float direction = MathTools.ToDegrees(particleEffect.Group.Rotation) + particleEffect.ParamEmitterDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
+						float direction = MathTools.ToDegrees(particleEffect.Rotation) + particleEffect.ParamEmitterDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
 						
 						EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), 0);
 						

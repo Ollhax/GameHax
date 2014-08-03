@@ -113,7 +113,7 @@ namespace MG.ParticleHax.Controllers
 
 					//Log.Info("Creating particle system from definition: " + definition.Name);
 					model.ParticleEffect = model.ParticleEffectPool.Create(definition);
-					model.ParticleEffect.Group.Gravity = new Vector2(0, 100);
+					model.ParticleEffect.Gravity = new Vector2(0, 100);
 					
 					UpdateParticleSystemPosition();
 				}
@@ -183,7 +183,7 @@ namespace MG.ParticleHax.Controllers
 
 			if (Settings.Get<bool>("Crosshair.Enable") && (particlePosition != null || particleEffect != null))
 			{
-				var center = particlePosition ?? particleEffect.Group.Position;
+				var center = particlePosition ?? particleEffect.Position;
 				var length = 15.0f;
 				var color = Settings.Get<Color>("Crosshair.Color");
 
@@ -211,7 +211,7 @@ namespace MG.ParticleHax.Controllers
 			var particleSystem = model.ParticleEffect;
 			if (particleSystem == null) return;
 			
-			particleSystem.Group.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+			particleSystem.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
 		}
 
 		private void OnPress(Vector2 pos)

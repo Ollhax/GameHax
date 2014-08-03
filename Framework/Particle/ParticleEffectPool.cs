@@ -19,8 +19,7 @@ namespace MG.Framework.Particle
 		{
 			var particlePool = GetPool(definition);
 			var particleEffect = particlePool.New();
-			particleEffect.Group = group ?? new ParticleGroup();
-			particleEffect.Reload();
+			particleEffect.Reload(group ?? new ParticleGroup());
 			
 			return particleEffect;
 		}
