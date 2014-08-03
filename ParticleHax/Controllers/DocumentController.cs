@@ -85,7 +85,7 @@ namespace MG.ParticleHax.Controllers
 				model.DefinitionTable.Load(xml);
 
 				// Convert path parameters
-				ToAbsolutePath(file.ParentDirectory);
+				ToAbsolutePath(file.ParentDirectory, model.DefinitionTable.Definitions);
 
 				// Add missing parameters
 				AddMissingParametersRecursive(model.DefinitionTable.Definitions);
@@ -188,7 +188,7 @@ namespace MG.ParticleHax.Controllers
 			BeforeSaveDocument.Invoke();
 
 			bool success = false;
-			ToRelativePath(outputFile.ParentDirectory);
+			ToRelativePath(outputFile.ParentDirectory, model.DefinitionTable.Definitions);
 
 			try
 			{
@@ -207,7 +207,7 @@ namespace MG.ParticleHax.Controllers
 				Log.Error("- Error: " + e.Message);
 			}
 
-			ToAbsolutePath(Environment.CurrentDirectory);
+			ToAbsolutePath(Environment.CurrentDirectory, model.DefinitionTable.Definitions);
 
 			return success;
 		}
@@ -221,20 +221,30 @@ namespace MG.ParticleHax.Controllers
 		{
 			model.UndoHandler.Redo();
 		}
-		
-		private void ToAbsolutePath(string directory)
+
+		private void ToAbsolutePath(string directory, ParticleCollection collection)
 		{
-			foreach (var d in model.DefinitionTable.Definitions)
+			foreach (var d in collection)
 			{
 				ToAbsolutePath(directory, d.Parameters);
+
+				foreach (var c in d.Children)
+				{
+					ToAbsolutePath(directory, c.Parameters);
+				}
 			}
 		}
 
-		private void ToRelativePath(string directory)
+		private void ToRelativePath(string directory, ParticleCollection collection)
 		{
-			foreach (var d in model.DefinitionTable.Definitions)
+			foreach (var d in collection)
 			{
 				ToRelativePath(directory, d.Parameters);
+
+				foreach (var c in d.Children)
+				{
+					ToRelativePath(directory, c.Parameters);
+				}
 			}
 		}
 

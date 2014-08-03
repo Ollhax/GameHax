@@ -153,6 +153,11 @@ namespace MG.Framework.Particle
 			}
 		}
 
+		public bool IsGroup
+		{
+			get { return Definition.Declaration == "Group"; }
+		}
+		
 		private AssetHandler assetHandler;
 		private ParticleEffectPool particleEffectPool;
 		private ParticleGroup group;
@@ -166,6 +171,9 @@ namespace MG.Framework.Particle
 			this.assetHandler = assetHandler;
 			this.particleEffectPool = particleEffectPool;
 			this.Definition = particleDefinition;
+
+			if (IsGroup) return;
+
 			ParticlePosition = ParticleData.Register<Vector2>("Position");
 			ParticleVelocity = ParticleData.Register<Vector2>("Velocity");
 			ParticleRotation = ParticleData.Register<float>("Rotation");
@@ -210,29 +218,32 @@ namespace MG.Framework.Particle
 		{
 			this.group = group;
 			bool wasRelative = ParamParticleRelativeToParent;
-
-			ParamTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
-			ParamTextureCells = new Vector2I(Definition.GetParameter("TextureCellsX").Value.Get<int>(), Definition.GetParameter("TextureCellsY").Value.Get<int>());
-			ParamTextureFrameTime = Definition.GetParameter("TextureFrameTime").Value.Get<float>();
-			ParamBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
-			ParamSortMode = (SortMode)Definition.Parameters["SortMode"].Value.Get<int>();
-			ParamParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();
-			ParamParticleOrientToVelocity = Definition.GetParameter("ParticleOrientToVelocity").Value.Get<bool>();
-			ParamParticleRelativeToParent = Definition.GetParameter("ParticleRelativeToParent").Value.Get<bool>();
-			ParamParticleColor = Definition.GetParameter("ParticleColor").Value.Get<Gradient>();
-			ParamEmitterLife = Definition.Parameters["EmitterLife"].Value.Get<float>();
-			ParamEmitterLoopMode = (LoopMode)Definition.Parameters["EmitterLoop"].Value.Get<int>();
-
-			EmitterCountMax = ParamEmitterCount.Get(0, 0);
-			EmitterSpawnDelay = ParamEmitterSpawnDelay.Get(0, 0);
-
-			if (wasRelative != ParamParticleRelativeToParent)
+			
+			if (!IsGroup)
 			{
-				ParticleData.ActiveParticles = 0;
-			}
+				ParamTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
+				ParamTextureCells = new Vector2I(Definition.GetParameter("TextureCellsX").Value.Get<int>(), Definition.GetParameter("TextureCellsY").Value.Get<int>());
+				ParamTextureFrameTime = Definition.GetParameter("TextureFrameTime").Value.Get<float>();
+				ParamBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
+				ParamSortMode = (SortMode)Definition.Parameters["SortMode"].Value.Get<int>();
+				ParamParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();
+				ParamParticleOrientToVelocity = Definition.GetParameter("ParticleOrientToVelocity").Value.Get<bool>();
+				ParamParticleRelativeToParent = Definition.GetParameter("ParticleRelativeToParent").Value.Get<bool>();
+				ParamParticleColor = Definition.GetParameter("ParticleColor").Value.Get<Gradient>();
+				ParamEmitterLife = Definition.Parameters["EmitterLife"].Value.Get<float>();
+				ParamEmitterLoopMode = (LoopMode)Definition.Parameters["EmitterLoop"].Value.Get<int>();
 
-			var texture = Definition.GetParameter("Texture").Value.Get<FilePath>();
-			ParticleTexture = assetHandler.Load<Texture2D>(texture);
+				EmitterCountMax = ParamEmitterCount.Get(0, 0);
+				EmitterSpawnDelay = ParamEmitterSpawnDelay.Get(0, 0);
+
+				if (wasRelative != ParamParticleRelativeToParent)
+				{
+					ParticleData.ActiveParticles = 0;
+				}
+
+				var texture = Definition.GetParameter("Texture").Value.Get<FilePath>();
+				ParticleTexture = assetHandler.Load<Texture2D>(texture);
+			}
 			
 			if (Definition.Children.Count != SubSystems.Count)
 			{

@@ -49,6 +49,12 @@ namespace MG.Framework.Particle
 				}
 			}
 
+			public Parameter(string name, Any value)
+			{
+				Name = name;
+				Value = value;
+			}
+
 			public void CopyFrom(Parameter other)
 			{
 				Name = other.Name;
@@ -247,7 +253,10 @@ namespace MG.Framework.Particle
 			Name = XmlHelper.ReadString(node, "Name");
 			Declaration = XmlHelper.ReadString(node, "Declaration");
 
-			CreateDefaults(); // Create defaults now to ensure the correct parameter order.
+			if (Declaration != "Group")
+			{
+				CreateDefaults(); // Create defaults now to ensure the correct parameter order.
+			}
 
 			var parametersNode = node.SelectSingleNode("Parameters");
 			if (parametersNode != null)

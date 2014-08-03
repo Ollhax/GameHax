@@ -16,7 +16,7 @@
 				<Category>Texture</Category>
 				<Type>FilePath</Type>
 				<DefaultValue>Resources/texture.png</DefaultValue>
-				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>
+				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>								
 			</Parameter>
 			<Parameter>
 				<Name>TextureAnchorX</Name>
@@ -798,5 +798,8 @@
 				</ValueList>
 			</Parameter>
 		</Parameters>
+	</ParticleDeclaration>
+	<ParticleDeclaration>
+		<Name>Group</Name>
 	</ParticleDeclaration>
 </ParticleDeclarationTable>

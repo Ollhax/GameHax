@@ -74,13 +74,16 @@ namespace MG.ParticleHax.Controllers
 			XmlHelper.Write(particleEffectNode, "Name", definition.Name);
 			XmlHelper.Write(particleEffectNode, "Declaration", definition.Declaration);
 			
-			var parametersNode = document.CreateElement("Parameters");
-			particleEffectNode.AppendChild(parametersNode);
-			foreach (var parameter in definition.Parameters)
+			if (definition.Parameters.Count > 0)
 			{
-				if (HasChange(parameter.Value, declaration.Parameters))
+				var parametersNode = document.CreateElement("Parameters");
+				particleEffectNode.AppendChild(parametersNode);
+				foreach (var parameter in definition.Parameters)
 				{
-					SaveParameter(model, parametersNode, parameter.Value, declaration.Parameters);
+					if (HasChange(parameter.Value, declaration.Parameters))
+					{
+						SaveParameter(model, parametersNode, parameter.Value, declaration.Parameters);
+					}
 				}
 			}
 

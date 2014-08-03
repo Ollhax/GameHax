@@ -117,16 +117,17 @@ namespace MG.ParticleHax.Controllers
 					
 					UpdateParticleSystemPosition();
 				}
-				else
-				{
-					controller.StatusText = "Particle system disabled (emitter life = 0)";
-				}
+				//else
+				//{
+				//    //controller.StatusText = "Particle system disabled (emitter life = 0)";
+				//    model.ParticleEffect = null;
+				//}
 			}
 		}
 		
 		private bool Disabled(ParticleDefinition definition)
 		{
-			return definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
+			return false;// definition.Declaration == "Group";// || definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
 		}
 
 		private Color GetBackgroundColor()

@@ -93,7 +93,10 @@ namespace MG.ParticleHax.Controllers
 			if (model.DeclarationTable.DeclarationsList.Count > 0)
 			{
 				var decl = model.DeclarationTable.DeclarationsList[0];
-				controller.SelectDefinition = CreateParticleSystem(decl.Name, false);
+				var id = CreateParticleSystem(decl.Name, false);
+
+				controller.SelectDefinition = id;
+				//model.DefinitionTable.Definitions.GetById(id).Parameters["Texture"] = new ParticleDefinition.Parameter("Texture", new Any(new FilePath("Resources/texture.png")));
 			}
 
 			model.Modified = false;
