@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 
 using MG.EditorCommon;
 using MG.Framework.Particle;
@@ -68,19 +69,8 @@ namespace MG.ParticleHax.Controllers
 				ToAbsolutePath(file.ParentDirectory);
 				
 				// Add missing parameters
-				foreach (var defPair in model.DefinitionTable.Definitions)
-				{
-					ParticleDeclaration declaration;
-					if (model.DeclarationTable.Declarations.TryGetValue(defPair.Declaration, out declaration))
-					{
-						model.Modified |= AddAction.AddMissingParameters(declaration.Parameters, defPair.Parameters, true);
-					}
-					else
-					{
-						Log.Warning("Could not find declation: " + declaration);
-					}
-				}
-
+				AddMissingParametersRecursive(model.DefinitionTable.Definitions);
+				
 				Environment.CurrentDirectory = file.ParentDirectory;
 			}
 			catch (Exception e)
@@ -97,6 +87,24 @@ namespace MG.ParticleHax.Controllers
 
 			OpenDocument.Invoke();
 			return true;
+		}
+
+		private void AddMissingParametersRecursive(ParticleCollection definitions)
+		{
+			foreach (var defPair in definitions)
+			{
+				ParticleDeclaration declaration;
+				if (model.DeclarationTable.Declarations.TryGetValue(defPair.Declaration, out declaration))
+				{
+					AddAction.AddMissingParameters(declaration.Parameters, defPair.Parameters, false);
+				}
+				else
+				{
+					Log.Warning("Could not find declation: " + declaration);
+				}
+
+				AddMissingParametersRecursive(defPair.Children);
+			}
 		}
 		
 		public bool Close()
@@ -165,7 +173,7 @@ namespace MG.ParticleHax.Controllers
 
 			try
 			{
-				model.DefinitionTable.Save(outputFile);
+				DocumentSaver.Save(model, outputFile);
 				model.DocumentFile = outputFile;
 				model.Modified = false;
 				controller.UpdateTitle = true;
@@ -194,7 +202,7 @@ namespace MG.ParticleHax.Controllers
 		{
 			model.UndoHandler.Redo();
 		}
-
+		
 		private void ToAbsolutePath(string directory)
 		{
 			foreach (var d in model.DefinitionTable.Definitions)

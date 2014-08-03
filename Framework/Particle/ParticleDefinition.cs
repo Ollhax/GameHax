@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
+using MG.Framework.Numerics;
 using MG.Framework.Utility;
 
 namespace MG.Framework.Particle
@@ -83,30 +84,29 @@ namespace MG.Framework.Particle
 				return true;
 			}
 
-			public void Save(XmlNode node)
-			{
-				var document = node.OwnerDocument ?? (XmlDocument)node;
+			//public void Save(XmlNode node)
+			//{
+			//    var document = node.OwnerDocument ?? (XmlDocument)node;
 
-				var parameterNode = document.CreateElement("Parameter");
-				node.AppendChild(parameterNode);
+			//    var parameterNode = document.CreateElement("Parameter");
+			//    node.AppendChild(parameterNode);
 
-				XmlHelper.Write(parameterNode, "Name", Name);
-				XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
-				XmlHelper.Write(parameterNode, "Value", Value.ToString());
+			//    XmlHelper.Write(parameterNode, "Name", Name);
+			//    XmlHelper.Write(parameterNode, "Type", Value.GetTypeOfValue().Name);
+			//    XmlHelper.Write(parameterNode, "Value", Value.ToString());
 				
-				var parametersNode = document.CreateElement("Parameters");
-				parameterNode.AppendChild(parametersNode);
+			//    var parametersNode = document.CreateElement("Parameters");
+			//    parameterNode.AppendChild(parametersNode);
 
-				foreach (var property in Parameters)
-				{
-					property.Value.Save(parametersNode);
-				}
-			}
+			//    foreach (var property in Parameters)
+			//    {
+			//        property.Value.Save(parametersNode);
+			//    }
+			//}
 		}
 
 		public int Id;
 		public string Name;
-		public string Emitter;
 		public string Declaration;
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
 		public ParticleCollection Children = new ParticleCollection();
@@ -129,7 +129,6 @@ namespace MG.Framework.Particle
 		public void CopyFrom(ParticleDefinition other)
 		{
 			Name = other.Name;
-			Emitter = other.Emitter;
 			Declaration = other.Declaration;
 			Id = other.Id;
 
@@ -162,7 +161,6 @@ namespace MG.Framework.Particle
 		public bool Equals(ParticleDefinition other)
 		{
 			if (Name != other.Name) return false;
-			if (Emitter != other.Emitter) return false;
 			if (Declaration != other.Declaration) return false;
 			if (Id != other.Id) return false;
 			if (Parameters.Count != other.Parameters.Count) return false;
@@ -187,10 +185,66 @@ namespace MG.Framework.Particle
 			CopyFrom(other);
 		}
 
+		private void RegisterDefaultParameter(string name, object value)
+		{
+			if (Parameters.ContainsKey(name)) return;
+
+			var parameter = new Parameter();
+			parameter.Name = name;
+			parameter.Value = new Any(0);
+			parameter.Value.Set(value);
+			Parameters.Add(parameter.Name, parameter);
+		}
+
+		private void CreateDefaults()
+		{
+			var defaultGradient = new Gradient();
+			defaultGradient.Add(new GradientEntry(0, new Color(255, 255, 255, 255)));
+			defaultGradient.Add(new GradientEntry(1, new Color(255, 255, 255, 0)));
+			RegisterDefaultParameter("Description", "");
+			RegisterDefaultParameter("Texture", new FilePath());
+			RegisterDefaultParameter("TextureAnchorX", 0.5f);
+			RegisterDefaultParameter("TextureAnchorY", 0.5f);
+			RegisterDefaultParameter("TextureCellsX", 1);
+			RegisterDefaultParameter("TextureCellsY", 1);
+			RegisterDefaultParameter("TextureFrameTime", 0.5f);
+			RegisterDefaultParameter("EmitterLife", 1.0f);
+			RegisterDefaultParameter("EmitterLoop", 0);
+			RegisterDefaultParameter("EmitterSpawnDelay", 0.0f);
+			RegisterDefaultParameter("EmitterSpawnRate", 10.0f);
+			RegisterDefaultParameter("EmitterCount", 0);
+			RegisterDefaultParameter("EmitterDirection", 0.0f);
+			RegisterDefaultParameter("EmitterRange", 360.0f);
+			RegisterDefaultParameter("EmitterOffsetX", 0.0f);
+			RegisterDefaultParameter("EmitterOffsetY", 0.0f);
+			RegisterDefaultParameter("EmitterInitialSpeed", 50.0f);
+			RegisterDefaultParameter("EmitterInitialRotation", 0.0f);
+			RegisterDefaultParameter("EmitterInitialRotationSpeed", 0.0f);
+			RegisterDefaultParameter("EmitterInitialScale", 1.0f);
+			RegisterDefaultParameter("ParticleLife", 1.0f);
+			RegisterDefaultParameter("ParticleInfinite", false);
+			RegisterDefaultParameter("ParticleOrientToVelocity", false);
+			RegisterDefaultParameter("ParticleRelativeToParent", false);
+			RegisterDefaultParameter("ParticleColor", defaultGradient);
+			RegisterDefaultParameter("ParticleGravityScale", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationX", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationY", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationAngular", 0.0f);
+			RegisterDefaultParameter("ParticleAirResistance", 0.0f);
+			RegisterDefaultParameter("ParticleTurn", 0.0f);
+			RegisterDefaultParameter("ParticleScale", 1.0f);
+			RegisterDefaultParameter("ParticleScaleX", 1.0f);
+			RegisterDefaultParameter("ParticleScaleY", 1.0f);
+			RegisterDefaultParameter("ParticleTurbulenceStrength", 0.0f);
+			RegisterDefaultParameter("ParticleTurbulenceScale", 0.01f);
+			RegisterDefaultParameter("ParticleTurbulenceSpeed", 1.0f);
+			RegisterDefaultParameter("SortMode", 0);
+			RegisterDefaultParameter("BlendMode", 1);
+		}
+
 		public ParticleDefinition(XmlNode node)
 		{
 			Name = XmlHelper.ReadString(node, "Name");
-			Emitter = XmlHelper.ReadString(node, "Emitter");
 			Declaration = XmlHelper.ReadString(node, "Declaration");
 
 			var parametersNode = node.SelectSingleNode("Parameters");
@@ -203,6 +257,8 @@ namespace MG.Framework.Particle
 				}
 			}
 
+			CreateDefaults();
+
 			var childrenNode = node.SelectSingleNode("Children");
 			if (childrenNode != null)
 			{
@@ -214,49 +270,7 @@ namespace MG.Framework.Particle
 				}
 			}
 		}
-
-		public void Save(XmlNode node)
-		{
-			var document = node.OwnerDocument ?? (XmlDocument)node;
-
-			var particleEffectNode = document.CreateElement("ParticleEffect");
-			node.AppendChild(particleEffectNode);
-
-			XmlHelper.Write(particleEffectNode, "Name", Name);
-			XmlHelper.Write(particleEffectNode, "Emitter", Emitter);
-			XmlHelper.Write(particleEffectNode, "Declaration", Declaration);
-
-			var parametersNode = document.CreateElement("Parameters");
-			particleEffectNode.AppendChild(parametersNode);
-			foreach (var property in Parameters)
-			{
-				property.Value.Save(parametersNode);
-			}
-
-			var childrenNode = document.CreateElement("Children");
-			particleEffectNode.AppendChild(childrenNode);
-
-			foreach (var child in Children)
-			{
-				child.Save(childrenNode);
-			}
-		}
-
-		public string Serialize()
-		{
-			using (var stringWriter = new StringWriter())
-			using (var xmlTextWriter = XmlWriter.Create(stringWriter, XmlHelper.DefaultWriterSettings))
-			{
-				var document = new XmlDocument();
-
-				Save(document);
-				document.Save(xmlTextWriter);
-				xmlTextWriter.Flush();
-
-				return stringWriter.ToString();
-			}
-		}
-
+		
 		public void ReloadCache()
 		{
 			foreach (var f in cachedFloats.Values)
@@ -337,37 +351,6 @@ namespace MG.Framework.Particle
 				id++;
 
 				AssignIds(child.Children, ref id);
-			}
-		}
-
-		public void Save(string file)
-		{
-			using (FileStream fs = File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Write))
-			{
-				Save(fs);
-			}
-		}
-
-		public void Save(Stream stream)
-		{
-			using (var xmlWriter = XmlWriter.Create(stream, XmlHelper.DefaultWriterSettings))
-			{
-				var document = new XmlDocument();
-				Save(document);
-				document.Save(xmlWriter);
-			}
-		}
-
-		public void Save(XmlNode node)
-		{
-			var document = node.OwnerDocument ?? (XmlDocument)node;
-
-			var tableNode = document.CreateElement("ParticleEffectTable");
-			node.AppendChild(tableNode);
-			
-			foreach (var child in Definitions)
-			{
-				child.Save(tableNode);
 			}
 		}
 	}

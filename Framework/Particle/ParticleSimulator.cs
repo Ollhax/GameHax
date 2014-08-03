@@ -13,10 +13,10 @@ namespace MG.Framework.Particle
 
 		private static void UpdateInternal(ParticleEffect particleEffect, Time time)
 		{
-			particleEffect.TimeSinceStart = time.TotalElapsedSeconds;
-
 			if (time.ElapsedSeconds <= 0)
 				return;
+
+			particleEffect.TimeSinceStart += time.ElapsedSeconds;
 
 			if (!particleEffect.Group.EmitterDisabled)
 			{

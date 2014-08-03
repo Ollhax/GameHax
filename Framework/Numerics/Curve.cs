@@ -11,7 +11,7 @@ namespace MG.Framework.Numerics
 	/// <summary>
 	/// An entry in the curve.
 	/// </summary>
-	public class CurveEntry : IComparable<CurveEntry>
+	public class CurveEntry : IComparable<CurveEntry>, IEquatable<CurveEntry>
 	{
 		/// <summary>
 		/// The type of entry determines how values are interpolated between this entry and its neighbours.
@@ -43,6 +43,20 @@ namespace MG.Framework.Numerics
 		public readonly Vector2 RightHandle;
 
 		/// <summary>
+		/// Test if this curve entry another curve entry.
+		/// </summary>
+		/// <param name="other">Curve entry to test against.</param>
+		/// <returns>True if the two curves entries are equal.</returns>
+		public bool Equals(CurveEntry other)
+		{
+			if (Type != other.Type) return false;
+			if (Value != other.Value) return false;
+			if (LeftHandle != other.LeftHandle) return false;
+			if (RightHandle != other.RightHandle) return false;
+			return true;
+		}
+
+		/// <summary>
 		/// Create a linear entry.
 		/// </summary>
 		/// <param name="value">This entry's value.</param>
@@ -51,7 +65,7 @@ namespace MG.Framework.Numerics
 			Type = EntryType.Linear;
 			Value = value;
 		}
-
+		
 		/// <summary>
 		/// Create a bezier entry.
 		/// </summary>
@@ -109,7 +123,7 @@ namespace MG.Framework.Numerics
 	/// A representation of a graph curve predefined data entries that you can interpolate between.
 	/// </summary>
 	[TypeConverter(typeof(CurveConverter))]
-	public class Curve : ICollection<CurveEntry>
+	public class Curve : ICollection<CurveEntry>, IEquatable<Curve>
 	{
 		private readonly List<CurveEntry> entries = new List<CurveEntry>();
 		
@@ -146,6 +160,40 @@ namespace MG.Framework.Numerics
 		public CurveEntry End
 		{
 			get { if (entries.Count > 0) return entries[entries.Count - 1]; return null; }
+		}
+
+		/// <summary>
+		/// Test if this curve equals another curve.
+		/// </summary>
+		/// <param name="other">Curve to test against.</param>
+		/// <returns>True if the two curves are equal.</returns>
+		public bool Equals(Curve other)
+		{
+			if (entries.Count != other.entries.Count) return false;
+			if (ExtrapolateModeLeft != other.ExtrapolateModeLeft) return false;
+			if (ExtrapolateModeRight != other.ExtrapolateModeRight) return false;
+
+			for (int i = 0; i < entries.Count; i++)
+			{
+				if (!entries[i].Equals(other.entries[i])) return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Test if this curve equals another curve.
+		/// </summary>
+		/// <param name="obj">Curve to test against.</param>
+		/// <returns>True if the two curves are equal.</returns>
+		public override bool Equals(object obj)
+		{
+			var otherCurve = obj as Curve;
+			if (otherCurve != null)
+			{
+				return Equals(otherCurve);
+			}
+			return false;
 		}
 
 		/// <summary>

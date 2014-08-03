@@ -30,19 +30,21 @@ namespace MG.Framework.Converters
 				string[] entries = ((string)value).Split(new[] { ListSeparator }, StringSplitOptions.None);
 				foreach (var entryText in entries)
 				{
+					if (string.IsNullOrEmpty(entryText)) continue;
+
 					var p = entryText.Split(new[] { EntrySeparator });
 
-					if (p.Length == 3 && p[0] == "lin")
+					if ((p.Length == 2) || (p.Length == 3 && p[0] == "lin")) // Backward compatibility
 					{
-						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
+						var position = new Vector2(Convert.ToSingle(p[p.Length - 2], culture), Convert.ToSingle(p[p.Length - 1], culture));
 						var entry = new CurveEntry(position);
 						curve.Add(entry);
 					}
-					else if (p.Length == 7 && p[0] == "bez")
+					else if ((p.Length == 6) || (p.Length == 7 && p[0] == "bez")) // Backward compatibility
 					{
-						var position = new Vector2(Convert.ToSingle(p[1], culture), Convert.ToSingle(p[2], culture));
-						var left = new Vector2(Convert.ToSingle(p[3], culture), Convert.ToSingle(p[4], culture));
-						var right = new Vector2(Convert.ToSingle(p[5], culture), Convert.ToSingle(p[6], culture));
+						var position = new Vector2(Convert.ToSingle(p[p.Length - 6], culture), Convert.ToSingle(p[p.Length - 5], culture));
+						var left = new Vector2(Convert.ToSingle(p[p.Length - 4], culture), Convert.ToSingle(p[p.Length - 3], culture));
+						var right = new Vector2(Convert.ToSingle(p[p.Length - 2], culture), Convert.ToSingle(p[p.Length - 1], culture));
 						var entry = new CurveEntry(position, left, right);
 						curve.Add(entry);
 					}
@@ -63,17 +65,16 @@ namespace MG.Framework.Converters
 				int count = curve.Count;
 				foreach (var entry in curve)
 				{
-					switch (entry.Type)
-					{
-						case CurveEntry.EntryType.Linear:
-							builder.Append("lin");
-							break;
-						case CurveEntry.EntryType.Bezier:
-							builder.Append("bez");
-							break;
-					}
-					
-					builder.Append(EntrySeparator);
+					//switch (entry.Type)
+					//{
+					//    case CurveEntry.EntryType.Linear:
+					//        builder.Append("lin");
+					//        break;
+					//    case CurveEntry.EntryType.Bezier:
+					//        builder.Append("bez");
+					//        break;
+					//}
+					//builder.Append(EntrySeparator);
 					builder.Append(entry.Value.X.ToString(culture));
 					builder.Append(EntrySeparator);
 					builder.Append(entry.Value.Y.ToString(culture));

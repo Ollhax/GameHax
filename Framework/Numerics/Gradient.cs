@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using MG.Framework.Converters;
 
@@ -7,7 +8,7 @@ namespace MG.Framework.Numerics
 	/// <summary>
 	/// An entry in the gradient.
 	/// </summary>
-	public class GradientEntry : IComparer<GradientEntry>
+	public class GradientEntry : IComparer<GradientEntry>, IEquatable<GradientEntry>
 	{
 		/// <summary>
 		/// The position value of this entry.
@@ -49,13 +50,23 @@ namespace MG.Framework.Numerics
 		{
 			return a.Position.CompareTo(b.Position);
 		}
+
+		/// <summary>
+		/// Test if two GradientEntries are equal.
+		/// </summary>
+		/// <param name="other">GradientEntry to test against.</param>
+		/// <returns>True if the two GradientEntries are equal.</returns>
+		public bool Equals(GradientEntry other)
+		{
+			return Position == other.Position && Color == other.Color;
+		}
 	}
 
 	/// <summary>
 	/// A representation of a gradient color curve.
 	/// </summary>
 	[TypeConverter(typeof(GradientConverter))]
-	public class Gradient : ICollection<GradientEntry>
+	public class Gradient : ICollection<GradientEntry>, IEquatable<Gradient>
 	{
 		private readonly List<GradientEntry> entries = new List<GradientEntry>();
 		
@@ -249,6 +260,36 @@ namespace MG.Framework.Numerics
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return entries.GetEnumerator();
+		}
+
+		/// <summary>
+		/// Test if this gradient equals another gradient.
+		/// </summary>
+		/// <param name="other">Gradient to test against.</param>
+		/// <returns>True if the two gradients are equal.</returns>
+		public bool Equals(Gradient other)
+		{
+			if (entries.Count != other.entries.Count) return false;
+			for (int i = 0; i < entries.Count; i++)
+			{
+				if (!entries[i].Equals(other.entries[i])) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Test if this gradient equals another object.
+		/// </summary>
+		/// <param name="obj">Gradient to test against.</param>
+		/// <returns>True if the two gradients are equal.</returns>
+		public override bool Equals(object obj)
+		{
+			var other = obj as Gradient;
+			if (other != null)
+			{
+				return Equals(other);
+			}
+			return false;
 		}
 	}
 }

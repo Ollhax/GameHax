@@ -769,8 +769,6 @@
 					</Parameter>
 				</Parameters>
 			</Parameter>
-			
-			
 			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>
