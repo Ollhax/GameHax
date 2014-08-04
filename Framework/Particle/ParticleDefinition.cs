@@ -118,6 +118,8 @@ namespace MG.Framework.Particle
 		public ParticleCollection Children = new ParticleCollection();
 		public ParticleDefinition Parent;
 
+		public bool IsGroup { get { return Declaration == "Group"; } }
+
 		private Dictionary<string, RandomFloat> cachedFloats = new Dictionary<string, RandomFloat>();
 		private Dictionary<string, RandomInt> cachedInts = new Dictionary<string, RandomInt>();
 		

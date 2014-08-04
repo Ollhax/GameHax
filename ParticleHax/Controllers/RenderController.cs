@@ -102,6 +102,7 @@ namespace MG.ParticleHax.Controllers
 				if (model.ParticleEffect != null)
 				{
 					model.ParticleEffectPool.Destroy(model.ParticleEffect);
+					model.ParticleEffect = null;
 				}
 
 				if (!Disabled(definition))
@@ -127,7 +128,18 @@ namespace MG.ParticleHax.Controllers
 		
 		private bool Disabled(ParticleDefinition definition)
 		{
-			return false;// definition.Declaration == "Group";// || definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
+			return IsOnlyGroups(definition);// definition.Declaration == "Group";// || definition.Parameters["EmitterLife"].Value.Get<float>() <= 0;
+		}
+
+		private bool IsOnlyGroups(ParticleDefinition definition)
+		{
+			if (!definition.IsGroup) return false;
+			foreach (var child in definition.Children)
+			{
+				if (!IsOnlyGroups(child)) return false;
+			}
+
+			return true;
 		}
 
 		private Color GetBackgroundColor()
