@@ -73,9 +73,9 @@ namespace MG.ParticleHax.Controllers
 			}
 		}
 
-		public int CreateParticleSystem(string declaration, bool undoable)
+		public int CreateParticleSystem(string declaration, int parentId, bool undoable)
 		{
-			var action = new AddAction(controller, model, declaration, undoable);
+			var action = new AddAction(controller, model, declaration, parentId, undoable);
 			model.UndoHandler.ExecuteAction(action);
 			return action.CurrentDefinitionId;
 		}
@@ -93,7 +93,7 @@ namespace MG.ParticleHax.Controllers
 			if (model.DeclarationTable.DeclarationsList.Count > 0)
 			{
 				var decl = model.DeclarationTable.DeclarationsList[0];
-				var id = CreateParticleSystem(decl.Name, false);
+				var id = CreateParticleSystem(decl.Name, 0, false);
 
 				controller.SelectDefinition = id;
 				//model.DefinitionTable.Definitions.GetById(id).Parameters["Texture"] = new ParticleDefinition.Parameter("Texture", new Any(new FilePath("Resources/texture.png")));
@@ -221,7 +221,7 @@ namespace MG.ParticleHax.Controllers
 				foreach (var decl in declarations)
 				{
 					var d = decl;
-					addEntry.SubEntries.Add(new TreeView.ContextMenu.Entry(decl.Name, () => OnContextMenuAdd(d.Name)));
+					addEntry.SubEntries.Add(new TreeView.ContextMenu.Entry(decl.Name, () => OnContextMenuAdd(d.Name, contextMenu.ItemId)));
 				}
 
 				contextMenu.Entries.Add(addEntry);
@@ -233,9 +233,9 @@ namespace MG.ParticleHax.Controllers
 			}
 		}
 
-		private void OnContextMenuAdd(string declaration)
+		private void OnContextMenuAdd(string declaration, int parentId)
 		{
-			CreateParticleSystem(declaration, true);
+			CreateParticleSystem(declaration, parentId, true);
 		}
 
 		private void OnContextMenuRemove(int id)

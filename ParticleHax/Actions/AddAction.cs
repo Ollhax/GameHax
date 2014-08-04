@@ -12,14 +12,16 @@ namespace MG.ParticleHax.Actions
 		private MainController controller;
 		private Model model;
 		private string declarationName;
+		private int parentId;
 		private bool undoable;
 
 		private ParticleDefinition addedDefinition;
 
-		public AddAction(MainController controller, Model model, string declaration, bool undoable)
+		public AddAction(MainController controller, Model model, string declaration, int parentId, bool undoable)
 		{
 			this.controller = controller;
 			this.declarationName = declaration;
+			this.parentId = parentId;
 			this.model = model;
 			this.undoable = undoable;
 		}
@@ -33,7 +35,15 @@ namespace MG.ParticleHax.Actions
 
 			if (addedDefinition == null) return false;
 
-			model.DefinitionTable.Definitions.Add(addedDefinition);
+			ParticleCollection collection = model.DefinitionTable.Definitions;
+			var parent = model.DefinitionTable.Definitions.GetById(parentId);
+			if (parent != null)
+			{
+				collection = parent.Children;
+				addedDefinition.Parent = parent;
+			}
+
+			collection.Add(addedDefinition);
 			
 			CurrentDefinitionId = addedDefinition.Id;
 			model.Modified = true;
