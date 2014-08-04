@@ -113,7 +113,7 @@ namespace MG.ParticleHax.Controllers
 
 					//Log.Info("Creating particle system from definition: " + definition.Name);
 					model.ParticleEffect = model.ParticleEffectPool.Create(definition);
-					model.ParticleEffect.Gravity = new Vector2(0, 100);
+					model.ParticleEffect.Gravity = new Vector2(0, 1);
 					
 					UpdateParticleSystemPosition();
 				}

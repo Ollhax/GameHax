@@ -31,7 +31,7 @@ namespace MG.Framework.Particle
 					particleEffect.ParamParticleAccelerationX.Get(emitterLife, lifeFraction),
 					particleEffect.ParamParticleAccelerationY.Get(emitterLife, lifeFraction));
 
-				accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction);
+				accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
 
 				var oldVel = particleEffect.ParticleVelocity[i];
 				var vel = oldVel + accel * time.ElapsedSeconds;
