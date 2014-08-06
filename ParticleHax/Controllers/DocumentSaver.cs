@@ -42,20 +42,48 @@ namespace MG.ParticleHax.Controllers
 			}
 		}
 
-		//public string Serialize()
-		//{
-		//    using (var stringWriter = new StringWriter())
-		//    using (var xmlTextWriter = XmlWriter.Create(stringWriter, XmlHelper.DefaultWriterSettings))
-		//    {
-		//        var document = new XmlDocument();
+		public static string Serialize(Model model, ParticleDefinition definition)
+		{
+			using (var stringWriter = new StringWriter())
+			using (var xmlTextWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { IndentChars = "\t", Indent = true, OmitXmlDeclaration =  true }))
+			{
+				var document = new XmlDocument();
 
-		//        Save(document);
-		//        document.Save(xmlTextWriter);
-		//        xmlTextWriter.Flush();
+				SaveDefinition(model, document, definition);
+				document.Save(xmlTextWriter);
+				xmlTextWriter.Flush();
 
-		//        return stringWriter.ToString();
-		//    }
-		//}
+				return stringWriter.ToString();
+			}
+		}
+		
+		public static void ToRelativePath(string directory, ParticleCollection collection)
+		{
+			foreach (var d in collection)
+			{
+				ToRelativePath(directory, d.Parameters);
+
+				foreach (var c in d.Children)
+				{
+					ToRelativePath(directory, c.Parameters);
+				}
+			}
+		}
+
+		public static void ToRelativePath(string directory, Dictionary<string, ParticleDefinition.Parameter> parameters)
+		{
+			foreach (var param in parameters)
+			{
+				var v = param.Value.Value;
+
+				if (v.IsFilePath()) // Save relative paths
+				{
+					v.Set((FilePath)v.Get<FilePath>().ToRelative(directory).ToString().Replace('\\', '/')); // Don't want constant changes depending on platform
+				}
+
+				ToRelativePath(directory, param.Value.Parameters);
+			}
+		}
 
 		private static void SaveDefinition(Model model, XmlNode node, ParticleDefinition definition)
 		{
@@ -82,7 +110,7 @@ namespace MG.ParticleHax.Controllers
 				{
 					if (HasChange(parameter.Value, declaration.Parameters))
 					{
-						SaveParameter(model, parametersNode, parameter.Value, declaration.Parameters);
+						SaveParameter(parametersNode, parameter.Value, declaration.Parameters);
 					}
 				}
 			}
@@ -123,7 +151,7 @@ namespace MG.ParticleHax.Controllers
 			return false;
 		}
 		
-		private static void SaveParameter(Model model, XmlNode node, ParticleDefinition.Parameter parameter, Dictionary<string, ParticleDeclaration.Parameter> defaults)
+		private static void SaveParameter(XmlNode node, ParticleDefinition.Parameter parameter, Dictionary<string, ParticleDeclaration.Parameter> defaults)
 		{
 			ParticleDeclaration.Parameter defaultChild;
 			if (!defaults.TryGetValue(parameter.Name, out defaultChild))
@@ -155,7 +183,7 @@ namespace MG.ParticleHax.Controllers
 							parameterNode.AppendChild(parametersNode);
 						}
 
-						SaveParameter(model, parametersNode, childParam.Value, defaultChild.Parameters);
+						SaveParameter(parametersNode, childParam.Value, defaultChild.Parameters);
 					}
 				}
 			}

@@ -64,6 +64,9 @@ namespace MG.ParticleEditorWindow
 		public event System.Action FileSaveAs = delegate { };
 		public event System.Action EditUndo = delegate { };
 		public event System.Action EditRedo = delegate { };
+		public event System.Action EditCut = delegate { };
+		public event System.Action EditCopy = delegate { };
+		public event System.Action EditPaste = delegate { };
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
@@ -73,12 +76,14 @@ namespace MG.ParticleEditorWindow
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
 		public readonly ParameterView ParameterView;
+		public readonly Clipboard Clipboard = new Clipboard();
 		
 		private bool sensitive = true;
 		
 		public string Title { get { return window.Title; } set { window.Title = value; } }
 		public bool UndoEnabled { get { return editUndo.Sensitive; } set { editUndo.Sensitive = value; } }
 		public bool RedoEnabled { get { return editRedo.Sensitive; } set { editRedo.Sensitive = value; } }
+		public bool CutCopyEnabled { get { return editCut.Sensitive; } set { editCut.Sensitive = editCopy.Sensitive = value; } }
 		
 		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
 
@@ -313,6 +318,13 @@ namespace MG.ParticleEditorWindow
 				fileSave.Sensitive = value;
 				fileSaveAs.Sensitive = value;
 				fileClose.Sensitive = value;
+				editPaste.Sensitive = value;
+
+				if (!sensitive)
+				{
+					editCut.Sensitive = value;
+					editCopy.Sensitive = value;
+				}
 			}
 		}
 		
@@ -344,6 +356,9 @@ namespace MG.ParticleEditorWindow
 		private MenuItem editMenuItem;
 		private ImageMenuItem editUndo;
 		private ImageMenuItem editRedo;
+		private ImageMenuItem editCut;
+		private ImageMenuItem editCopy;
+		private ImageMenuItem editPaste;
 
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
@@ -406,6 +421,20 @@ namespace MG.ParticleEditorWindow
 			editRedo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.y, ModifierType.ControlMask, AccelFlags.Visible));
 			editRedo.Activated += (sender, args) => EditRedo.Invoke();
 			editMenu.Append(editRedo);
+
+			editMenu.Append(new SeparatorMenuItem());
+			
+			editCut = new ImageMenuItem(Stock.Cut, accelerators);
+			editCut.Activated += (sender, args) => EditCut.Invoke();
+			editMenu.Append(editCut);
+
+			editCopy = new ImageMenuItem(Stock.Copy, accelerators);
+			editCopy.Activated += (sender, args) => EditCopy.Invoke();
+			editMenu.Append(editCopy);
+
+			editPaste = new ImageMenuItem(Stock.Paste, accelerators);
+			editPaste.Activated += (sender, args) => EditPaste.Invoke();
+			editMenu.Append(editPaste);
 			
 			// View menu
 			viewMenuItem = new MenuItem("_View");

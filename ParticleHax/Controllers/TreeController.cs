@@ -17,6 +17,9 @@ namespace MG.ParticleHax.Controllers
 		private TreeView treeView;
 
 		public event Action<ParticleDefinition> ItemSelected = delegate { };
+		public event Action<int> ItemCut = delegate { };
+		public event Action<int> ItemCopy = delegate { };
+		public event Action<int> ItemPaste = delegate { };
 		
 		public TreeController(MainController controller, Model model, TreeView treeView)
 		{
@@ -77,6 +80,16 @@ namespace MG.ParticleHax.Controllers
 		{
 			var action = new AddAction(controller, model, declaration, parentId, undoable);
 			model.UndoHandler.ExecuteAction(action);
+
+			// Default values
+			var def = model.DefinitionTable.Definitions.GetById(action.CurrentDefinitionId);
+			if (def != null)
+			{
+				var paramTexture = new ParticleDefinition.Parameter("Texture", new Any(new FilePath("Resources/texture.png")));
+				DocumentLoader.ToAbsolutePath(Environment.CurrentDirectory, paramTexture);
+				def.Parameters["Texture"] = paramTexture;
+			}
+			
 			return action.CurrentDefinitionId;
 		}
 
@@ -96,7 +109,6 @@ namespace MG.ParticleHax.Controllers
 				var id = CreateParticleSystem(decl.Name, 0, false);
 
 				controller.SelectDefinition = id;
-				//model.DefinitionTable.Definitions.GetById(id).Parameters["Texture"] = new ParticleDefinition.Parameter("Texture", new Any(new FilePath("Resources/texture.png")));
 			}
 
 			model.Modified = false;
@@ -230,7 +242,16 @@ namespace MG.ParticleHax.Controllers
 			if (def != null)
 			{
 				contextMenu.Entries.Add(new TreeView.ContextMenu.Entry("Remove \"" + def.Name + "\"", () => OnContextMenuRemove(def.Id)));
+
+				var cutEntry = new TreeView.ContextMenu.Entry("Cut", () => ItemCut(def.Id));
+				contextMenu.Entries.Add(cutEntry);
+
+				var copyEntry = new TreeView.ContextMenu.Entry("Copy", () => ItemCopy(def.Id));
+				contextMenu.Entries.Add(copyEntry);
 			}
+
+			var pasteEntry = new TreeView.ContextMenu.Entry("Paste", () => ItemPaste(def != null ? def.Id : 0));
+			contextMenu.Entries.Add(pasteEntry);
 		}
 
 		private void OnContextMenuAdd(string declaration, int parentId)

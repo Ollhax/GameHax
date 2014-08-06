@@ -15,7 +15,7 @@
 				<Description>The texture used for this particle effect.</Description>
 				<Category>Texture</Category>
 				<Type>FilePath</Type>
-				<DefaultValue>Resources/texture.png</DefaultValue>
+				<DefaultValue></DefaultValue>
 				<FilePathFilter>Image Files (*.png)|*.png|All files (*.*)|*.*</FilePathFilter>								
 			</Parameter>
 			<Parameter>

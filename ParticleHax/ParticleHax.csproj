@@ -57,7 +57,9 @@
     <Compile Include="Actions\RemoveAction.cs" />
     <Compile Include="Actions\RenameAction.cs" />
     <Compile Include="Actions\MoveAction.cs" />
+    <Compile Include="Controllers\ClipboardController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
+    <Compile Include="Controllers\DocumentLoader.cs" />
     <Compile Include="Controllers\DocumentSaver.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ParameterController.cs" />

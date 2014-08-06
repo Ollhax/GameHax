@@ -270,20 +270,20 @@ namespace MG.ParticleEditorWindow
 		[GLib.ConnectBefore]
 		private void OnButtonPress(object o, ButtonPressEventArgs args)
 		{
+			TreePath selectedItemPath;
+			treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath);
+
+			if (selectedItemPath == null)
+			{
+				treeView.Selection.UnselectAll();
+			}
+			else
+			{
+				treeView.Selection.SelectPath(selectedItemPath);
+			}
+
 			if (args.Event.Button == 3) // Right click
 			{
-				TreePath selectedItemPath;
-				treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath);
-
-				if (selectedItemPath == null)
-				{
-					treeView.Selection.UnselectAll();
-				}
-				else
-				{
-					treeView.Selection.SelectPath(selectedItemPath);
-				}
-				
 				var menu = new ContextMenu();
 				menu.ItemId = GetSelectedItemId();
 				menu.Entries = new List<ContextMenu.Entry>();

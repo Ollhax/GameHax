@@ -23,6 +23,7 @@ namespace MG.ParticleHax.Controllers
 		private TreeController treeController;
 		private ParameterController parameterController;
 		private SettingsController settingsController;
+		private ClipboardController clipboardController;
 		private bool updateBlocked;
 
 		private Stopwatch startStopwatch = new Stopwatch();
@@ -113,6 +114,7 @@ namespace MG.ParticleHax.Controllers
 			treeController = new TreeController(this, model, window.TreeView);
 			parameterController = new ParameterController(this, model, window.ParameterView);
 			settingsController = new SettingsController(window);
+			clipboardController = new ClipboardController(this, model, window.Clipboard);
 			
 			window.FileNew += documentController.New;
 			window.FileOpen += documentController.Open;
@@ -121,9 +123,16 @@ namespace MG.ParticleHax.Controllers
 			window.FileSaveAs += () => documentController.SaveAs();
 			window.EditUndo += documentController.Undo;
 			window.EditRedo += documentController.Redo;
+			window.EditCut += () => clipboardController.Cut(model.CurrentDefinitionId);
+			window.EditCopy += () => clipboardController.Copy(model.CurrentDefinitionId);
+			window.EditPaste += () => clipboardController.Paste(model.CurrentDefinitionId);
 			treeController.ItemSelected += renderController.OnItemSelected;
 			treeController.ItemSelected += parameterController.OnChangeDefinition;
-			
+			treeController.ItemSelected += OnItemSelected;
+			treeController.ItemCut += id => clipboardController.Cut(id);
+			treeController.ItemCopy += id => clipboardController.Copy(id);
+			treeController.ItemPaste += id => clipboardController.Paste(id);
+
 			documentController.NewDocument += treeController.OnNewDocument;
 			documentController.OpenDocument += treeController.OnOpenDocument;
 			documentController.BeforeSaveDocument += parameterController.CancelEdit;
@@ -135,7 +144,7 @@ namespace MG.ParticleHax.Controllers
 
 			Log.Info("Done creating MainController.");
 		}
-
+		
 		private void Update()
 		{
 			if (updateBlocked) return;
@@ -217,6 +226,11 @@ namespace MG.ParticleHax.Controllers
 			window.UndoEnabled = model.UndoHandler.UndoSteps > 0;
 			window.RedoEnabled = model.UndoHandler.RedoSteps > 0;
 			UpdateTitleInternal();
+		}
+
+		private void OnItemSelected(ParticleDefinition particleDefinition)
+		{
+			window.CutCopyEnabled = particleDefinition != null;
 		}
 
 		private void UpdateTitleInternal()
