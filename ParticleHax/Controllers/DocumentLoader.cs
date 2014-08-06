@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -31,12 +32,20 @@ namespace MG.ParticleHax.Controllers
 			using (var stringReader = new StringReader(serializedDefinition))
 			using (var xmlTextReader = XmlReader.Create(stringReader, XmlHelper.DefaultReaderSettings))
 			{
-				var document = new XmlDocument();
-				document.Load(xmlTextReader);
-				var particleDefinition = new ParticleDefinition(document.FirstChild);
+				ParticleDefinition particleDefinition;
+				
+				try
+				{
+					var document = new XmlDocument();
+					document.Load(xmlTextReader);
+					particleDefinition = new ParticleDefinition(document.FirstChild);
+				}
+				catch (Exception)
+				{
+					return null;
+				}
 				
 				AddMissingParametersRecursive(model, particleDefinition);
-
 				return particleDefinition;
 			}
 		}
