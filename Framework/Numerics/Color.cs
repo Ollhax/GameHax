@@ -479,20 +479,15 @@ namespace MG.Framework.Numerics
 		{
 			Color color;
 
-			r = r * a;
-			g = g * a;
-			b = b * a;
+			r = r < 0 ? 0 : (r > 255 ? 255 : r);
+			g = g < 0 ? 0 : (g > 255 ? 255 : g);
+			b = b < 0 ? 0 : (b > 255 ? 255 : b);
 
-			if (((((r | g) | b) | a) & -256) != 0)
-			{
-				r = r < 0 ? 0 : (r > 255 ? 255 : r);
-				g = g < 0 ? 0 : (g > 255 ? 255 : g);
-				b = b < 0 ? 0 : (b > 255 ? 255 : b);
-				a = a < 0 ? 0 : (a > 255 ? 255 : a);
-			}
-
+			r = (r * a) / 255;
+			g = (g * a) / 255;
+			b = (b * a) / 255;
+			
 			color.packedValue = (uint)(((r | g << 8) | b << 16) | a << 24);
-
 			return color;
 		}
 

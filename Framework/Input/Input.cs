@@ -81,22 +81,43 @@ namespace MG.Framework.Input
 		{
 			return GetAction(action, ActionState.StateType.Released, false);
 		}
-
-		public double GetRange(string range)
+		
+		public bool GetRange(string range, out float value)
 		{
-			Range r;
-			if (ActiveRanges.TryGetValue(range, out r))
+			double d;
+			bool r = GetRange(range, true, out d);
+			value = (float)d;
+			return r;
+		}
+		
+		public bool PeekRange(string range, out float value)
+		{
+			double d;
+			bool r = GetRange(range, false, out d);
+			value = (float)d;
+			return r;
+		}
+
+		public float GetRange(string range, float defaultValue)
+		{
+			float d;
+			if (GetRange(range, out d))
 			{
-				return r.Value;
+				return d;
 			}
-			return 0;
+			return defaultValue;
 		}
 
-		public float GetRangeF(string range)
+		public float PeekRange(string range, float defaultValue)
 		{
-			return (float)GetRange(range);
+			float d;
+			if (PeekRange(range, out d))
+			{
+				return d;
+			}
+			return defaultValue;
 		}
-
+		
 		public void Reset()
 		{
 			foreach (var action in activeActions)
@@ -122,6 +143,23 @@ namespace MG.Framework.Input
 			}
 
 			RawCharacters.Clear();
+		}
+
+		private bool GetRange(string range, bool deactivate, out double value)
+		{
+			value = 0;
+
+			Range r;
+			if (ActiveRanges.TryGetValue(range, out r))
+			{
+				value = r.Value;
+				if (deactivate)
+				{
+					ActiveRanges.Remove(range);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		private bool GetAction(string action, ActionState.StateType flags, bool deactivate)
