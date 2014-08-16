@@ -62,11 +62,7 @@ namespace MG.ParticleHax.Controllers
 			foreach (var d in collection)
 			{
 				ToRelativePath(directory, d.Parameters);
-
-				foreach (var c in d.Children)
-				{
-					ToRelativePath(directory, c.Parameters);
-				}
+				ToRelativePath(directory, d.Children);
 			}
 		}
 

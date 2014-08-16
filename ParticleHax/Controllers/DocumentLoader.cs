@@ -12,10 +12,6 @@ namespace MG.ParticleHax.Controllers
 {
 	static class DocumentLoader
 	{
-		//1. måste spara relativa sökvägar när man kopierar file paths
-		//2. kör AddMissingParametersRecursive på deserialiserad data
-		//3. deserialize borde ske här (serialize if docummentsaver)
-		
 		public static void LoadDefinitionTable(Model model, FilePath file, XmlNode node)
 		{
 			model.DefinitionTable.Load(node);
@@ -55,11 +51,7 @@ namespace MG.ParticleHax.Controllers
 			foreach (var d in collection)
 			{
 				ToAbsolutePath(directory, d.Parameters);
-
-				foreach (var c in d.Children)
-				{
-					ToAbsolutePath(directory, c.Parameters);
-				}
+				ToAbsolutePath(directory, d.Children);
 			}
 		}
 
