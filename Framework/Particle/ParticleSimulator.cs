@@ -23,7 +23,7 @@ namespace MG.Framework.Particle
 				UpdateEmitter(particleEffect, time);
 			}
 
-			for (int i = 0; i < particleEffect.ParticleData.ActiveParticles; )
+			for (int i = 0; i < particleEffect.ParticleData.ActiveParticles; i++)
 			{
 				var emitterLife = particleEffect.LifeFractional;
 				var lifeFraction = particleEffect.ParticleAge[i] / particleEffect.ParticleLife[i];
@@ -82,18 +82,15 @@ namespace MG.Framework.Particle
 
 				if (particleEffect.ParticleAge[i] >= particleEffect.ParticleLife[i])
 				{
-					if (particleEffect.ParamParticleInfinite)
+					if (!particleEffect.ParamParticleInfinite)
 					{
-						particleEffect.ParticleAge[i] -= particleEffect.ParticleLife[i];
+						Destroy(particleEffect, i);
+						i--;
 					}
 					else
 					{
-						Destroy(particleEffect, i);
+						particleEffect.ParticleAge[i] -= particleEffect.ParticleLife[i];
 					}
-				}
-				else
-				{
-					i++;
 				}
 			}
 
