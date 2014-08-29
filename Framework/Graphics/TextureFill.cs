@@ -126,8 +126,12 @@ void main()
 			
 			GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertices.Length * Vertex2Tex2Color.GetSize()), vertices, BufferUsageHint.DynamicDraw);
 
+			if (currentEffect.ColorAttribute.HasValue)
+			{
+				GL.VertexAttribPointer(currentEffect.ColorAttribute.Value, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Tex2Color.GetSize(), sizeof(float) * 2);
+			}
+
 			GL.VertexAttribPointer(currentEffect.VertexAttribute, 2, VertexAttribPointerType.Float, false, Vertex2Tex2Color.GetSize(), 0);
-			GL.VertexAttribPointer(currentEffect.ColorAttribute, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Tex2Color.GetSize(), sizeof(float) * 2);
 			GL.VertexAttribPointer(currentEffect.TextureCoordinatesAttribute, 2, VertexAttribPointerType.Float, false, Vertex2Tex2Color.GetSize(), sizeof(float) * 2 + sizeof(byte) * 4);
 			GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedShort, 0);
 

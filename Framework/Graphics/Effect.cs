@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+
+using MG.Framework.Utility;
 
 using OpenTK.Graphics.OpenGL;
 
@@ -123,6 +126,20 @@ namespace MG.Framework.Graphics
 			{
 				GL.DeleteShader(vertexShaderObject);
 			}
+		}
+
+		protected static StreamReader Load(FilePath file)
+		{
+			try
+			{
+				return File.OpenText(file);
+			}
+			catch (Exception e)
+			{
+				Log.Error("Could not load file: " + file + ", error: " + e.Message);
+			}
+
+			return null;
 		}
 	}
 }

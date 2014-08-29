@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using MG.Framework.Numerics;
 using MG.Framework.Utility;
@@ -37,7 +38,8 @@ namespace MG.Framework.Input
 		private int currentGamepadIndex = -1;
 		private GamePadState lastGamepadState;
 		private bool usingGamepad = false;
-		
+		private float lastWheel = 0;
+
 		public delegate void InputCallback(Input input);
 		public event InputCallback InputReceived;
 
@@ -174,10 +176,14 @@ namespace MG.Framework.Input
 				HandleKeyboard();
 				HandleGamepads();
 			}
-			
+
+			var wheel = window.Mouse.WheelPrecise;
+
 			SetRange("MouseX", window.Mouse.X);
 			SetRange("MouseY", window.Mouse.Y);
-			SetRange("MouseWheel", window.Mouse.WheelPrecise);
+			SetRange("MouseWheel", wheel - lastWheel);
+			
+			lastWheel = wheel;
 			input.Update(time);
 
 			OnInputReceived();

@@ -123,7 +123,11 @@ void main()
 
 			GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObjects[0]);
 			GL.VertexAttribPointer(currentEffect.VertexAttribute, 2, VertexAttribPointerType.Float, false, Vertex2Color.GetSize(), 0);
-			GL.VertexAttribPointer(currentEffect.ColorAttribute, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Color.GetSize(), 2 * sizeof(float));
+
+			if (currentEffect.ColorAttribute.HasValue)
+			{
+				GL.VertexAttribPointer(currentEffect.ColorAttribute.Value, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Color.GetSize(), 2 * sizeof(float));
+			}
 
 			for (int entryIndex = 0; entryIndex < entries.Count; )
 			{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -40,6 +41,12 @@ namespace MG.Framework.Assets
 		public FilePath GetFullPath(FilePath assetPath)
 		{
 			return Path.Combine(RootDirectory, assetPath);
+		}
+
+		public FilePath GetAssetPath(FilePath fullPath)
+		{
+			Debug.Assert(fullPath.IsAbsolute);
+			return fullPath.ToRelative(RootDirectory);
 		}
 		
 		public void Update()

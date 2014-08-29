@@ -199,7 +199,7 @@ namespace MG.Framework.Numerics
 		}
 
 		/// <summary>
-		/// Convert radians to degrees.
+		/// Convert degrees to radians.
 		/// </summary>
 		/// <param name="degrees">Degrees.</param>
 		/// <returns>Angle in radians.</returns>
@@ -209,7 +209,7 @@ namespace MG.Framework.Numerics
 		}
 
 		/// <summary>
-		/// Convert degrees to radians.
+		/// Convert radians to degrees.
 		/// </summary>
 		/// <param name="radians">Radians.</param>
 		/// <returns>Angle in degrees.</returns>

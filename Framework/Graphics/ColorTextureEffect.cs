@@ -1,4 +1,9 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using System;
+using System.IO;
+
+using MG.Framework.Utility;
+
+using OpenTK.Graphics.OpenGL;
 
 namespace MG.Framework.Graphics
 {
@@ -9,6 +14,25 @@ namespace MG.Framework.Graphics
 
 		public int TextureCoordinatesAttribute { get { return textureCoordinatesAttribute; } }
 		
+		public static ColorTextureEffect Load(FilePath vertexShaderFile, FilePath fragmentShaderFile)
+		{
+			var vs = Load(vertexShaderFile);
+			var fs = Load(fragmentShaderFile);
+
+			if (vs == null || fs == null) return null;
+
+			try
+			{
+				return new ColorTextureEffect(vs.ReadToEnd(), fs.ReadToEnd());
+			}
+			catch (Exception e)
+			{
+				Log.Error("Error on loading shader: " + e.Message);
+			}
+
+			return null;
+		}
+
 		public ColorTextureEffect(string vertexShader, string fragmentShader) : base(vertexShader, fragmentShader)
 		{
 			textureSamplerUniform = Uniforms["u_texture"];

@@ -9,12 +9,12 @@ namespace MG.Framework.Graphics
 		private int projectionUniform;
 		private int viewUniform;
 		private int vertexAttribute;
-		private int colorAttribute;
+		private int? colorAttribute;
 		
 		public Matrix Projection;
 		public Matrix View;
 		public int VertexAttribute { get { return vertexAttribute; } }
-		public int ColorAttribute { get { return colorAttribute; } }
+		public int? ColorAttribute { get { return colorAttribute; } }
 
 		private float[] matrix = new float[16];
 
@@ -23,7 +23,12 @@ namespace MG.Framework.Graphics
 			projectionUniform = Uniforms["u_PMatrix"];
 			viewUniform = Uniforms["u_MVMatrix"];
 			vertexAttribute = Attributes["a_position"];
-			colorAttribute = Attributes["a_color"];
+			
+			int colorAttributeTemp;
+			if (Attributes.TryGetValue("a_color", out colorAttributeTemp))
+			{
+				colorAttribute = colorAttributeTemp;
+			}
 		}
 
 		public override void Enable()
@@ -38,7 +43,11 @@ namespace MG.Framework.Graphics
 
 			// Enable vertex arrays
 			GL.EnableVertexAttribArray(vertexAttribute);
-			GL.EnableVertexAttribArray(colorAttribute);
+
+			if (colorAttribute.HasValue)
+			{
+				GL.EnableVertexAttribArray(colorAttribute.Value);
+			}
 		}
 
 		public override void Disable()
@@ -46,7 +55,11 @@ namespace MG.Framework.Graphics
 			base.Disable();
 			
 			GL.DisableVertexAttribArray(vertexAttribute);
-			GL.DisableVertexAttribArray(colorAttribute);
+
+			if (colorAttribute.HasValue)
+			{
+				GL.DisableVertexAttribArray(colorAttribute.Value);
+			}
 		}
 	}
 }

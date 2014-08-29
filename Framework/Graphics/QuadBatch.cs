@@ -294,8 +294,12 @@ void main()
 					//GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (IntPtr)(entryCount * 6 * Vertex2Tex2Color.GetSize()), quads);
 					GL.BindBuffer(BufferTarget.ElementArrayBuffer, vertexBufferObjects[1]);
 
+					if (currentEffect.ColorAttribute.HasValue)
+					{
+						GL.VertexAttribPointer(currentEffect.ColorAttribute.Value, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Tex2Color.GetSize(), sizeof(float) * 2);
+					}
+
 					GL.VertexAttribPointer(currentEffect.VertexAttribute, 2, VertexAttribPointerType.Float, false, Vertex2Tex2Color.GetSize(), 0);
-					GL.VertexAttribPointer(currentEffect.ColorAttribute, 4, VertexAttribPointerType.UnsignedByte, true, Vertex2Tex2Color.GetSize(), sizeof(float) * 2);
 					GL.VertexAttribPointer(currentEffect.TextureCoordinatesAttribute, 2, VertexAttribPointerType.Float, false, Vertex2Tex2Color.GetSize(), sizeof(float) * 2 + sizeof(byte) * 4);
 					GL.DrawElements(BeginMode.Triangles, entryCount * 6, DrawElementsType.UnsignedShort, 0);
 
@@ -334,14 +338,15 @@ void main()
 			Begin(Matrix.Identity);
 		}
 
-		public void Begin(Matrix transform, BlendMode blendMode = BlendMode.BlendmodeAlpha, TextureSampling textureSampling = null)
+		public void Begin(Matrix transform, BlendMode blendMode = BlendMode.BlendmodeAlpha, TextureSampling textureSampling = null, ColorTextureEffect effect = null)
 		{
 			Debug.Assert(!hasBegun, "Called Begin() twice");
 			hasBegun = true;
-
+			
 			this.transform = transform;
 			this.blendMode = blendMode;
 			this.textureSampling = textureSampling ?? TextureSampling.LinearClamp;
+			this.currentEffect = effect ?? defaultEffect;
 		}
 
 		public void End()

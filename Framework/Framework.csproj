@@ -152,6 +152,7 @@
     <Compile Include="Particle\RandomFloat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Any.cs" />
+    <Compile Include="Utility\Variant.cs" />
     <Compile Include="Utility\DefinitionTable.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\FilePath.cs" />

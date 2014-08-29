@@ -1,6 +1,4 @@
-﻿using MG.Framework.Numerics;
-
-namespace MG.Framework.Graphics
+﻿namespace MG.Framework.Graphics
 {
 	public class RenderContext
 	{
