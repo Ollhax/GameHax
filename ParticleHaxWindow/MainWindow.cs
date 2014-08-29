@@ -62,6 +62,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action FileClose = delegate { };
 		public event System.Action FileSave = delegate { };
 		public event System.Action FileSaveAs = delegate { };
+		public event System.Action EditRestart = delegate { };
 		public event System.Action EditUndo = delegate { };
 		public event System.Action EditRedo = delegate { };
 		public event System.Action EditCut = delegate { };
@@ -319,6 +320,7 @@ namespace MG.ParticleEditorWindow
 				fileSaveAs.Sensitive = value;
 				fileClose.Sensitive = value;
 				editPaste.Sensitive = value;
+				editRestart.Sensitive = value;
 
 				if (!sensitive)
 				{
@@ -354,6 +356,7 @@ namespace MG.ParticleEditorWindow
 		private ImageMenuItem fileExit;
 
 		private MenuItem editMenuItem;
+		private ImageMenuItem editRestart;
 		private ImageMenuItem editUndo;
 		private ImageMenuItem editRedo;
 		private ImageMenuItem editCut;
@@ -411,6 +414,14 @@ namespace MG.ParticleEditorWindow
 			var editMenu = new Menu();
 			editMenuItem.Submenu = editMenu;
 			menuBar.Append(editMenuItem);
+
+			editRestart = new ImageMenuItem("Restart");
+			editRestart.Image = new Gtk.Image(Stock.Refresh, IconSize.Button);
+			editRestart.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.F5, ModifierType.None, AccelFlags.Visible));
+			editRestart.Activated += (sender, args) => EditRestart.Invoke();
+			editMenu.Append(editRestart);
+
+			editMenu.Append(new SeparatorMenuItem());
 
 			editUndo = new ImageMenuItem(Stock.Undo, accelerators);
 			editUndo.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.z, ModifierType.ControlMask, AccelFlags.Visible));

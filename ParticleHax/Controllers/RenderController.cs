@@ -125,6 +125,15 @@ namespace MG.ParticleHax.Controllers
 				//}
 			}
 		}
+
+		public void Restart()
+		{
+			if (model.ParticleEffect != null)
+			{
+				model.ParticleEffectPool.Destroy(model.ParticleEffect);
+				model.ParticleEffect = null;
+			}
+		}
 		
 		private bool Disabled(ParticleDefinition definition)
 		{

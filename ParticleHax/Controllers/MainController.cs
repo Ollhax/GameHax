@@ -121,6 +121,7 @@ namespace MG.ParticleHax.Controllers
 			window.FileClose += () => documentController.Close();
 			window.FileSave += () => documentController.Save();
 			window.FileSaveAs += () => documentController.SaveAs();
+			window.EditRestart += renderController.Restart;
 			window.EditUndo += documentController.Undo;
 			window.EditRedo += documentController.Redo;
 			window.EditCut += () => clipboardController.Cut(model.CurrentDefinitionId);
