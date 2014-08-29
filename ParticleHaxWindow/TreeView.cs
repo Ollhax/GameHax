@@ -67,6 +67,7 @@ namespace MG.ParticleEditorWindow
 			treeView.EnableSearch = true;
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
+			treeView.HeadersVisible = false;
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 			
