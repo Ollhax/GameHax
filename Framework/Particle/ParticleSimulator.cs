@@ -80,9 +80,16 @@ namespace MG.Framework.Particle
 
 				particleEffect.ParticleAge[i] += time.ElapsedSeconds;
 
-				if (!particleEffect.ParamParticleInfinite && particleEffect.ParticleAge[i] >= particleEffect.ParticleLife[i])
+				if (particleEffect.ParticleAge[i] >= particleEffect.ParticleLife[i])
 				{
-					Destroy(particleEffect, i);
+					if (particleEffect.ParamParticleInfinite)
+					{
+						particleEffect.ParticleAge[i] -= particleEffect.ParticleLife[i];
+					}
+					else
+					{
+						Destroy(particleEffect, i);
+					}
 				}
 				else
 				{

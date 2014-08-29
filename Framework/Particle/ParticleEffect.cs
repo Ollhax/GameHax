@@ -236,9 +236,9 @@ namespace MG.Framework.Particle
 				EmitterCountMax = ParamEmitterCount.Get(0, 0);
 				EmitterSpawnDelay = ParamEmitterSpawnDelay.Get(0, 0);
 
-				if (wasRelative != ParamParticleRelativeToParent)
+				if (wasRelative != ParamParticleRelativeToParent || ParamParticleInfinite)
 				{
-					ParticleData.ActiveParticles = 0;
+					Reset();
 				}
 
 				var texture = Definition.GetParameter("Texture").Value.Get<FilePath>();
@@ -262,15 +262,21 @@ namespace MG.Framework.Particle
 				}
 			}
 		}
-		
-		public void Clear()
+
+		public void Reset()
 		{
 			ParticleData.ActiveParticles = 0;
 			TimeSinceStart = 0;
-			EmitterSpawnDelay = 0;
 			EmitterAge = 0;
 			EmitterSpawnAccumulator = 0;
 			EmitterCount = 0;
+		}
+
+		public void Clear()
+		{
+			Reset();
+
+			EmitterSpawnDelay = 0;
 			EmitterCountMax = 0;
 
 			ClearChildren();
