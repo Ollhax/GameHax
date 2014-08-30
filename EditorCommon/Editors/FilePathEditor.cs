@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+
+using Gdk;
+
 using Gtk;
 
 using MG.Framework.Utility;
@@ -46,7 +49,10 @@ namespace MG.EditorCommon.Editors
 			var fc = new FileChooserDialog(title, null, action, "Cancel", ResponseType.Cancel, "Open", ResponseType.Accept);
 			//fc.SetCurrentFolder(currentValue.ParentDirectory);
 			fc.SetFilename(currentValue);
-
+			fc.PreviewWidget = previewImage;
+			fc.UpdatePreview += DialogOnUpdatePreview;
+			UpdatePreview(fc, currentValue);
+			
 			var filters = GtkTools.ParseFilterString(declarationParameter.FilePathFilter);
 
 			if (filters != null)
@@ -60,6 +66,29 @@ namespace MG.EditorCommon.Editors
 			}
 
 			fc.Destroy();
+		}
+
+		private Gtk.Image previewImage = new Gtk.Image();
+
+		private void DialogOnUpdatePreview(object sender, EventArgs eventArgs)
+		{
+			var dialog = sender as FileChooserDialog;
+			if (dialog == null) return;
+
+			UpdatePreview(dialog, dialog.PreviewFilename);
+		}
+
+		private void UpdatePreview(FileChooserDialog dialog, string file)
+		{
+			try
+			{
+				previewImage.Pixbuf = new Pixbuf(file, 128, 128);
+				dialog.PreviewWidgetActive = true;
+			}
+			catch (Exception)
+			{
+				dialog.PreviewWidgetActive = false;
+			}
 		}
 	}
 
