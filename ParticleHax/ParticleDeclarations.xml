@@ -459,6 +459,7 @@
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
+				<ValueDigits>2</ValueDigits>
 				<Parameters>
 					<Parameter>
 						<Name>GraphEmitter</Name>
