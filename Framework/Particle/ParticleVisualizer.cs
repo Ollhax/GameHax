@@ -14,8 +14,9 @@ namespace MG.Framework.Particle
 		{
 			DrawCurrent(particleEffect, renderContext, transform);
 
-			foreach (var system in particleEffect.SubSystems)
+			for (int i = particleEffect.SubSystems.Count - 1; i >= 0; i--)				
 			{
+				var system = particleEffect.SubSystems[i];
 				Draw(system, renderContext, transform);
 			}
 		}
