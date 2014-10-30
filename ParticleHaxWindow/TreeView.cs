@@ -13,6 +13,7 @@ namespace MG.ParticleEditorWindow
 		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
 		private Gtk.TreeView treeView;
+		private Gtk.TreeViewColumn effectColumn;
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
 		private int disableChangeCallbacks;
@@ -68,13 +69,15 @@ namespace MG.ParticleEditorWindow
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
 			treeView.HeadersVisible = false;
+			
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 			
-			var effectColumn = new Gtk.TreeViewColumn();
+			effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
 			
 			treeView.AppendColumn(effectColumn);
+			treeView.AppendColumn(new TreeViewColumn()); // Add a dummy column. This steals the horizontal space right of the label, allowing us to select entries properly.
 
 			storage = new Gtk.TreeStore(typeof(int), typeof(string));
 			storage.RowChanged += OnRowChanged;
@@ -94,7 +97,7 @@ namespace MG.ParticleEditorWindow
 			effectColumn.PackStart(cellRendererText, true);
 			effectColumn.AddAttribute(cellRendererText, "text", ColumnName);
 		}
-		
+
 		public void SelectItem(int id, bool scrollToSelected)
 		{
 			storage.Foreach(delegate(TreeModel model, TreePath path, TreeIter treeIter)
@@ -272,11 +275,15 @@ namespace MG.ParticleEditorWindow
 		private void OnButtonPress(object o, ButtonPressEventArgs args)
 		{
 			TreePath selectedItemPath;
-			treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath);
+			TreeViewColumn column;
+			treeView.GetPathAtPos((int)args.Event.X, (int)args.Event.Y, out selectedItemPath, out column);
 
-			if (selectedItemPath == null)
+			bool deselect = false;
+
+			if (selectedItemPath == null || column != effectColumn)
 			{
 				treeView.Selection.UnselectAll();
+				deselect = true;
 			}
 			else
 			{
@@ -285,6 +292,11 @@ namespace MG.ParticleEditorWindow
 
 			if (args.Event.Button == 3) // Right click
 			{
+				if (deselect)
+				{
+					args.RetVal = true; // Don't select the entry
+				}
+
 				var menu = new ContextMenu();
 				menu.ItemId = GetSelectedItemId();
 				menu.Entries = new List<ContextMenu.Entry>();
