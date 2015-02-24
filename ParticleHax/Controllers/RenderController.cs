@@ -50,6 +50,17 @@ namespace MG.ParticleHax.Controllers
 			loaded = true;
 		}
 
+		private int GetParticles(ParticleEffect effect)
+		{
+			int particles = effect.ParticleData.ActiveParticles;
+			foreach (var subEffect in effect.SubSystems)
+			{
+				particles += GetParticles(subEffect);
+			}
+
+			return particles;
+		}
+
 		public void Update(Time time)
 		{
 			var particleEffect = model.ParticleEffect;
@@ -64,7 +75,7 @@ namespace MG.ParticleHax.Controllers
 				}
 				else
 				{
-					controller.StatusText = "Particles: " + particleEffect.ParticleData.ActiveParticles.ToString();
+					controller.StatusText = "Particles: " + GetParticles(particleEffect).ToString();
 				}
 			}
 

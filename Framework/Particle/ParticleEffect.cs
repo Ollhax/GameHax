@@ -233,8 +233,7 @@ namespace MG.Framework.Particle
 				ParamEmitterLife = Definition.Parameters["EmitterLife"].Value.Get<float>();
 				ParamEmitterLoopMode = (LoopMode)Definition.Parameters["EmitterLoop"].Value.Get<int>();
 
-				EmitterCountMax = ParamEmitterCount.Get(0, 0);
-				EmitterSpawnDelay = ParamEmitterSpawnDelay.Get(0, 0);
+				RestartEmitter();
 
 				if (wasRelative != ParamParticleRelativeToParent || ParamParticleInfinite)
 				{
@@ -272,10 +271,18 @@ namespace MG.Framework.Particle
 			EmitterCount = 0;
 		}
 
+		public void RestartEmitter()
+		{
+			EmitterSpawnAccumulator = 0;
+			EmitterCount = 0;
+			EmitterCountMax = ParamEmitterCount.Get(0, 0);
+			EmitterSpawnDelay = ParamEmitterSpawnDelay.Get(0, 0);
+		}
+
 		public void Clear()
 		{
 			Reset();
-
+			
 			EmitterSpawnDelay = 0;
 			EmitterCountMax = 0;
 

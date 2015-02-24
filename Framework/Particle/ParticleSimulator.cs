@@ -116,6 +116,7 @@ namespace MG.Framework.Particle
 			if (particleEffect.EmitterAge > particleEffect.ParamEmitterLife && particleEffect.ParamEmitterLoopMode == ParticleEffect.LoopMode.Loop)
 			{
 				particleEffect.EmitterAge %= particleEffect.ParamEmitterLife;
+				particleEffect.RestartEmitter();
 			}
 
 			if (particleEffect.EmitterAlive)
