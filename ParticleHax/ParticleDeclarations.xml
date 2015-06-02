@@ -11,6 +11,19 @@
 				<DefaultValue></DefaultValue>
 			</Parameter>
 			<Parameter>
+				<Name>QualityLevel</Name>
+				<PrettyName>Quality Level</PrettyName>
+				<Description>The minimum quality level where this effect is displayed. Set to higher values to make the effect (and its children) appear only with quality settings tuned up.</Description>
+				<Category>General</Category>
+				<Type>Int32</Type>
+				<DefaultValue>0</DefaultValue>
+				<ValueList>
+					<Value Name="Low" Value="0"/>
+					<Value Name="Medium" Value="1"/>
+					<Value Name="High" Value="2"/>
+				</ValueList>
+			</Parameter>
+			<Parameter>
 				<Name>Texture</Name>
 				<Description>The texture used for this particle effect.</Description>
 				<Category>Texture</Category>

@@ -68,6 +68,7 @@ namespace MG.Framework.Particle
 		public readonly List<float> ParticleAge;
 
 		public Texture2D ParticleTexture;
+		public int ParamQualityLevel;
 		public Vector2 ParamTextureAnchor;
 		public Vector2I ParamTextureCells;
 		public float ParamTextureFrameTime;
@@ -221,6 +222,7 @@ namespace MG.Framework.Particle
 			
 			if (!IsGroup)
 			{
+				ParamQualityLevel = Definition.Parameters["QualityLevel"].Value.Get<int>();
 				ParamTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
 				ParamTextureCells = new Vector2I(Definition.GetParameter("TextureCellsX").Value.Get<int>(), Definition.GetParameter("TextureCellsY").Value.Get<int>());
 				ParamTextureFrameTime = Definition.GetParameter("TextureFrameTime").Value.Get<float>();

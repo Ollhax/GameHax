@@ -73,6 +73,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action ToggleShowOrigin = delegate { };
 		public event System.Action BackgroundColorChanged = delegate { };
 		public event System.Action ViewModeChanged = delegate { };
+		public event System.Action QualityLevelChanged = delegate { };
 		
 		public readonly RenderView RenderView;
 		public readonly TreeView TreeView;
@@ -103,6 +104,24 @@ namespace MG.ParticleEditorWindow
 				if (value == 0) viewModeShowSelected.Active = true;
 				else if (value == 1) viewModeShowSelectedChildren.Active = true;
 				else viewModeShowFull.Active = true;
+			}
+		}
+
+		public int QualityLevel
+		{
+			get
+			{
+				if (viewQualityLevelLow.Active) return 0;
+				if (viewQualityLevelMedium.Active) return 1;
+				if (viewQualityLevelHigh.Active) return 2;
+				return 0;
+			}
+
+			set
+			{
+				if (value == 0) viewQualityLevelLow.Active = true;
+				else if (value == 1) viewQualityLevelMedium.Active = true;
+				else viewQualityLevelHigh.Active = true;
 			}
 		}
 
@@ -371,6 +390,10 @@ namespace MG.ParticleEditorWindow
 		private RadioMenuItem viewModeShowSelectedChildren;
 		private RadioMenuItem viewModeShowFull;
 		
+		private RadioMenuItem viewQualityLevelLow;
+		private RadioMenuItem viewQualityLevelMedium;
+		private RadioMenuItem viewQualityLevelHigh;
+		
 		private MenuBar CreateMenu()
 		{
 			var menuBar = new MenuBar();
@@ -478,9 +501,8 @@ namespace MG.ParticleEditorWindow
 			viewModeShowFull.AddAccelerator("activate", accelerators, new AccelKey());
 			viewModeShowFull.Activated += (sender, args) => ViewModeChanged.Invoke();
 			viewModeMenu.Append(viewModeShowFull);
-
+			
 			// Background color submenu
-
 			var backgroundMenu = new Menu();
 			var backgroundMenuItem = new MenuItem("Background Color");
 			backgroundMenuItem.Submenu = backgroundMenu;
@@ -504,6 +526,27 @@ namespace MG.ParticleEditorWindow
 			}
 
 			viewShowColor[0].Active = true;
+
+			// Quality level submenu
+			var qualityLevelMenu = new Menu();
+			var qualityLevelMenuItem = new MenuItem("Quality Level");
+			qualityLevelMenuItem.Submenu = qualityLevelMenu;
+			viewMenu.Append(qualityLevelMenuItem);
+
+			viewQualityLevelLow = new RadioMenuItem("Low");
+			viewQualityLevelLow.AddAccelerator("activate", accelerators, new AccelKey());
+			viewQualityLevelLow.Activated += (sender, args) => QualityLevelChanged.Invoke();
+			qualityLevelMenu.Append(viewQualityLevelLow);
+
+			viewQualityLevelMedium = new RadioMenuItem(viewQualityLevelLow.Group, "Medium");
+			viewQualityLevelMedium.AddAccelerator("activate", accelerators, new AccelKey());
+			viewQualityLevelMedium.Activated += (sender, args) => QualityLevelChanged.Invoke();
+			qualityLevelMenu.Append(viewQualityLevelMedium);
+
+			viewQualityLevelHigh = new RadioMenuItem(viewQualityLevelLow.Group, "High");
+			viewQualityLevelHigh.AddAccelerator("activate", accelerators, new AccelKey());
+			viewQualityLevelHigh.Activated += (sender, args) => QualityLevelChanged.Invoke();
+			qualityLevelMenu.Append(viewQualityLevelHigh);
 			
 			return menuBar;
 		}

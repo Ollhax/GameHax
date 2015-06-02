@@ -117,6 +117,8 @@ namespace MG.Framework.Particle
 		public Dictionary<string, Parameter> Parameters = new Dictionary<string, Parameter>();
 		public ParticleCollection Children = new ParticleCollection();
 		public ParticleDefinition Parent;
+		
+		public static int GlobalQualityLevel = 2;
 
 		public bool IsGroup { get { return Declaration == "Group"; } }
 

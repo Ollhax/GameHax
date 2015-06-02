@@ -12,6 +12,8 @@ namespace MG.Framework.Particle
 
 		public static void Draw(ParticleEffect particleEffect, RenderContext renderContext, Matrix transform)
 		{
+			if (particleEffect.ParamQualityLevel > ParticleDefinition.GlobalQualityLevel) return;
+
 			DrawCurrent(particleEffect, renderContext, transform);
 
 			for (int i = particleEffect.SubSystems.Count - 1; i >= 0; i--)				

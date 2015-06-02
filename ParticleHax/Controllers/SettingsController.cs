@@ -33,6 +33,7 @@ namespace MG.ParticleHax.Controllers
 			Settings.Set("Crosshair.Color", new Color(1.0f, 1.0f, 1.0f, 0.5f));
 
 			Settings.Set("ViewMode", (int)(RenderController.ParticleView.FullTree));
+			Settings.Set("QualityLevel", (int)(RenderController.ParticleQualityLevel.High));
 			
 			Settings.Load(); // Override defaults
 			Settings.Save(); // Save any missing settings
@@ -42,6 +43,9 @@ namespace MG.ParticleHax.Controllers
 
 			window.ViewMode = Settings.Get<int>("ViewMode");
 			window.ViewModeChanged += OnViewModeChanged;
+
+			window.QualityLevel = Settings.Get<int>("QualityLevel");
+			window.QualityLevelChanged += OnQualityLevelChanged;
 
 			window.CurrentBackgroundColorIndex = Settings.Get<int>("Background.Current");
 			window.BackgroundColorChanged += OnBackgroundColorChanged;
@@ -62,6 +66,12 @@ namespace MG.ParticleHax.Controllers
 		private void OnViewModeChanged()
 		{
 			Settings.Set("ViewMode", window.ViewMode);
+			Settings.Save();
+		}
+
+		private void OnQualityLevelChanged()
+		{
+			Settings.Set("QualityLevel", window.QualityLevel);
 			Settings.Save();
 		}
 

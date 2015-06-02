@@ -19,6 +19,13 @@ namespace MG.ParticleHax.Controllers
 			FullTree
 		}
 
+		public enum ParticleQualityLevel
+		{
+			Low,
+			Medium,
+			High
+		}
+
 		private MainController controller;
 		private Model model;
 		private AssetHandler assetHandler;
@@ -31,6 +38,11 @@ namespace MG.ParticleHax.Controllers
 		public ParticleView ViewMode
 		{
 			get { return (ParticleView)Settings.Get<int>("ViewMode"); }
+		}
+
+		public ParticleQualityLevel QualityLevel
+		{
+			get { return (ParticleQualityLevel)Settings.Get<int>("QualityLevel"); }
 		}
 
 		public RenderController(MainController controller, Model model, AssetHandler assetHandler, RenderView renderView)
@@ -63,6 +75,8 @@ namespace MG.ParticleHax.Controllers
 
 		public void Update(Time time)
 		{
+			ParticleDefinition.GlobalQualityLevel = (int)QualityLevel;
+
 			var particleEffect = model.ParticleEffect;
 			if (particleEffect != null)
 			{

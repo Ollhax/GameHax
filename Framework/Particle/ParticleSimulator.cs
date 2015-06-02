@@ -13,7 +13,7 @@ namespace MG.Framework.Particle
 
 		private static void UpdateInternal(ParticleEffect particleEffect, Time time)
 		{
-			if (time.ElapsedSeconds <= 0)
+			if (time.ElapsedSeconds <= 0 || particleEffect.ParamQualityLevel > ParticleDefinition.GlobalQualityLevel)
 				return;
 
 			particleEffect.TimeSinceStart += time.ElapsedSeconds;
