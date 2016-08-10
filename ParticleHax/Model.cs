@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using MG.EditorCommon;
 using MG.EditorCommon.Undo;
@@ -17,6 +18,7 @@ namespace MG.ParticleHax
 		public ParticleDefinitionTable DefinitionTable;
 		public ParticleEffect ParticleEffect;
 		public ParticleEffectPool ParticleEffectPool;
+		public HashSet<int> InvisibleIds = new HashSet<int>();
 
 		public ParticleDefinition CurrentDefinition { get { return DefinitionTable.Definitions.GetById(CurrentDefinitionId); } }
 
@@ -38,6 +40,7 @@ namespace MG.ParticleHax
 			CurrentDefinitionId = 0;
 			DefinitionIdCounter = 1;
 			Modified = false;
+			InvisibleIds.Clear();
 		}
 	}
 }

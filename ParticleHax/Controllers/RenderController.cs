@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using MG.EditorCommon;
 using MG.Framework.Assets;
@@ -243,7 +244,22 @@ namespace MG.ParticleHax.Controllers
 
 		private void DrawEffect(RenderContext renderContext, ParticleEffect particleEffect, bool drawChildren)
 		{
-			if (drawChildren)
+			if (model.InvisibleIds.Count != 0)
+			{
+				if (!model.InvisibleIds.Contains(particleEffect.Definition.Id))
+				{
+					ParticleVisualizer.DrawCurrent(particleEffect, renderContext, Matrix.Identity);
+				}
+				if (drawChildren)
+				{
+					for (int i = particleEffect.SubSystems.Count - 1; i >= 0; i--)
+					{
+						var system = particleEffect.SubSystems[i];
+						DrawEffect(renderContext, system, drawChildren);
+					}
+				}
+			}
+			else if (drawChildren)
 			{
 				ParticleVisualizer.Draw(particleEffect, renderContext, Matrix.Identity);
 			}

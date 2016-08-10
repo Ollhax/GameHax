@@ -16,6 +16,7 @@ namespace MG.ParticleEditorWindow
 		private Gtk.TreeViewColumn effectColumn;
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
+		private const int ColumnShow = 2;
 		private int disableChangeCallbacks;
 		private int lastReorderId;
 		private bool disableReorderChanges;
@@ -54,6 +55,7 @@ namespace MG.ParticleEditorWindow
 		public event Action<int> ItemSelected = delegate { };
 		public event Action<int> ItemMoved = delegate { };
 		public event Action<int> ItemDeleted = delegate { };
+		public event Action<int, bool> ItemInvisible = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
 		
@@ -72,14 +74,14 @@ namespace MG.ParticleEditorWindow
 			
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
-			
+
 			effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
 			
 			treeView.AppendColumn(effectColumn);
 			treeView.AppendColumn(new TreeViewColumn()); // Add a dummy column. This steals the horizontal space right of the label, allowing us to select entries properly.
 
-			storage = new Gtk.TreeStore(typeof(int), typeof(string));
+			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool));
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
 			
@@ -90,7 +92,12 @@ namespace MG.ParticleEditorWindow
 			//treeView.RowActivated += WidgetOnRowActivated;
 			treeView.ButtonPressEvent += OnButtonPress;
 			treeView.KeyPressEvent += OnKeyPress;
-			
+
+			var tog = new Gtk.CellRendererToggle();
+			tog.Toggled += new Gtk.ToggledHandler(OnToggled);
+			effectColumn.PackStart(tog, false);
+			effectColumn.AddAttribute(tog, "active", ColumnShow);
+
 			var cellRendererText = new CellRendererText();
 			cellRendererText.Editable = true;
 			cellRendererText.Edited += OnTextEdited;
@@ -118,7 +125,18 @@ namespace MG.ParticleEditorWindow
 					return false;
 				});
 		}
-		
+
+		void OnToggled(object o, ToggledArgs args)
+		{
+			Gtk.TreeIter iter;
+ 			if (storage.GetIterFromString (out iter, args.Path)) {
+ 				bool val = (bool) storage.GetValue (iter, ColumnShow);
+ 				storage.SetValue (iter, ColumnShow, !val);
+				var id = (int)storage.GetValue(iter, ColumnId);
+				ItemInvisible.Invoke(id, val);
+			}
+		}
+
 		public List<ItemIndex> GetItemIndices()
 		{
 			var indices = new List<ItemIndex>();
@@ -202,33 +220,33 @@ namespace MG.ParticleEditorWindow
 			}
 		}
 
-		public void SetValues(List<ItemIndex> values)
+		public void SetValues(List<ItemIndex> values, HashSet<int> invisibleIds)
 		{
 			disableChangeCallbacks++;
 			SaveStatus();
 			storage.Clear();
-			
-			SetValues(TreeIter.Zero, values);
+
+			SetValues(TreeIter.Zero, values, invisibleIds);
 
 			RestoreStatus();
 			disableChangeCallbacks--;
 		}
 
-		private void SetValues(TreeIter parent, List<ItemIndex> values)
+		private void SetValues(TreeIter parent, List<ItemIndex> values, HashSet<int> invisibleIds)
 		{
 			foreach (var v in values)
 			{
 				TreeIter iter;
 				if (parent.Equals(TreeIter.Zero))
 				{
-					iter = storage.AppendValues(v.Id, v.Name);
+					iter = storage.AppendValues(v.Id, v.Name, !invisibleIds.Contains(v.Id));
 				}
 				else
 				{
-					iter = storage.AppendValues(parent, v.Id, v.Name);
+					iter = storage.AppendValues(parent, v.Id, v.Name, !invisibleIds.Contains(v.Id));
 				}
 
-				SetValues(iter, v.Children);
+				SetValues(iter, v.Children, invisibleIds);
 			}
 		}
 
