@@ -32,6 +32,7 @@ namespace MG.ParticleHax.Controllers
 			treeView.ItemMoved += OnItemMoved;
 			treeView.ItemDeleted += RemoveParticleSystem;
 			treeView.CreateContextMenu += OnCreateContextMenu;
+			treeView.ItemInvisible += OnItemInvisible;
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
@@ -40,7 +41,7 @@ namespace MG.ParticleHax.Controllers
 		{
 			var indices = new List<TreeView.ItemIndex>();
 			CreateTreeModel(indices, model.DefinitionTable.Definitions);
-			treeView.SetValues(indices);
+			treeView.SetValues(indices, model.InvisibleIds);
 		}
 
 		public void SelectItem(int id)
@@ -97,6 +98,7 @@ namespace MG.ParticleHax.Controllers
 		{
 			var action = new RemoveAction(controller, model, id);
 			model.UndoHandler.ExecuteAction(action);
+			model.InvisibleIds.Remove(id);
 		}
 
 		public void OnNewDocument()
@@ -126,6 +128,7 @@ namespace MG.ParticleHax.Controllers
 			//Log.Info("Start ID: " + model.DefinitionIdCounter);
 
 			model.DocumentOpen = true;
+			model.InvisibleIds.Clear();
 		}
 
 		private int GetHighestId(ParticleCollection particleCollection, int highest)
@@ -177,6 +180,18 @@ namespace MG.ParticleHax.Controllers
 
 			var moveAction = new MoveAction(controller, model, movedItemId, newIndex, newParent);
 			model.UndoHandler.ExecuteAction(moveAction);
+		}
+
+		private void OnItemInvisible(int id, bool invisible)
+		{
+			if (invisible)
+			{
+				model.InvisibleIds.Add(id);
+			}
+			else
+			{
+				model.InvisibleIds.Remove(id);
+			}
 		}
 		
 		private bool FindItemLocation(List<TreeView.ItemIndex> indices, int itemId, int parentId, out int newIndex, out int newParent)
