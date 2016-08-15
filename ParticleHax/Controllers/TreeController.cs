@@ -53,7 +53,7 @@ namespace MG.ParticleHax.Controllers
 		{
 			foreach (var def in collection)
 			{
-				var item = new TreeView.ItemIndex { Id = def.Id, Name = def.Name };
+				var item = new TreeView.ItemIndex { Id = def.Id, Name = def.Name, IsGroup = def.IsGroup };
 				indices.Add(item);
 				
 				CreateTreeModel(item.Children, def.Children);
@@ -193,7 +193,18 @@ namespace MG.ParticleHax.Controllers
 				model.InvisibleIds.Remove(id);
 			}
 		}
-		
+
+		private void OnShowAllItems()
+		{
+			treeView.ShowAll(false);
+			model.InvisibleIds.Clear();
+		}
+
+		private void OnSetVisibilityRecursive(int id, bool visible)
+		{
+			treeView.SetVisibilityRecursive(id, visible);
+		}
+
 		private bool FindItemLocation(List<TreeView.ItemIndex> indices, int itemId, int parentId, out int newIndex, out int newParent)
 		{
 			for (int i = 0; i < indices.Count; i++)
@@ -253,9 +264,15 @@ namespace MG.ParticleHax.Controllers
 
 				contextMenu.Entries.Add(addEntry);
 			}
-			
+
 			if (def != null)
 			{
+				var hideEntry = new TreeView.ContextMenu.Entry("Hide Recursive", () => OnSetVisibilityRecursive(def.Id, false));
+				contextMenu.Entries.Add(hideEntry);
+
+				var showEntry = new TreeView.ContextMenu.Entry("Show Recursive", () => OnSetVisibilityRecursive(def.Id, true));
+				contextMenu.Entries.Add(showEntry);
+
 				contextMenu.Entries.Add(new TreeView.ContextMenu.Entry("Remove \"" + def.Name + "\"", () => OnContextMenuRemove(def.Id)));
 
 				var cutEntry = new TreeView.ContextMenu.Entry("Cut", () => ItemCut(def.Id));
@@ -263,6 +280,11 @@ namespace MG.ParticleHax.Controllers
 
 				var copyEntry = new TreeView.ContextMenu.Entry("Copy", () => ItemCopy(def.Id));
 				contextMenu.Entries.Add(copyEntry);
+			}
+			else
+			{
+				var showAllEntry = new TreeView.ContextMenu.Entry("Show All", () => OnShowAllItems());
+				contextMenu.Entries.Add(showAllEntry);
 			}
 
 			var pasteEntry = new TreeView.ContextMenu.Entry("Paste", () => ItemPaste(def != null ? def.Id : 0));
