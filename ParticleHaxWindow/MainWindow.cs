@@ -206,8 +206,8 @@ namespace MG.ParticleEditorWindow
 			var hpaneMain = new HPaned();
 			menuBox.PackStart(hpaneMain, true, true, 0);
 			hpaneMain.Position = 300;
-			
-			var rightBox = new HBox(false, 1);
+
+			var rightBox = new HPaned();// Box(false, 1);
 			hpaneMain.Pack2(rightBox, true, true);
 			
 			//// Setup gl widget and graph
@@ -226,11 +226,11 @@ namespace MG.ParticleEditorWindow
 			//vpaneRight.Pack1(f1, true, true);
 			//vpaneRight.Pack2(f2, true, true);
 
-			rightBox.PackStart(RenderView.Widget, true, true, 0);
+			rightBox.Pack1(RenderView.Widget, true, true);
 
 			// Tree view
 			TreeView.Widget.SetSizeRequest(200, -1);
-			rightBox.PackEnd(TreeView.Widget, false, true, 0);
+			rightBox.Pack2(TreeView.Widget, false, false);
 
 			// Parameter view
 			ParameterView.Widget.SetSizeRequest(150, -1);
