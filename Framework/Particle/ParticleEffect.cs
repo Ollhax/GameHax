@@ -84,6 +84,7 @@ namespace MG.Framework.Particle
 		public readonly List<float> ParticleScale;
 		public readonly List<float> ParticleLife;
 		public readonly List<float> ParticleAge;
+		public readonly List<float> ParticleStartFrame;
 		public readonly List<int> ParticleSegmentIndex;
 
 		public List<Matrix> SegmentTransforms;
@@ -104,6 +105,9 @@ namespace MG.Framework.Particle
 		public int ParamMirrorSegments;
 		public float ParamMirrorRange;
 		public MirrorType ParamMirrorType;
+
+		public RandomFloat ParamTextureFrameStart;
+		public RandomFloat ParamTextureFrameTimeline;
 
 		public RandomFloat ParamParticleGravityScale;
 		public RandomFloat ParamParticleAccelerationX;
@@ -209,7 +213,11 @@ namespace MG.Framework.Particle
 			ParticleScale = ParticleData.Register<float>("Scale");
 			ParticleLife = ParticleData.Register<float>("Life");
 			ParticleAge = ParticleData.Register<float>("Age");
+			ParticleStartFrame = ParticleData.Register<float>("StartFrame");
 			ParticleSegmentIndex = ParticleData.Register<int>("SegmentIndex");
+
+			ParamTextureFrameStart = Definition.GetFloatParameter("TextureFrameStart");
+			ParamTextureFrameTimeline = Definition.GetFloatParameter("TextureFrameTimeline");
 
 			ParamParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			ParamParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");

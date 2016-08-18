@@ -217,7 +217,9 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("TextureAnchorY", 0.5f);
 			RegisterDefaultParameter("TextureCellsX", 1);
 			RegisterDefaultParameter("TextureCellsY", 1);
+			RegisterDefaultParameter("TextureFrameStart", 0.0f);
 			RegisterDefaultParameter("TextureFrameTime", 0.5f);
+			RegisterDefaultParameter("TextureFrameTimeline", 1.0f);
 			RegisterDefaultParameter("EmitterLife", 1.0f);
 			RegisterDefaultParameter("EmitterLoop", 0);
 			RegisterDefaultParameter("EmitterSpawnDelay", 0.0f);

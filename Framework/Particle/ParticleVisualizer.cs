@@ -123,9 +123,24 @@ namespace MG.Framework.Particle
 					var sourceArea = new RectangleF(0, 0, particleEffect.ParticleTexture.Width, particleEffect.ParticleTexture.Height);
 					var maxCells = particleEffect.AnimationCells;
 
+					int frame = -1;
 					if (maxCells > 1 && particleEffect.ParamTextureFrameTime != 0)
 					{
-						int frame = (int)(a / particleEffect.ParamTextureFrameTime) % maxCells;
+						int startFrame = (int)(particleEffect.ParticleStartFrame[i] * maxCells);
+						frame = (startFrame + (int)(a / particleEffect.ParamTextureFrameTime)) % maxCells;
+					}
+					else if (maxCells > 1)
+					{
+						float timelineFrame = particleEffect.ParamTextureFrameTimeline.Get(0, a);
+						if (timelineFrame >= 1.0f)
+						{
+							// 1.0, 2.0, 3.0, etc should not be interpreted as frame 0.
+							timelineFrame -= MathTools.Epsilon;
+						}
+						frame = (int)((particleEffect.ParticleStartFrame[i] + timelineFrame) * maxCells) % maxCells;
+					}
+					if (frame >= 0)
+					{
 						int frameX = frame % particleEffect.ParamTextureCells.X;
 						int frameY = frame / particleEffect.ParamTextureCells.X;
 						float cellX = particleEffect.ParticleTexture.Width / (float)particleEffect.ParamTextureCells.X;

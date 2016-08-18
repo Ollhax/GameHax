@@ -72,14 +72,67 @@
 				<MinValue>1</MinValue>
 			</Parameter>
 			<Parameter>
+				<Name>TextureFrameStart</Name>
+				<PrettyName>Start Frame</PrettyName>
+				<Description>Specify which frame to start on.\n0=first frame\n1=last frame.\nFinal absolute value is capped between 0 and 1.</Description>
+				<Category>Texture</Category>
+				<Type>Single</Type>
+				<DefaultValue>0</DefaultValue>
+				<MaxValue>1.0</MaxValue>
+				<MinValue>0.0</MinValue>
+				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<Parameters>
+					<Parameter>
+						<Name>Random</Name>
+						<PrettyName>Random(+/-)</PrettyName>
+						<Description>Amount of randomization for this parameter.</Description>
+						<Type>Single</Type>
+						<DefaultValue>0</DefaultValue>
+						<ValueStep>0.1</ValueStep>
+						<MaxValue>1.0</MaxValue>
+						<MinValue>0.0</MinValue>
+					</Parameter>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>0.0</CurveMin>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>TextureFrameTime</Name>
 				<PrettyName>Frame Time</PrettyName>
-				<Description>The amount of time each texture cell will be displayed.</Description>
+				<Description>The amount of time each texture cell will be displayed.\n&lt;b&gt;Set to 0 to use Frame Timeline.&lt;/b&gt;</Description>
 				<Category>Texture</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.5</DefaultValue>
 				<ValueStep>0.1</ValueStep>
 				<ValueDigits>2</ValueDigits>
+			</Parameter>
+			<Parameter>
+				<Name>TextureFrameTimeline</Name>
+				<PrettyName>Frame Timeline</PrettyName>
+				<Description>Specify which frame to show over time.\n0 = first frame\n1 = last frame\n>1 loops.\n&lt;b&gt;Set Frame Time to 0 to use Timeline&lt;/b&gt;</Description>
+				<Category>Texture</Category>
+				<Type>Single</Type>
+				<DefaultValue>1</DefaultValue>
+				<MinValue>0.0</MinValue>
+				<ValueStep>0.1</ValueStep>
+				<ValueDigits>2</ValueDigits>
+				<Parameters>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue>0:0;1:1</DefaultValue>
+						<CurveMin>0.0</CurveMin>
+					</Parameter>
+				</Parameters>
 			</Parameter>
 			<Parameter>
 				<Name>EmitterLife</Name>
