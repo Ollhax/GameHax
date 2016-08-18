@@ -786,6 +786,48 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>MirrorSegments</Name>
+				<PrettyName>Segments</PrettyName>
+				<Description>Total number of segments of the system. Additional segments are mirrored.</Description>
+				<Category>Mirror</Category>
+				<Type>Int32</Type>
+				<DefaultValue>1</DefaultValue>
+				<ValueStep>1</ValueStep>
+				<ValueDigits>1</ValueDigits>
+				<MinValue>1</MinValue>
+			</Parameter>
+			<Parameter>
+				<Name>MirrorRange</Name>
+				<PrettyName>Segment Range</PrettyName>
+				<Description>Angular range from center, in degrees. Segments are spread out evenly. If 360 a segment is not created at 360 degrees (would be same as original system).</Description>
+				<Category>Mirror</Category>
+				<Type>Single</Type>
+				<DefaultValue>360.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<MinValue>0.0</MinValue>
+				<MaxValue>360.0</MaxValue>
+			</Parameter>
+			<Parameter>
+				<Name>MirrorType</Name>
+				<PrettyName>Mirror Type</PrettyName>
+				<Description>Set if the mirrored system.</Description>
+				<Category>Mirror</Category>
+				<Type>Int32</Type>
+				<DefaultValue>0</DefaultValue>
+				<ValueList>
+					<Value Name="Clone Emitter" Value="0"/>
+					<Value Name="Clone Particle" Value="1"/>
+					<Value Name="Segment by Segment" Value="2"/>
+					<Value Name="Random Segment" Value="3"/>
+					<Value Name="Mirror X" Value="4"/>
+					<Value Name="Mirror Y" Value="5"/>
+					<Value Name="Mirror X and Y" Value="6"/>
+					<Value Name="Mirror 180" Value="7"/>
+					<Value Name="Mirror X Random Range" Value="8"/>
+					<Value Name="Mirror Y Random Range" Value="9"/>
+				</ValueList>
+			</Parameter>
+			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>
 				<Description>How particles will be sorted before being drawn.</Description>

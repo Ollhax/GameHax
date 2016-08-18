@@ -25,18 +25,51 @@ namespace MG.Framework.Particle
 
 			for (int i = 0; i < particleEffect.ParticleData.ActiveParticles; i++)
 			{
+				int segmentIndex = particleEffect.ParticleSegmentIndex[i];
+				if (segmentIndex >= 0 && (particleEffect.SegmentTransforms == null || segmentIndex >= particleEffect.SegmentTransforms.Count))
+				{
+					segmentIndex = -1;
+				}
+
 				var emitterLife = particleEffect.LifeFractional;
 				var lifeFraction = particleEffect.ParticleAge[i] / particleEffect.ParticleLife[i];
 				var accel = new Vector2(
 					particleEffect.ParamParticleAccelerationX.Get(emitterLife, lifeFraction),
 					particleEffect.ParamParticleAccelerationY.Get(emitterLife, lifeFraction));
+				float resistance = particleEffect.ParamParticleAirResistance.Get(emitterLife, lifeFraction);
+				var turn = particleEffect.ParamParticleTurn.Get(emitterLife, lifeFraction);
 
-				accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
+				if (segmentIndex == -1)
+				{
+					accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
+				}
+				else
+				{
+					// Gravity is absolute and need to be broken out for segments
+					Vector2 gravity = particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
+					var oldGravity = particleEffect.ParticleGravityVelocity[i];
+					var velGravity = oldGravity + gravity * time.ElapsedSeconds;
+					if (resistance != 0)
+					{
+						var res = velGravity * resistance * time.ElapsedSeconds;
+						var absX = Math.Abs(velGravity.X);
+						var absY = Math.Abs(velGravity.Y);
+						res.X = MathTools.Clamp(res.X, -absX, absX);
+						res.Y = MathTools.Clamp(res.Y, -absY, absY);
+						velGravity -= res;
+					}
+					if (turn != 0)
+					{
+						velGravity = velGravity.Rotated(MathTools.ToRadians(turn));
+					}
+
+					particleEffect.ParticleGravityVelocity[i] = velGravity;
+					particleEffect.ParticleGravityOffset[i] += (oldGravity + velGravity) / 2 * time.ElapsedSeconds;
+				}
 
 				var oldVel = particleEffect.ParticleVelocity[i];
 				var vel = oldVel + accel * time.ElapsedSeconds;
 
-				float resistance = particleEffect.ParamParticleAirResistance.Get(emitterLife, lifeFraction);
 				if (resistance != 0)
 				{
 					var res = vel * resistance * time.ElapsedSeconds;
@@ -47,7 +80,6 @@ namespace MG.Framework.Particle
 					vel -= res;
 				}
 
-				var turn = particleEffect.ParamParticleTurn.Get(emitterLife, lifeFraction);
 				if (turn != 0)
 				{
 					vel = vel.Rotated(MathTools.ToRadians(turn));
@@ -70,12 +102,20 @@ namespace MG.Framework.Particle
 
 				if (particleEffect.ParamParticleOrientToVelocity)
 				{
-					particleEffect.ParticleRotation[i] = vel.Angle() + MathTools.PiOver2;
+					if (segmentIndex == -1 || particleEffect.ParticleGravityVelocity[i].IsZero)
+					{
+						particleEffect.ParticleRotation[i] = vel.Angle() + MathTools.PiOver2;
+					}
+					else
+					{
+						particleEffect.ParticleRotation[i] = 0.0f;
+					}
 				}
 				else
 				{
 					particleEffect.ParticleRotationSpeed[i] += MathTools.ToRadians(particleEffect.ParamParticleAccelerationAngular.Get(emitterLife, lifeFraction)) * time.ElapsedSeconds;
-					particleEffect.ParticleRotation[i] += particleEffect.ParticleRotationSpeed[i] * time.ElapsedSeconds;
+					float rotationSpeed = particleEffect.ParticleRotationSpeed[i];
+					particleEffect.ParticleRotation[i] += rotationSpeed * time.ElapsedSeconds;
 				}
 
 				particleEffect.ParticleAge[i] += time.ElapsedSeconds;
@@ -139,12 +179,69 @@ namespace MG.Framework.Particle
 						var p = particleEffect.ParamParticleRelativeToParent ? Vector2.Zero : particleEffect.Position;
 						var e = particleEffect.LifeFractional;
 						float range = particleEffect.ParamEmitterRange.Get(e, 0) / 2;
-						float direction = MathTools.ToDegrees(particleEffect.Rotation) + particleEffect.ParamEmitterDirection.Get(e, 0) + MathTools.Random().NextFloat(-range, range);
-						
-						EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0);
+						float rotationDirection = MathTools.ToDegrees(particleEffect.Rotation);
+						float mainDirection = rotationDirection + particleEffect.ParamEmitterDirection.Get(e, 0);
+						float randomDirection = MathTools.Random().NextFloat(-range, range);
+						float direction = mainDirection + randomDirection;
+						int spawnSegment = 0;
+
+						if (particleEffect.SegmentTransforms != null)
+						{
+							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorX || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorY || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror180 || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXY)
+							{
+								spawnSegment = 1;
+							}
+							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment)
+							{
+								spawnSegment = MathTools.Random().Next(particleEffect.SegmentTransforms.Count + 1);
+							}
+							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnSegmentBySegment)
+							{
+								spawnSegment = particleEffect.LastSegment + 1;
+								if (particleEffect.LastSegment > particleEffect.SegmentTransforms.Count)
+								{
+									spawnSegment = 0;
+								}
+								particleEffect.LastSegment = spawnSegment;
+							}
+						}
+						EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, spawnSegment - 1);
 						
 						particleEffect.EmitterSpawnAccumulator -= secondsPerParticle;
 						particleEffect.EmitterCount++;
+
+						if (particleEffect.SegmentTransforms != null && particleEffect.SegmentTransforms.Count > 0 && !(particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnSegmentBySegment))
+						{
+							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.CloneEmitter || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXRandomRange || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorYRandomRange)
+							{
+								for (int i = 0; i < particleEffect.SegmentTransforms.Count; ++i)
+								{
+									direction = mainDirection + MathTools.Random().NextFloat(-range, range);
+									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i);
+								}
+							}
+							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.CloneParticle)
+							{
+								for (int i = 0; i < particleEffect.SegmentTransforms.Count; ++i)
+								{
+									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i);
+								}
+							}
+							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorX || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorY || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror180)
+							{
+								for (int i = 1; i < particleEffect.ParamMirrorSegments; ++i)
+								{
+									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i * 2);
+								}
+							}
+							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXY)
+							{
+								for (int i = 1; i < particleEffect.ParamMirrorSegments; ++i)
+								{
+									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i * 4);
+								}
+							}
+						}
 					}
 					else
 					{
@@ -169,7 +266,7 @@ namespace MG.Framework.Particle
 			particleEffect.ParticleData.ActiveParticles--;
 		}
 		
-		private static int EmitInternal(ParticleEffect particleEffect, Vector2 position, Vector2 velocity, float rotation, float life)
+		private static int EmitInternal(ParticleEffect particleEffect, Vector2 position, Vector2 velocity, float rotation, float life, int segmentIndex)
 		{
 			if (particleEffect.ParticleData.ActiveParticles + 1 >= particleEffect.ParticleData.MaxParticles) particleEffect.ParticleData.Resize();
 			var index = particleEffect.ParticleData.ActiveParticles;
@@ -206,11 +303,18 @@ namespace MG.Framework.Particle
 				particleEffect.ParticleData.Shuffle(index, particleEffect.ParticleData.ActiveParticles - 1);
 			}
 
-			particleEffect.ParticlePosition[index] = position + new Vector2(particleEffect.ParamEmitterOffsetX.Get(e, 0), particleEffect.ParamEmitterOffsetY.Get(e, 0));
+			particleEffect.ParticleSegmentIndex[index] = segmentIndex;
+			Vector2 posOffset = new Vector2(particleEffect.ParamEmitterOffsetX.Get(e, 0), particleEffect.ParamEmitterOffsetY.Get(e, 0));
+			float initialRotation = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0)) + rotation;
+			float initialScale = particleEffect.ParamEmitterInitialScale.Get(e, 0);
+			particleEffect.ParticleOrigin[index] = position;
+			particleEffect.ParticlePosition[index] = posOffset;
 			particleEffect.ParticleVelocity[index] = velocity;
-			particleEffect.ParticleRotation[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0)) + rotation;
+			particleEffect.ParticleGravityOffset[index] = Vector2.Zero;
+			particleEffect.ParticleGravityVelocity[index] = Vector2.Zero;
+			particleEffect.ParticleRotation[index] = initialRotation;
 			particleEffect.ParticleRotationSpeed[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotationSpeed.Get(e, 0));
-			particleEffect.ParticleScale[index] = particleEffect.ParamEmitterInitialScale.Get(e, 0);
+			particleEffect.ParticleScale[index] = initialScale;
 			particleEffect.ParticleAge[index] = 0;
 			particleEffect.ParticleLife[index] = newParticleLife;
 

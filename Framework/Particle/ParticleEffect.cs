@@ -40,6 +40,7 @@ namespace MG.Framework.Particle
 		public float EmitterSpawnAccumulator;
 		public int EmitterCount;
 		public int EmitterCountMax;
+		public int LastSegment;
 		
 		public enum LoopMode
 		{
@@ -54,18 +55,38 @@ namespace MG.Framework.Particle
 			NewestOnTop,
 			OldestOnTop,
 		}
-		
+
+		public enum MirrorType
+		{
+			CloneEmitter,
+			CloneParticle,
+			SpawnSegmentBySegment,
+			SpawnRandomSegment,
+			MirrorX,
+			MirrorY,
+			MirrorXY,
+			Mirror180,
+			MirrorXRandomRange,
+			MirrorYRandomRange,
+		}
+
 		public readonly ParticleDefinition Definition;
 		public List<ParticleEffect> SubSystems = new List<ParticleEffect>();
 		public ParticleData ParticleData = new ParticleData(64);
-		
+
+		public readonly List<Vector2> ParticleOrigin;
 		public readonly List<Vector2> ParticlePosition;
 		public readonly List<Vector2> ParticleVelocity;
+		public readonly List<Vector2> ParticleGravityOffset;
+		public readonly List<Vector2> ParticleGravityVelocity;
 		public readonly List<float> ParticleRotation;
 		public readonly List<float> ParticleRotationSpeed;
 		public readonly List<float> ParticleScale;
 		public readonly List<float> ParticleLife;
 		public readonly List<float> ParticleAge;
+		public readonly List<int> ParticleSegmentIndex;
+
+		public List<Matrix> SegmentTransforms;
 
 		public Texture2D ParticleTexture;
 		public int ParamQualityLevel;
@@ -80,6 +101,9 @@ namespace MG.Framework.Particle
 		public Gradient ParamParticleColor;
 		public LoopMode ParamEmitterLoopMode;
 		public float ParamEmitterLife;
+		public int ParamMirrorSegments;
+		public float ParamMirrorRange;
+		public MirrorType ParamMirrorType;
 
 		public RandomFloat ParamParticleGravityScale;
 		public RandomFloat ParamParticleAccelerationX;
@@ -106,7 +130,7 @@ namespace MG.Framework.Particle
 		public RandomFloat ParamEmitterInitialRotation;
 		public RandomFloat ParamEmitterInitialRotationSpeed;
 		public RandomFloat ParamEmitterInitialScale;
-		
+
 		public float LifeFractional
 		{
 			get { return ParamEmitterLife > 0 ? EmitterAge / ParamEmitterLife : 0; }
@@ -175,14 +199,18 @@ namespace MG.Framework.Particle
 
 			if (IsGroup) return;
 
+			ParticleOrigin = ParticleData.Register<Vector2>("Origin");
 			ParticlePosition = ParticleData.Register<Vector2>("Position");
 			ParticleVelocity = ParticleData.Register<Vector2>("Velocity");
+			ParticleGravityOffset = ParticleData.Register<Vector2>("GravityOffset");
+			ParticleGravityVelocity = ParticleData.Register<Vector2>("GravityVelocity");
 			ParticleRotation = ParticleData.Register<float>("Rotation");
 			ParticleRotationSpeed = ParticleData.Register<float>("RotationSpeed");
 			ParticleScale = ParticleData.Register<float>("Scale");
 			ParticleLife = ParticleData.Register<float>("Life");
 			ParticleAge = ParticleData.Register<float>("Age");
-			
+			ParticleSegmentIndex = ParticleData.Register<int>("SegmentIndex");
+
 			ParamParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			ParamParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
 			ParamParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
@@ -244,6 +272,90 @@ namespace MG.Framework.Particle
 
 				var texture = Definition.GetParameter("Texture").Value.Get<FilePath>();
 				ParticleTexture = assetHandler.Load<Texture2D>(texture);
+				LastSegment = -1;
+
+				ParamMirrorSegments = Definition.GetParameter("MirrorSegments").Value.Get<int>();
+				ParamMirrorRange = Definition.GetParameter("MirrorRange").Value.Get<float>();
+				ParamMirrorType = (MirrorType)Definition.GetParameter("MirrorType").Value.Get<int>();
+
+				SegmentTransforms = null;
+				if (ParamMirrorType == MirrorType.MirrorXRandomRange)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.CreateScale(-1.0f, 1.0f, 1.0f));
+				}
+				else if (ParamMirrorType == MirrorType.MirrorX)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.Identity);
+					SegmentTransforms.Add(Matrix.CreateScale(-1.0f, 1.0f, 1.0f));
+				}
+				else if (ParamMirrorType == MirrorType.MirrorYRandomRange)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.CreateScale(1.0f, -1.0f, 1.0f));
+				}
+				else if (ParamMirrorType == MirrorType.MirrorY)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.Identity);
+					SegmentTransforms.Add(Matrix.CreateScale(1.0f, -1.0f, 1.0f));
+				}
+				else if (ParamMirrorType == MirrorType.MirrorXY)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.Identity);
+					SegmentTransforms.Add(Matrix.CreateScale(-1.0f, 1.0f, 1.0f));
+					SegmentTransforms.Add(Matrix.CreateScale(1.0f, -1.0f, 1.0f));
+					SegmentTransforms.Add(Matrix.CreateScale(-1.0f, -1.0f, 1.0f));
+				}
+				else if (ParamMirrorType == MirrorType.Mirror180)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.Identity);
+					SegmentTransforms.Add(Matrix.CreateScale(-1.0f, -1.0f, 1.0f));
+				}
+				if (ParamMirrorSegments > 1)
+				{
+					if (SegmentTransforms == null)
+					{
+						SegmentTransforms = new List<Matrix>();
+					}
+					float anglePerSegment = 0.0f;
+					if (ParamMirrorRange < 359.9f)
+					{
+						// Spread evenly over full range, one segment at Range.
+						anglePerSegment = ParamMirrorRange / (ParamMirrorSegments - 1);
+					}
+					else
+					{
+						// Spread evenly over full 360 range
+						anglePerSegment = ParamMirrorRange / ParamMirrorSegments;
+					}
+					for (int i = 1; i < ParamMirrorSegments; ++i)
+					{
+						Matrix matrix = Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + anglePerSegment * i));
+						SegmentTransforms.Add(matrix);
+						if (ParamMirrorType == MirrorType.MirrorX || ParamMirrorType == MirrorType.MirrorXRandomRange)
+						{
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(-1.0f, 1.0f, 1.0f));
+						}
+						else if (ParamMirrorType == MirrorType.MirrorY || ParamMirrorType == MirrorType.MirrorYRandomRange)
+						{
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(1.0f, -1.0f, 1.0f));
+						}
+						else if (ParamMirrorType == MirrorType.MirrorXY)
+						{
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(-1.0f, 1.0f, 1.0f));
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(1.0f, -1.0f, 1.0f));
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(-1.0f, -1.0f, 1.0f));
+						}
+						else if (ParamMirrorType == MirrorType.Mirror180)
+						{
+							SegmentTransforms.Add(matrix * Matrix.CreateScale(-1.0f, -1.0f, 1.0f));
+						}
+					}
+				}
 			}
 			
 			if (Definition.Children.Count != SubSystems.Count)
@@ -271,6 +383,7 @@ namespace MG.Framework.Particle
 			EmitterAge = 0;
 			EmitterSpawnAccumulator = 0;
 			EmitterCount = 0;
+			LastSegment = -1;
 		}
 
 		public void RestartEmitter()
