@@ -93,7 +93,6 @@ namespace MG.Framework.Particle
 		public int ParamQualityLevel;
 		public Vector2 ParamTextureAnchor;
 		public Vector2I ParamTextureCells;
-		public float ParamTextureFrameTime;
 		public BlendMode ParamBlendMode;
 		public SortMode ParamSortMode;
 		public bool ParamParticleInfinite;
@@ -261,7 +260,6 @@ namespace MG.Framework.Particle
 				ParamQualityLevel = Definition.Parameters["QualityLevel"].Value.Get<int>();
 				ParamTextureAnchor = new Vector2(Definition.GetParameter("TextureAnchorX").Value.Get<float>(), Definition.GetParameter("TextureAnchorY").Value.Get<float>());
 				ParamTextureCells = new Vector2I(Definition.GetParameter("TextureCellsX").Value.Get<int>(), Definition.GetParameter("TextureCellsY").Value.Get<int>());
-				ParamTextureFrameTime = Definition.GetParameter("TextureFrameTime").Value.Get<float>();
 				ParamBlendMode = (BlendMode)Definition.GetParameter("BlendMode").Value.Get<int>();
 				ParamSortMode = (SortMode)Definition.Parameters["SortMode"].Value.Get<int>();
 				ParamParticleInfinite = Definition.GetParameter("ParticleInfinite").Value.Get<bool>();

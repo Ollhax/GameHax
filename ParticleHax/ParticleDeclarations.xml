@@ -104,19 +104,9 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>TextureFrameTime</Name>
-				<PrettyName>Frame Time</PrettyName>
-				<Description>The amount of time each texture cell will be displayed.\n&lt;b&gt;Set to 0 to use Frame Timeline.&lt;/b&gt;</Description>
-				<Category>Texture</Category>
-				<Type>Single</Type>
-				<DefaultValue>0.5</DefaultValue>
-				<ValueStep>0.1</ValueStep>
-				<ValueDigits>2</ValueDigits>
-			</Parameter>
-			<Parameter>
 				<Name>TextureFrameTimeline</Name>
 				<PrettyName>Frame Timeline</PrettyName>
-				<Description>Specify which frame to show over time.\n0 = first frame\n1 = last frame\n>1 loops.\n&lt;b&gt;Set Frame Time to 0 to use Timeline&lt;/b&gt;</Description>
+				<Description>Specify which frame to show over time.\n0 = first frame\n1 = last frame\n>1 loops.</Description>
 				<Category>Texture</Category>
 				<Type>Single</Type>
 				<DefaultValue>1</DefaultValue>

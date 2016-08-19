@@ -124,12 +124,7 @@ namespace MG.Framework.Particle
 					var maxCells = particleEffect.AnimationCells;
 
 					int frame = -1;
-					if (maxCells > 1 && particleEffect.ParamTextureFrameTime != 0)
-					{
-						int startFrame = (int)(particleEffect.ParticleStartFrame[i] * maxCells);
-						frame = (startFrame + (int)(a / particleEffect.ParamTextureFrameTime)) % maxCells;
-					}
-					else if (maxCells > 1)
+					if (maxCells > 1)
 					{
 						float timelineFrame = particleEffect.ParamTextureFrameTimeline.Get(0, a);
 						if (timelineFrame >= 1.0f)
