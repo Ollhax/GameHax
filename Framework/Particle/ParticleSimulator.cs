@@ -88,9 +88,26 @@ namespace MG.Framework.Particle
 				var turbulence = particleEffect.ParamParticleTurbulenceStrength.Get(emitterLife, lifeFraction);
 				if (turbulence != 0)
 				{
+					Vector2 particlePos = particleEffect.ParticlePosition[i];
+					if (segmentIndex >= 0 && particleEffect.ParamMirrorType != ParticleEffect.MirrorType.Mirror)
+					{
+						// Calculate final world position to get different turbulence for the different copies
+						Matrix particleTransform = MathTools.Create2DAffineMatrix(particlePos.X, particlePos.Y, 1.0f, 1.0f, 0.0f);
+						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
+						particleTransform = particleTransform * segmentTransform;
+						particlePos = particleTransform.TranslationXY;
+					}
+					if (particleEffect.ParamParticleRelativeToParent)
+					{
+						particlePos += particleEffect.Position;
+					}
+					else
+					{
+						particlePos += particleEffect.ParticleOrigin[i];
+					}
 					var v = SampleTurbulence(
 						particleEffect,
-						particleEffect.ParticlePosition[i],
+						particlePos,
 						particleEffect.ParamParticleTurbulenceScale.Get(emitterLife, lifeFraction) * 0.01f,
 						particleEffect.ParamParticleTurbulenceSpeed.Get(emitterLife, lifeFraction) * 0.1f);
 
@@ -187,20 +204,21 @@ namespace MG.Framework.Particle
 
 						if (particleEffect.SegmentTransforms != null)
 						{
-							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorX || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorY || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror180 || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXY)
-							{
-								spawnSegment = 1;
-							}
-							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment)
+							spawnSegment = 1;
+							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment)
 							{
 								spawnSegment = MathTools.Random().Next(particleEffect.SegmentTransforms.Count + 1);
 							}
 							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnSegmentBySegment)
 							{
+								if (particleEffect.LastSegment == -1)
+								{
+									particleEffect.LastSegment = MathTools.Random().Next(particleEffect.SegmentTransforms.Count + 1);
+								}
 								spawnSegment = particleEffect.LastSegment + 1;
 								if (particleEffect.LastSegment > particleEffect.SegmentTransforms.Count)
 								{
-									spawnSegment = 0;
+									spawnSegment = 1;
 								}
 								particleEffect.LastSegment = spawnSegment;
 							}
@@ -210,36 +228,12 @@ namespace MG.Framework.Particle
 						particleEffect.EmitterSpawnAccumulator -= secondsPerParticle;
 						particleEffect.EmitterCount++;
 
-						if (particleEffect.SegmentTransforms != null && particleEffect.SegmentTransforms.Count > 0 && !(particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnSegmentBySegment))
+						if (particleEffect.SegmentTransforms != null && particleEffect.SegmentTransforms.Count > 0 && particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Copy)
 						{
-							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.CloneEmitter || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXRandomRange || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorYRandomRange)
+							for (int i = 1; i < particleEffect.SegmentTransforms.Count; ++i)
 							{
-								for (int i = 0; i < particleEffect.SegmentTransforms.Count; ++i)
-								{
-									direction = mainDirection + MathTools.Random().NextFloat(-range, range);
-									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i);
-								}
-							}
-							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.CloneParticle)
-							{
-								for (int i = 0; i < particleEffect.SegmentTransforms.Count; ++i)
-								{
-									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i);
-								}
-							}
-							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorX || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorY || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror180)
-							{
-								for (int i = 1; i < particleEffect.ParamMirrorSegments; ++i)
-								{
-									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i * 2);
-								}
-							}
-							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXY)
-							{
-								for (int i = 1; i < particleEffect.ParamMirrorSegments; ++i)
-								{
-									EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i * 4);
-								}
+								direction = mainDirection + MathTools.Random().NextFloat(-range, range);
+								EmitInternal(particleEffect, p, MathTools.FromAngle(ParticleHelpers.ToRadians(direction)) * particleEffect.ParamEmitterInitialSpeed.Get(e, 0), particleEffect.Rotation, 0, i);
 							}
 						}
 					}

@@ -79,13 +79,9 @@ namespace MG.Framework.Particle
 				}
 
 				int mirroredCount = 0;
-				if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorX || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorY || particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror180)
+				if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror && particleEffect.SegmentTransforms != null)
 				{
-					mirroredCount = 1;
-				}
-				else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.MirrorXY)
-				{
-					mirroredCount = 3;
+					mirroredCount = particleEffect.SegmentTransforms.Count - 1;
 				}
 				for (int mirror = 0; mirror <= mirroredCount; mirror++)
 				{

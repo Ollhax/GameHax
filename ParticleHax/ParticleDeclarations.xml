@@ -831,7 +831,7 @@
 			<Parameter>
 				<Name>MirrorSegments</Name>
 				<PrettyName>Segments</PrettyName>
-				<Description>Total number of segments of the system. Additional segments are mirrored.</Description>
+				<Description>Total number of segments of the system.\n&lt;b&gt;2 segments&lt;/b&gt; are mirrored from center.\n&lt;b&gt;3+ segments&lt;/b&gt; are spread out evenly and centered.</Description>
 				<Category>Mirror</Category>
 				<Type>Int32</Type>
 				<DefaultValue>1</DefaultValue>
@@ -840,34 +840,37 @@
 				<MinValue>1</MinValue>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorRange</Name>
-				<PrettyName>Segment Range</PrettyName>
-				<Description>Angular range from center, in degrees. Segments are spread out evenly. If 360 a segment is not created at 360 degrees (would be same as original system).</Description>
+				<Name>MirrorCenter</Name>
+				<PrettyName>Mirror Center</PrettyName>
+				<Description>&lt;b&gt;2 segments&lt;/b&gt; Angular mirror center, in degrees from up direction.\n0=Mirror X, 90=Mirror Y.\n&lt;b&gt;3+ segments&lt;/b&gt; center of segment spread.</Description>
 				<Category>Mirror</Category>
 				<Type>Single</Type>
-				<DefaultValue>360.0</DefaultValue>
+				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
-				<MinValue>0.0</MinValue>
-				<MaxValue>360.0</MaxValue>
+			</Parameter>
+			<Parameter>
+				<Name>MirrorRange</Name>
+				<PrettyName>Segment Range</PrettyName>
+				<Description>Angular +- range from center, in degrees. Used for 3 or more segment.\n\n180 makes a full circle and the segments are spread evenly over it, anything less spreads from -range to +range with a segment in -range and one in +range.</Description>
+				<Category>Mirror</Category>
+				<Type>Single</Type>
+				<DefaultValue>180.0</DefaultValue>
+				<MaxValue>180.0</MaxValue>
+				<MinValue>-180.0</MinValue>
+				<ValueStep>1.0</ValueStep>
 			</Parameter>
 			<Parameter>
 				<Name>MirrorType</Name>
 				<PrettyName>Mirror Type</PrettyName>
-				<Description>Set if the mirrored system.</Description>
+				<Description>&lt;b&gt;Copy&lt;/b&gt; Particles in different segments gets their own random values.\n&lt;b&gt;Mirror&lt;/b&gt; Particles in different segments gets the same values and then transformed.\n&lt;b&gt;Segment per Segment&lt;/b&gt; One particle is spawned in one of the segments, in order.\n&lt;b&gt;Random Segment&lt;/b&gt; One particle is spawned in a random segment.</Description>
 				<Category>Mirror</Category>
 				<Type>Int32</Type>
 				<DefaultValue>0</DefaultValue>
 				<ValueList>
-					<Value Name="Clone Emitter" Value="0"/>
-					<Value Name="Clone Particle" Value="1"/>
+					<Value Name="Copy" Value="0"/>
+					<Value Name="Mirror" Value="1"/>
 					<Value Name="Segment by Segment" Value="2"/>
 					<Value Name="Random Segment" Value="3"/>
-					<Value Name="Mirror X" Value="4"/>
-					<Value Name="Mirror Y" Value="5"/>
-					<Value Name="Mirror X and Y" Value="6"/>
-					<Value Name="Mirror 180" Value="7"/>
-					<Value Name="Mirror X Random Range" Value="8"/>
-					<Value Name="Mirror Y Random Range" Value="9"/>
 				</ValueList>
 			</Parameter>
 			<Parameter>
