@@ -99,6 +99,7 @@ namespace MG.Framework.Particle
 		public float ParamMirrorCenter;
 		public float ParamMirrorRange;
 		public MirrorType ParamMirrorType;
+		public bool ParamMirrorKeepRotation;
 
 		public RandomFloat ParamTextureFrameStart;
 		public RandomFloat ParamTextureFrameTimeline;
@@ -303,6 +304,7 @@ namespace MG.Framework.Particle
 				ParamMirrorCenter = Definition.GetParameter("MirrorCenter").Value.Get<float>();
 				ParamMirrorRange = Definition.GetParameter("MirrorRange").Value.Get<float>();
 				ParamMirrorType = (MirrorType)Definition.GetParameter("MirrorType").Value.Get<int>();
+				ParamMirrorKeepRotation = Definition.GetParameter("MirrorKeepRotation").Value.Get<bool>();
 
 				SegmentTransforms = null;
 				if (ParamMirrorSegments > 1)

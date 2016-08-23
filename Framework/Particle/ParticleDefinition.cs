@@ -236,6 +236,7 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("MirrorCenter", 0.0f);
 			RegisterDefaultParameter("MirrorRange", 180.0f);
 			RegisterDefaultParameter("MirrorType", 0);
+			RegisterDefaultParameter("MirrorKeepRotation", false);
 			RegisterDefaultParameter("ParticleLife", 1.0f);
 			RegisterDefaultParameter("ParticleInfinite", false);
 			RegisterDefaultParameter("ParticleOrientToVelocity", false);

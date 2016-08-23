@@ -99,6 +99,10 @@ namespace MG.Framework.Particle
 					{
 						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
 						particleTransform = particleTransform * segmentTransform;
+						if (particleEffect.ParamMirrorKeepRotation)
+						{
+							particleTransform = MathTools.Create2DAffineMatrix(particleTransform.TranslationXY.X, particleTransform.TranslationXY.Y, s * sx, s * sy, r);
+						}
 					}
 
 					if (particleEffect.ParamParticleRelativeToParent)

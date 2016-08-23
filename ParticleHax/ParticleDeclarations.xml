@@ -874,6 +874,14 @@
 				</ValueList>
 			</Parameter>
 			<Parameter>
+				<Name>MirrorKeepRotation</Name>
+				<PrettyName>Keep Rotation</PrettyName>
+				<Description>If true, particles will keep their rotation no matter what segment they come from.</Description>
+				<Category>Mirror</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>false</DefaultValue>
+			</Parameter>
+			<Parameter>
 				<Name>SortMode</Name>
 				<PrettyName>Sort Mode</PrettyName>
 				<Description>How particles will be sorted before being drawn.</Description>
