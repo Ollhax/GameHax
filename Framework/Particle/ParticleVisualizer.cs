@@ -78,15 +78,15 @@ namespace MG.Framework.Particle
 					}
 				}
 
-				int mirroredCount = 0;
-				if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Mirror && particleEffect.SegmentTransforms != null)
+				int clonedCount = 0;
+				if (particleEffect.ParamSegmentSpawnType == ParticleEffect.SegmentSpawnType.CloneAll && particleEffect.SegmentTransforms != null)
 				{
-					mirroredCount = particleEffect.SegmentTransforms.Count - 1;
+					clonedCount = particleEffect.SegmentTransforms.Count - 1;
 				}
-				for (int mirror = 0; mirror <= mirroredCount; mirror++)
+				for (int clone = 0; clone <= clonedCount; clone++)
 				{
 					int segmentIndex = particleEffect.ParticleSegmentIndex[i];
-					segmentIndex += mirror;
+					segmentIndex += clone;
 					if (particleEffect.ParamParticleOrientToVelocity && segmentIndex >= 0 && particleEffect.SegmentTransforms != null && segmentIndex < particleEffect.SegmentTransforms.Count)
 					{
 						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
@@ -99,7 +99,7 @@ namespace MG.Framework.Particle
 					{
 						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
 						particleTransform = particleTransform * segmentTransform;
-						if (particleEffect.ParamMirrorKeepRotation)
+						if (particleEffect.ParamSegmentKeepRotation)
 						{
 							particleTransform = MathTools.Create2DAffineMatrix(particleTransform.TranslationXY.X, particleTransform.TranslationXY.Y, s * sx, s * sy, r);
 						}

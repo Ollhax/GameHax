@@ -56,12 +56,12 @@ namespace MG.Framework.Particle
 			OldestOnTop,
 		}
 
-		public enum MirrorType
+		public enum SegmentSpawnType
 		{
-			Copy,
-			Mirror,
-			SpawnSegmentBySegment,
-			SpawnRandomSegment,
+			All,
+			CloneAll,
+			SequentialSegment,
+			RandomSegment,
 		}
 
 		public readonly ParticleDefinition Definition;
@@ -95,11 +95,13 @@ namespace MG.Framework.Particle
 		public Gradient ParamParticleColor;
 		public LoopMode ParamEmitterLoopMode;
 		public float ParamEmitterLife;
-		public int ParamMirrorSegments;
+		public int ParamSegmentCount;
+		public float ParamSegmentCenter;
+		public float ParamSegmentRange;
+		public SegmentSpawnType ParamSegmentSpawnType;
+		public bool ParamSegmentKeepRotation;
+		public bool ParamMirror;
 		public float ParamMirrorCenter;
-		public float ParamMirrorRange;
-		public MirrorType ParamMirrorType;
-		public bool ParamMirrorKeepRotation;
 
 		public RandomFloat ParamTextureFrameStart;
 		public RandomFloat ParamTextureFrameTimeline;
@@ -300,42 +302,46 @@ namespace MG.Framework.Particle
 				ParticleTexture = assetHandler.Load<Texture2D>(texture);
 				LastSegment = -1;
 
-				ParamMirrorSegments = Definition.GetParameter("MirrorSegments").Value.Get<int>();
+				ParamSegmentCount = Definition.GetParameter("SegmentCount").Value.Get<int>();
+				ParamSegmentCenter = Definition.GetParameter("SegmentCenter").Value.Get<float>();
+				ParamSegmentRange = Definition.GetParameter("SegmentRange").Value.Get<float>();
+				ParamSegmentSpawnType = (SegmentSpawnType)Definition.GetParameter("SegmentSpawnType").Value.Get<int>();
+				ParamSegmentKeepRotation = Definition.GetParameter("SegmentKeepRotation").Value.Get<bool>();
+				ParamMirror = Definition.GetParameter("Mirror").Value.Get<bool>();
 				ParamMirrorCenter = Definition.GetParameter("MirrorCenter").Value.Get<float>();
-				ParamMirrorRange = Definition.GetParameter("MirrorRange").Value.Get<float>();
-				ParamMirrorType = (MirrorType)Definition.GetParameter("MirrorType").Value.Get<int>();
-				ParamMirrorKeepRotation = Definition.GetParameter("MirrorKeepRotation").Value.Get<bool>();
 
 				SegmentTransforms = null;
-				if (ParamMirrorSegments > 1)
+				if (ParamSegmentCount > 1)
 				{
-					if (SegmentTransforms == null)
-					{
-						SegmentTransforms = new List<Matrix>();
-					}
-					if (ParamMirrorSegments == 2)
-					{
-						SegmentTransforms.Add(Matrix.Identity);
-						Matrix mirrorMatrix = CreateReflectionZ(ParticleHelpers.ToRadians(ParamMirrorCenter));
-						SegmentTransforms.Add(mirrorMatrix);
-					}
-					else if (MathTools.Equals(Math.Abs(ParamMirrorRange), 180.0f))
+					SegmentTransforms = new List<Matrix>();
+					float segmentRange = ParamSegmentRange;
+					float segmentStart = -ParamSegmentRange;
+					float segmentCenter = ParamSegmentCenter;
+					if (MathTools.Equals(Math.Abs(segmentRange), 180.0f))
 					{
 						// Spread evenly over full circle
-						float anglePerSegment = ParamMirrorRange * 2.0f / ParamMirrorSegments;
-						for (int i = 0; i < ParamMirrorSegments; ++i)
-						{
-							SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + ParamMirrorCenter + i * anglePerSegment)));
-						}
+						segmentRange = segmentRange - segmentRange / ParamSegmentCount;
+						segmentStart = -segmentRange;
 					}
-					else
+					// Spread evenly from -range to +range with one segment at -range and one at +range.
+					float anglePerSegment = segmentRange * 2.0f / (ParamSegmentCount - 1);
+					for (int i = 0; i < ParamSegmentCount; ++i)
 					{
-						// Spread evenly from -range to +range with one segment at -range and one at +range.
-						float anglePerSegment = ParamMirrorRange * 2.0f / (ParamMirrorSegments - 1);
-						for (int i = 0; i < ParamMirrorSegments; ++i)
-						{
-							SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + ParamMirrorCenter - ParamMirrorRange + i * anglePerSegment)));
-						}
+						SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + segmentCenter + segmentStart + i * anglePerSegment)));
+					}
+				}
+				else if (ParamMirror)
+				{
+					SegmentTransforms = new List<Matrix>();
+					SegmentTransforms.Add(Matrix.Identity);
+				}
+				if (ParamMirror)
+				{
+					Matrix mirrorMatrix = CreateReflectionZ(ParticleHelpers.ToRadians(ParamMirrorCenter));
+					int segments = SegmentTransforms.Count;
+					for (int i = 0; i < segments; ++i)
+					{
+						SegmentTransforms.Add(SegmentTransforms[i] * mirrorMatrix);
 					}
 				}
 			}

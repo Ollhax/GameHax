@@ -89,7 +89,7 @@ namespace MG.Framework.Particle
 				if (turbulence != 0)
 				{
 					Vector2 particlePos = particleEffect.ParticlePosition[i];
-					if (segmentIndex >= 0 && particleEffect.ParamMirrorType != ParticleEffect.MirrorType.Mirror)
+					if (segmentIndex >= 0 && particleEffect.ParamSegmentSpawnType != ParticleEffect.SegmentSpawnType.CloneAll)
 					{
 						// Calculate final world position to get different turbulence for the different copies
 						Matrix particleTransform = MathTools.Create2DAffineMatrix(particlePos.X, particlePos.Y, 1.0f, 1.0f, 0.0f);
@@ -205,18 +205,18 @@ namespace MG.Framework.Particle
 						if (particleEffect.SegmentTransforms != null)
 						{
 							spawnSegment = 1;
-							if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnRandomSegment)
+							if (particleEffect.ParamSegmentSpawnType == ParticleEffect.SegmentSpawnType.RandomSegment)
 							{
-								spawnSegment = MathTools.Random().Next(particleEffect.SegmentTransforms.Count + 1);
+								spawnSegment += MathTools.Random().Next(particleEffect.SegmentTransforms.Count);
 							}
-							else if (particleEffect.ParamMirrorType == ParticleEffect.MirrorType.SpawnSegmentBySegment)
+							else if (particleEffect.ParamSegmentSpawnType == ParticleEffect.SegmentSpawnType.SequentialSegment)
 							{
-								if (particleEffect.LastSegment == -1)
+								if (particleEffect.LastSegment < 0)
 								{
-									particleEffect.LastSegment = MathTools.Random().Next(particleEffect.SegmentTransforms.Count + 1);
+									particleEffect.LastSegment = 0;
 								}
 								spawnSegment = particleEffect.LastSegment + 1;
-								if (particleEffect.LastSegment > particleEffect.SegmentTransforms.Count)
+								if (particleEffect.LastSegment >= particleEffect.SegmentTransforms.Count)
 								{
 									spawnSegment = 1;
 								}
@@ -228,7 +228,7 @@ namespace MG.Framework.Particle
 						particleEffect.EmitterSpawnAccumulator -= secondsPerParticle;
 						particleEffect.EmitterCount++;
 
-						if (particleEffect.SegmentTransforms != null && particleEffect.SegmentTransforms.Count > 0 && particleEffect.ParamMirrorType == ParticleEffect.MirrorType.Copy)
+						if (particleEffect.SegmentTransforms != null && particleEffect.SegmentTransforms.Count > 0 && particleEffect.ParamSegmentSpawnType == ParticleEffect.SegmentSpawnType.All)
 						{
 							for (int i = 1; i < particleEffect.SegmentTransforms.Count; ++i)
 							{

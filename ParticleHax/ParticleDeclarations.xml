@@ -829,10 +829,10 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorSegments</Name>
-				<PrettyName>Segments</PrettyName>
-				<Description>Total number of segments of the system.\n&lt;b&gt;2 segments&lt;/b&gt; are mirrored from center.\n&lt;b&gt;3+ segments&lt;/b&gt; are spread out evenly and centered.</Description>
-				<Category>Mirror</Category>
+				<Name>SegmentCount</Name>
+				<PrettyName>Segment Count</PrettyName>
+				<Description>Total number of segments of the system, they are spread out evenly and centered.</Description>
+				<Category>Segment</Category>
 				<Type>Int32</Type>
 				<DefaultValue>1</DefaultValue>
 				<ValueStep>1</ValueStep>
@@ -840,19 +840,19 @@
 				<MinValue>1</MinValue>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorCenter</Name>
-				<PrettyName>Mirror Center</PrettyName>
-				<Description>&lt;b&gt;2 segments&lt;/b&gt; Angular mirror center, in degrees from up direction.\n0=Mirror X, 90=Mirror Y.\n&lt;b&gt;3+ segments&lt;/b&gt; center of segment spread.</Description>
-				<Category>Mirror</Category>
+				<Name>SegmentCenter</Name>
+				<PrettyName>Segment Center</PrettyName>
+				<Description>Center of segment spread.</Description>
+				<Category>Segment</Category>
 				<Type>Single</Type>
 				<DefaultValue>0.0</DefaultValue>
 				<ValueStep>1.0</ValueStep>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorRange</Name>
+				<Name>SegmentRange</Name>
 				<PrettyName>Segment Range</PrettyName>
-				<Description>Angular +- range from center, in degrees. Used for 3 or more segment.\n\n180 makes a full circle and the segments are spread evenly over it, anything less spreads from -range to +range with a segment in -range and one in +range.</Description>
-				<Category>Mirror</Category>
+				<Description>Angular +- range from center, in degrees.\n\n180 makes a full circle and the segments are spread evenly over it, anything less spreads from -range to +range with a segment in -range and one in +range.</Description>
+				<Category>Segment</Category>
 				<Type>Single</Type>
 				<DefaultValue>180.0</DefaultValue>
 				<MaxValue>180.0</MaxValue>
@@ -860,26 +860,43 @@
 				<ValueStep>1.0</ValueStep>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorType</Name>
-				<PrettyName>Mirror Type</PrettyName>
-				<Description>&lt;b&gt;Copy&lt;/b&gt; Particles in different segments gets their own random values.\n&lt;b&gt;Mirror&lt;/b&gt; Particles in different segments gets the same values and then transformed.\n&lt;b&gt;Segment per Segment&lt;/b&gt; One particle is spawned in one of the segments, in order.\n&lt;b&gt;Random Segment&lt;/b&gt; One particle is spawned in a random segment.</Description>
-				<Category>Mirror</Category>
+				<Name>SegmentSpawnType</Name>
+				<PrettyName>Spawn Type</PrettyName>
+				<Description>&lt;b&gt;All&lt;/b&gt; One particle is spawned in every segment and the different particles get their own random values.\n&lt;b&gt;Clone All&lt;/b&gt; Particles in different segments gets the same values.\n&lt;b&gt;Sequential&lt;/b&gt; One particle is spawned in one of the segments, in sequence.\n&lt;b&gt;Random Segment&lt;/b&gt; One particle is spawned in a random segment.</Description>
+				<Category>Segment</Category>
 				<Type>Int32</Type>
 				<DefaultValue>0</DefaultValue>
 				<ValueList>
-					<Value Name="Copy" Value="0"/>
-					<Value Name="Mirror" Value="1"/>
-					<Value Name="Segment by Segment" Value="2"/>
+					<Value Name="All" Value="0"/>
+					<Value Name="Clone All" Value="1"/>
+					<Value Name="Sequential" Value="2"/>
 					<Value Name="Random Segment" Value="3"/>
 				</ValueList>
 			</Parameter>
 			<Parameter>
-				<Name>MirrorKeepRotation</Name>
+				<Name>SegmentKeepRotation</Name>
 				<PrettyName>Keep Rotation</PrettyName>
 				<Description>If true, particles will keep their rotation no matter what segment they come from.</Description>
-				<Category>Mirror</Category>
+				<Category>Segment</Category>
 				<Type>Boolean</Type>
 				<DefaultValue>false</DefaultValue>
+			</Parameter>
+			<Parameter>
+				<Name>Mirror</Name>
+				<PrettyName>Mirror System</PrettyName>
+				<Description>Reflect all segments and create a mirror image based on Mirror Center.</Description>
+				<Category>Segment</Category>
+				<Type>Boolean</Type>
+				<DefaultValue>false</DefaultValue>
+			</Parameter>
+			<Parameter>
+				<Name>MirrorCenter</Name>
+				<PrettyName>Mirror Center</PrettyName>
+				<Description>Angular mirror center, in degrees from up direction.\n0=Mirror X, 90=Mirror Y</Description>
+				<Category>Segment</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
 			</Parameter>
 			<Parameter>
 				<Name>SortMode</Name>

@@ -232,11 +232,13 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("EmitterInitialRotation", 0.0f);
 			RegisterDefaultParameter("EmitterInitialRotationSpeed", 0.0f);
 			RegisterDefaultParameter("EmitterInitialScale", 1.0f);
-			RegisterDefaultParameter("MirrorSegments", 1);
+			RegisterDefaultParameter("SegmentCount", 1);
+			RegisterDefaultParameter("SegmentCenter", 0.0f);
+			RegisterDefaultParameter("SegmentRange", 180.0f);
+			RegisterDefaultParameter("SegmentSpawnType", 0);
+			RegisterDefaultParameter("SegmentKeepRotation", false);
+			RegisterDefaultParameter("Mirror", false);
 			RegisterDefaultParameter("MirrorCenter", 0.0f);
-			RegisterDefaultParameter("MirrorRange", 180.0f);
-			RegisterDefaultParameter("MirrorType", 0);
-			RegisterDefaultParameter("MirrorKeepRotation", false);
 			RegisterDefaultParameter("ParticleLife", 1.0f);
 			RegisterDefaultParameter("ParticleInfinite", false);
 			RegisterDefaultParameter("ParticleOrientToVelocity", false);
