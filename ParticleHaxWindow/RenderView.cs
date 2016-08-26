@@ -17,6 +17,8 @@ namespace MG.ParticleEditorWindow
 		public event Action Load = delegate { };
 		public event Action<RenderContext> Draw = delegate { };
 		public event Action<Vector2> LeftMousePress = delegate { };
+		public event Action<Vector2> LeftMouseDown = delegate { };
+		public event Action<Vector2> LeftMouseUp = delegate { };
 
 		private bool pressed;
 
@@ -75,6 +77,7 @@ namespace MG.ParticleEditorWindow
 		private void OnLeftMouseDown(Vector2 pos)
 		{
 			pressed = true;
+			LeftMouseDown.Invoke(pos);
 			LeftMousePress.Invoke(pos);
 		}
 
@@ -89,6 +92,7 @@ namespace MG.ParticleEditorWindow
 		private void OnLeftMouseUp(Vector2 pos)
 		{
 			pressed = false;
+			LeftMouseUp.Invoke(pos);
 		}
 
 		public void Refresh()

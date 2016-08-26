@@ -211,7 +211,7 @@ namespace MG.Framework.Particle
 						var p = particleEffect.ParamParticleRelativeToParent ? Vector2.Zero : particleEffect.Position;
 						var e = particleEffect.LifeFractional;
 						float range = particleEffect.ParamEmitterRange.Get(e, 0) / 2;
-						float rotationDirection = MathTools.ToDegrees(particleEffect.Rotation);
+						float rotationDirection = particleEffect.ParamParticleRelativeToParent ? 0.0f : MathTools.ToDegrees(particleEffect.Rotation);
 						float mainDirection = rotationDirection + particleEffect.ParamEmitterDirection.Get(e, 0);
 						float randomDirection = MathTools.Random().NextFloat(-range, range);
 						float direction = mainDirection + randomDirection;
