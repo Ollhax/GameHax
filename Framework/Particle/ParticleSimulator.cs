@@ -33,38 +33,46 @@ namespace MG.Framework.Particle
 
 				var emitterLife = particleEffect.LifeFractional;
 				var lifeFraction = particleEffect.ParticleAge[i] / particleEffect.ParticleLife[i];
-				var accel = new Vector2(
-					particleEffect.ParamParticleAccelerationX.Get(emitterLife, lifeFraction),
-					particleEffect.ParamParticleAccelerationY.Get(emitterLife, lifeFraction));
+
 				float resistance = particleEffect.ParamParticleAirResistance.Get(emitterLife, lifeFraction);
 				var turn = particleEffect.ParamParticleTurn.Get(emitterLife, lifeFraction);
 
-				if (segmentIndex == -1)
+				// Gravity and world acceleration are absolute and need to be broken out
+				var worldAccel = new Vector2(
+					particleEffect.ParamParticleAccelerationX.Get(emitterLife, lifeFraction),
+					particleEffect.ParamParticleAccelerationY.Get(emitterLife, lifeFraction));
+				worldAccel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
+				var oldWorldVelocity = particleEffect.ParticleWorldForceVelocity[i];
+				var velWorld = oldWorldVelocity + worldAccel * time.ElapsedSeconds;
+				if (resistance != 0)
 				{
-					accel += particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
+					var res = velWorld * resistance * time.ElapsedSeconds;
+					var absX = Math.Abs(velWorld.X);
+					var absY = Math.Abs(velWorld.Y);
+					res.X = MathTools.Clamp(res.X, -absX, absX);
+					res.Y = MathTools.Clamp(res.Y, -absY, absY);
+					velWorld -= res;
 				}
-				else
+				if (turn != 0)
 				{
-					// Gravity is absolute and need to be broken out for segments
-					Vector2 gravity = particleEffect.Gravity * particleEffect.ParamParticleGravityScale.Get(emitterLife, lifeFraction) * 100.0f;
-					var oldGravity = particleEffect.ParticleGravityVelocity[i];
-					var velGravity = oldGravity + gravity * time.ElapsedSeconds;
-					if (resistance != 0)
-					{
-						var res = velGravity * resistance * time.ElapsedSeconds;
-						var absX = Math.Abs(velGravity.X);
-						var absY = Math.Abs(velGravity.Y);
-						res.X = MathTools.Clamp(res.X, -absX, absX);
-						res.Y = MathTools.Clamp(res.Y, -absY, absY);
-						velGravity -= res;
-					}
-					if (turn != 0)
-					{
-						velGravity = velGravity.Rotated(MathTools.ToRadians(turn));
-					}
+					velWorld = velWorld.Rotated(MathTools.ToRadians(turn));
+				}
 
-					particleEffect.ParticleGravityVelocity[i] = velGravity;
-					particleEffect.ParticleGravityOffset[i] += (oldGravity + velGravity) / 2 * time.ElapsedSeconds;
+				particleEffect.ParticleWorldForceVelocity[i] = velWorld;
+				particleEffect.ParticleWorldForceOffset[i] += (oldWorldVelocity + velWorld) / 2 * time.ElapsedSeconds;
+
+				var localAccel = new Vector2(
+					particleEffect.ParamParticleAccelerationLocalX.Get(emitterLife, lifeFraction),
+					particleEffect.ParamParticleAccelerationLocalY.Get(emitterLife, lifeFraction));
+				var accel = new Vector2(0.0f, 0.0f);
+				if (!localAccel.IsZero)
+				{
+					Vector2 localY = new Vector2(0.0f, -1.0f);
+					localY = localY.Rotated(particleEffect.ParticleRotation[i]);
+					Vector2 localX = new Vector2(1.0f, 0.0f);
+					localX = localX.Rotated(particleEffect.ParticleRotation[i]);
+					localAccel = localX * localAccel.X + localY * localAccel.Y;
+					accel += localAccel;
 				}
 
 				var oldVel = particleEffect.ParticleVelocity[i];
@@ -119,13 +127,20 @@ namespace MG.Framework.Particle
 
 				if (particleEffect.ParamParticleOrientToVelocity)
 				{
-					if (segmentIndex == -1 || particleEffect.ParticleGravityVelocity[i].IsZero)
+					if (particleEffect.ParticleWorldForceVelocity[i].IsZero)
 					{
 						particleEffect.ParticleRotation[i] = vel.Angle() + MathTools.PiOver2;
 					}
+					else if (segmentIndex >= 0)
+					{
+						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
+						Matrix velocityMatrix = MathTools.Create2DAffineMatrix(particleEffect.ParticleWorldForceVelocity[i].X, particleEffect.ParticleWorldForceVelocity[i].Y, 1.0f, 1.0f, 0.0f);
+						velocityMatrix = velocityMatrix * Matrix.Invert(segmentTransform);
+						particleEffect.ParticleRotation[i] = (velocityMatrix.TranslationXY + particleEffect.ParticleVelocity[i]).Angle() + MathTools.PiOver2;
+					}
 					else
 					{
-						particleEffect.ParticleRotation[i] = 0.0f;
+						particleEffect.ParticleRotation[i] = (particleEffect.ParticleWorldForceVelocity[i] + particleEffect.ParticleVelocity[i]).Angle() + MathTools.PiOver2;
 					}
 				}
 				else
@@ -305,8 +320,8 @@ namespace MG.Framework.Particle
 			particleEffect.ParticleOrigin[index] = position;
 			particleEffect.ParticlePosition[index] = posOffset;
 			particleEffect.ParticleVelocity[index] = velocity;
-			particleEffect.ParticleGravityOffset[index] = Vector2.Zero;
-			particleEffect.ParticleGravityVelocity[index] = Vector2.Zero;
+			particleEffect.ParticleWorldForceOffset[index] = Vector2.Zero;
+			particleEffect.ParticleWorldForceVelocity[index] = Vector2.Zero;
 			particleEffect.ParticleRotation[index] = initialRotation;
 			particleEffect.ParticleRotationSpeed[index] = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotationSpeed.Get(e, 0));
 			particleEffect.ParticleScale[index] = initialScale;

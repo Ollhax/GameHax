@@ -590,6 +590,60 @@
 				</Parameters>
 			</Parameter>
 			<Parameter>
+				<Name>ParticleAccelerationLocalX</Name>
+				<PrettyName>Local Accel. X</PrettyName>
+				<Description>How much the particle should accelerate in local X coordinates based on rotation.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
+				<Name>ParticleAccelerationLocalY</Name>
+				<PrettyName>Local Accel. Y</PrettyName>
+				<Description>How much the particle should accelerate in local Y coordinates based on rotation.</Description>
+				<Category>Particle</Category>
+				<Type>Single</Type>
+				<DefaultValue>0.0</DefaultValue>
+				<ValueStep>1.0</ValueStep>
+				<Parameters>
+					<Parameter>
+						<Name>GraphEmitter</Name>
+						<PrettyName>Emitter Life %</PrettyName>
+						<Description>How this parameter is affected over the emitter life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+					<Parameter>
+						<Name>GraphParticle</Name>
+						<PrettyName>Particle Life %</PrettyName>
+						<Description>How this parameter is affected over the particle life time.</Description>
+						<Type>Curve</Type>
+						<DefaultValue></DefaultValue>
+						<CurveMin>-1.0</CurveMin>
+					</Parameter>
+				</Parameters>
+			</Parameter>
+			<Parameter>
 				<Name>ParticleAccelerationAngular</Name>
 				<PrettyName>Spin Acceleration</PrettyName>
 				<Description>How much the particle should accelerate angular coordinates.</Description>
@@ -851,18 +905,18 @@
 			<Parameter>
 				<Name>SegmentRange</Name>
 				<PrettyName>Segment Range</PrettyName>
-				<Description>Angular +- range from center, in degrees.\n\n180 makes a full circle and the segments are spread evenly over it, anything less spreads from -range to +range with a segment in -range and one in +range.</Description>
+				<Description>Angular +- range from center, in degrees.</Description>
 				<Category>Segment</Category>
 				<Type>Single</Type>
 				<DefaultValue>180.0</DefaultValue>
-				<MaxValue>180.0</MaxValue>
-				<MinValue>-180.0</MinValue>
+				<MaxValue>360.0</MaxValue>
+				<MinValue>0.0</MinValue>
 				<ValueStep>1.0</ValueStep>
 			</Parameter>
 			<Parameter>
 				<Name>SegmentSpawnType</Name>
 				<PrettyName>Spawn Type</PrettyName>
-				<Description>&lt;b&gt;All&lt;/b&gt; One particle is spawned in every segment and the different particles get their own random values.\n&lt;b&gt;Clone All&lt;/b&gt; Particles in different segments gets the same values.\n&lt;b&gt;Sequential&lt;/b&gt; One particle is spawned in one of the segments, in sequence.\n&lt;b&gt;Random Segment&lt;/b&gt; One particle is spawned in a random segment.</Description>
+				<Description>&lt;b&gt;All: &lt;/b&gt;One particle is spawned in every segment and the different particles get their own random values.\n\n&lt;b&gt;Clone All: &lt;/b&gt;Particles in different segments gets the same values.\n\n&lt;b&gt;Sequential: &lt;/b&gt;One particle is spawned in one of the segments, in sequence.\n\n&lt;b&gt;Random Segment: &lt;/b&gt;One particle is spawned in a random segment.</Description>
 				<Category>Segment</Category>
 				<Type>Int32</Type>
 				<DefaultValue>0</DefaultValue>

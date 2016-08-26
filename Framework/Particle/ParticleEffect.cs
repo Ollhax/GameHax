@@ -71,8 +71,8 @@ namespace MG.Framework.Particle
 		public readonly List<Vector2> ParticleOrigin;
 		public readonly List<Vector2> ParticlePosition;
 		public readonly List<Vector2> ParticleVelocity;
-		public readonly List<Vector2> ParticleGravityOffset;
-		public readonly List<Vector2> ParticleGravityVelocity;
+		public readonly List<Vector2> ParticleWorldForceOffset;
+		public readonly List<Vector2> ParticleWorldForceVelocity;
 		public readonly List<float> ParticleRotation;
 		public readonly List<float> ParticleRotationSpeed;
 		public readonly List<float> ParticleScale;
@@ -109,6 +109,8 @@ namespace MG.Framework.Particle
 		public RandomFloat ParamParticleGravityScale;
 		public RandomFloat ParamParticleAccelerationX;
 		public RandomFloat ParamParticleAccelerationY;
+		public RandomFloat ParamParticleAccelerationLocalX;
+		public RandomFloat ParamParticleAccelerationLocalY;
 		public RandomFloat ParamParticleAccelerationAngular;
 		public RandomFloat ParamParticleAirResistance;
 		public RandomFloat ParamParticleTurn;
@@ -203,8 +205,8 @@ namespace MG.Framework.Particle
 			ParticleOrigin = ParticleData.Register<Vector2>("Origin");
 			ParticlePosition = ParticleData.Register<Vector2>("Position");
 			ParticleVelocity = ParticleData.Register<Vector2>("Velocity");
-			ParticleGravityOffset = ParticleData.Register<Vector2>("GravityOffset");
-			ParticleGravityVelocity = ParticleData.Register<Vector2>("GravityVelocity");
+			ParticleWorldForceOffset = ParticleData.Register<Vector2>("WorldForceOffset");
+			ParticleWorldForceVelocity = ParticleData.Register<Vector2>("WorldForceVelocity");
 			ParticleRotation = ParticleData.Register<float>("Rotation");
 			ParticleRotationSpeed = ParticleData.Register<float>("RotationSpeed");
 			ParticleScale = ParticleData.Register<float>("Scale");
@@ -219,6 +221,8 @@ namespace MG.Framework.Particle
 			ParamParticleGravityScale = Definition.GetFloatParameter("ParticleGravityScale");
 			ParamParticleAccelerationX = Definition.GetFloatParameter("ParticleAccelerationX");
 			ParamParticleAccelerationY = Definition.GetFloatParameter("ParticleAccelerationY");
+			ParamParticleAccelerationLocalX = Definition.GetFloatParameter("ParticleAccelerationLocalX");
+			ParamParticleAccelerationLocalY = Definition.GetFloatParameter("ParticleAccelerationLocalY");
 			ParamParticleAccelerationAngular = Definition.GetFloatParameter("ParticleAccelerationAngular");
 			ParamParticleAirResistance = Definition.GetFloatParameter("ParticleAirResistance");
 			ParamParticleTurn = Definition.GetFloatParameter("ParticleTurn");
@@ -314,20 +318,11 @@ namespace MG.Framework.Particle
 				if (ParamSegmentCount > 1)
 				{
 					SegmentTransforms = new List<Matrix>();
-					float segmentRange = ParamSegmentRange;
-					float segmentStart = -ParamSegmentRange;
-					float segmentCenter = ParamSegmentCenter;
-					if (MathTools.Equals(Math.Abs(segmentRange), 180.0f))
-					{
-						// Spread evenly over full circle
-						segmentRange = segmentRange - segmentRange / ParamSegmentCount;
-						segmentStart = -segmentRange;
-					}
-					// Spread evenly from -range to +range with one segment at -range and one at +range.
-					float anglePerSegment = segmentRange * 2.0f / (ParamSegmentCount - 1);
+					float anglePerSegment = ParamSegmentRange * 2.0f / ParamSegmentCount;
+					float segmentStart = -ParamSegmentRange + anglePerSegment / 2.0f;
 					for (int i = 0; i < ParamSegmentCount; ++i)
 					{
-						SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + segmentCenter + segmentStart + i * anglePerSegment)));
+						SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + ParamSegmentCenter + segmentStart + i * anglePerSegment)));
 					}
 				}
 				else if (ParamMirror)

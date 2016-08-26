@@ -247,6 +247,8 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("ParticleGravityScale", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationX", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationY", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationLocalX", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationLocalY", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationAngular", 0.0f);
 			RegisterDefaultParameter("ParticleAirResistance", 0.0f);
 			RegisterDefaultParameter("ParticleTurn", 0.0f);

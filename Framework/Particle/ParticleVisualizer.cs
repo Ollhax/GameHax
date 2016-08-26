@@ -90,7 +90,7 @@ namespace MG.Framework.Particle
 					if (particleEffect.ParamParticleOrientToVelocity && segmentIndex >= 0 && particleEffect.SegmentTransforms != null && segmentIndex < particleEffect.SegmentTransforms.Count)
 					{
 						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
-						Matrix velocityMatrix = MathTools.Create2DAffineMatrix(particleEffect.ParticleGravityVelocity[i].X, particleEffect.ParticleGravityVelocity[i].Y, 1.0f, 1.0f, 0.0f);
+						Matrix velocityMatrix = MathTools.Create2DAffineMatrix(particleEffect.ParticleWorldForceVelocity[i].X, particleEffect.ParticleWorldForceVelocity[i].Y, 1.0f, 1.0f, 0.0f);
 						velocityMatrix = velocityMatrix * Matrix.Invert(segmentTransform);
 						r = (velocityMatrix.TranslationXY + particleEffect.ParticleVelocity[i]).Angle() + MathTools.PiOver2;
 					}
@@ -114,11 +114,8 @@ namespace MG.Framework.Particle
 						particleTransform.TranslationXY += particleEffect.ParticleOrigin[i];
 					}
 
-					if (segmentIndex != -1)
-					{
-						// Offset position with gravity
-						particleTransform.TranslationXY += particleEffect.ParticleGravityOffset[i];
-					}
+					// Offset position with world forces
+					particleTransform.TranslationXY += particleEffect.ParticleWorldForceOffset[i];
 
 					var sourceArea = new RectangleF(0, 0, particleEffect.ParticleTexture.Width, particleEffect.ParticleTexture.Height);
 					var maxCells = particleEffect.AnimationCells;
