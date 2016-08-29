@@ -216,6 +216,23 @@ namespace MG.ParticleHax.Controllers
 			primitiveBatch.End();
 		}
 
+		private void DrawGrid(RenderContext renderContext, Color color, int size)
+		{
+			var area = renderContext.ActiveScreen.NormalizedScreenArea;
+			var primitiveBatch = renderContext.PrimitiveBatch;
+
+			primitiveBatch.Begin();
+			for (int x = 0; x < area.Width / size; x++)
+			{
+				for (int y = 0; y < area.Height / size; y++)
+				{
+					primitiveBatch.Draw(new RectangleF(area.X + x * size, area.Y + y * size - 1, size + 1, size + 1), color);
+				}
+			}
+
+			primitiveBatch.End();
+		}
+
 		private void Draw(RenderContext renderContext)
 		{
 			var clearColor = GetBackgroundColor();
@@ -226,6 +243,15 @@ namespace MG.ParticleHax.Controllers
 			if (clearColor.A != 255)
 			{
 				DrawCheckboard(renderContext, clearColor);
+			}
+
+			if (Settings.Get<bool>("ShowGrid"))
+			{
+				int gridSize = Settings.Get<int>("GridSize");
+				Color gridColor = clearColor;
+				gridColor.R = gridColor.G = gridColor.B = gridColor.R > (byte)60 || gridColor.A < (byte)128 ? (byte)0 : (byte)128;
+				gridColor.A = 255;
+				DrawGrid(renderContext, gridColor, gridSize);
 			}
 
 			var particleEffect = model.ParticleEffect;
@@ -239,7 +265,7 @@ namespace MG.ParticleHax.Controllers
 			{
 				var center = particlePosition ?? particleEffect.Position;
 				var color = Settings.Get<Color>("Crosshair.Color");
-				var rotation = particleRotation ?? particleEffect.Rotation;
+				var rotation = particleRotation ?? (particleEffect != null ? particleEffect.Rotation : 0.0f);
 				var upVector = new Vector2(0.0f, length);
 				var rightVector = new Vector2(length, 0.0f);
 				upVector = upVector.Rotated(rotation);

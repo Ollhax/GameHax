@@ -71,6 +71,8 @@ namespace MG.ParticleEditorWindow
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
+		public event System.Action ToggleShowGrid = delegate { };
+		public event System.Action SetGridSize = delegate { };
 		public event System.Action BackgroundColorChanged = delegate { };
 		public event System.Action ViewModeChanged = delegate { };
 		public event System.Action QualityLevelChanged = delegate { };
@@ -88,6 +90,35 @@ namespace MG.ParticleEditorWindow
 		public bool CutCopyEnabled { get { return editCut.Sensitive; } set { editCut.Sensitive = editCopy.Sensitive = value; } }
 		
 		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
+		public bool ViewShowGrid { get { return viewShowGrid.Active; } set { viewShowGrid.Active = value; } }
+
+		public int ViewGridSize
+		{
+			get
+			{
+				foreach( KeyValuePair<int, RadioMenuItem> kvp in viewGridSizeMap )
+				{
+					if (kvp.Value.Active)
+					{
+						return kvp.Key;
+					}
+				}
+
+				return 0;
+			}
+
+			set
+			{
+				foreach (KeyValuePair<int, RadioMenuItem> kvp in viewGridSizeMap)
+				{
+					if (kvp.Key == value)
+					{
+						kvp.Value.Active = true;
+						return;
+					}
+				}
+			}
+		}
 
 		public int ViewMode
 		{
@@ -384,6 +415,8 @@ namespace MG.ParticleEditorWindow
 
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
+		private CheckMenuItem viewShowGrid;
+		private Dictionary<int, RadioMenuItem> viewGridSizeMap = new Dictionary<int, RadioMenuItem>();
 		private List<ColorMenuItem> viewShowColor = new List<ColorMenuItem>();
 
 		private RadioMenuItem viewModeShowSelected;
@@ -480,6 +513,31 @@ namespace MG.ParticleEditorWindow
 			viewShowOrigin.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.e, ModifierType.ControlMask, AccelFlags.Visible));
 			viewShowOrigin.Activated += (sender, args) => ToggleShowOrigin.Invoke();
 			viewMenu.Append(viewShowOrigin);
+
+			viewShowGrid = new CheckMenuItem("Show Grid");
+			viewShowGrid.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.g, ModifierType.ControlMask, AccelFlags.Visible));
+			viewShowGrid.Activated += (sender, args) => ToggleShowGrid.Invoke();
+			viewMenu.Append(viewShowGrid);
+
+			// Grid size submenu
+			var setGridMenu = new Menu();
+			MenuItem viewSetGridSize = new MenuItem("Grid Size");
+			viewSetGridSize.Submenu = setGridMenu;
+			viewMenu.Append(viewSetGridSize);
+
+			int gridValue = 10;
+			var viewSetGridSizeFirst = new RadioMenuItem(gridValue.ToString());
+			viewSetGridSizeFirst.Activated += (sender, args) => SetGridSize.Invoke();
+			setGridMenu.Append(viewSetGridSizeFirst);
+			viewGridSizeMap.Add(gridValue, viewSetGridSizeFirst);
+			int[] gridSizes = { 15, 20, 25, 30, 50, 60, 75, 90, 100, 120, 125, 150, 175, 180, 200, 240, 250, 300, 350, 360, 400, 450, 480, 500, 540, 600 };
+			foreach (int gridSize in gridSizes)
+			{
+				var viewSetGridSizeX = new RadioMenuItem(viewSetGridSizeFirst.Group, gridSize.ToString());
+				viewSetGridSizeX.Activated += (sender, args) => SetGridSize.Invoke();
+				setGridMenu.Append(viewSetGridSizeX);
+				viewGridSizeMap.Add(gridSize, viewSetGridSizeX);
+			}
 
 			// View mode submenu
 			var viewModeMenu = new Menu();

@@ -32,6 +32,9 @@ namespace MG.ParticleHax.Controllers
 			Settings.Set("Crosshair.Enable", true);
 			Settings.Set("Crosshair.Color", new Color(1.0f, 1.0f, 1.0f, 0.5f));
 
+			Settings.Set("ShowGrid", false);
+			Settings.Set("GridSize", 120);
+
 			Settings.Set("ViewMode", (int)(RenderController.ParticleView.FullTree));
 			Settings.Set("QualityLevel", (int)(RenderController.ParticleQualityLevel.High));
 			
@@ -40,6 +43,12 @@ namespace MG.ParticleHax.Controllers
 
 			window.ViewShowOrigin = Settings.Get<bool>("Crosshair.Enable");
 			window.ToggleShowOrigin += OnToggleShowOrigin;
+
+			window.ViewShowGrid = Settings.Get<bool>("ShowGrid");
+			window.ToggleShowGrid += OnToggleShowGrid;
+
+			window.ViewGridSize = Settings.Get<int>("GridSize");
+			window.SetGridSize += OnSetGridSize;
 
 			window.ViewMode = Settings.Get<int>("ViewMode");
 			window.ViewModeChanged += OnViewModeChanged;
@@ -60,6 +69,18 @@ namespace MG.ParticleHax.Controllers
 		private void OnToggleShowOrigin()
 		{
 			Settings.Set("Crosshair.Enable", window.ViewShowOrigin);
+			Settings.Save();
+		}
+
+		private void OnToggleShowGrid()
+		{
+			Settings.Set("ShowGrid", window.ViewShowGrid);
+			Settings.Save();
+		}
+
+		private void OnSetGridSize()
+		{
+			Settings.Set("GridSize", window.ViewGridSize);
 			Settings.Save();
 		}
 
