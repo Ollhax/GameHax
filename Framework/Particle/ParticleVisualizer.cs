@@ -78,26 +78,73 @@ namespace MG.Framework.Particle
 					}
 				}
 
-				if (particleEffect.ParamParticleRelativeToParent)
+				int clonedCount = 0;
+				if (particleEffect.ParamSegmentSpawnType == ParticleEffect.SegmentSpawnType.CloneAll && particleEffect.SegmentTransforms != null)
 				{
-					p += particleEffect.Position;
+					clonedCount = particleEffect.SegmentTransforms.Count - 1;
 				}
-
-				var sourceArea = new RectangleF(0, 0, particleEffect.ParticleTexture.Width, particleEffect.ParticleTexture.Height);
-				var maxCells = particleEffect.AnimationCells;
-				
-				if (maxCells > 1 && particleEffect.ParamTextureFrameTime != 0)
+				for (int clone = 0; clone <= clonedCount; clone++)
 				{
-					int frame = (int)(a / particleEffect.ParamTextureFrameTime) % maxCells;
-					int frameX = frame % particleEffect.ParamTextureCells.X;
-					int frameY = frame / particleEffect.ParamTextureCells.X;
-					float cellX = particleEffect.ParticleTexture.Width / (float)particleEffect.ParamTextureCells.X;
-					float cellY = particleEffect.ParticleTexture.Height / (float)particleEffect.ParamTextureCells.Y;
+					int segmentIndex = particleEffect.ParticleSegmentIndex[i];
+					segmentIndex += clone;
+					if (particleEffect.ParamParticleOrientToVelocity && segmentIndex >= 0 && particleEffect.SegmentTransforms != null && segmentIndex < particleEffect.SegmentTransforms.Count)
+					{
+						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
+						Matrix velocityMatrix = MathTools.Create2DAffineMatrix(particleEffect.ParticleWorldForceVelocity[i].X, particleEffect.ParticleWorldForceVelocity[i].Y, 1.0f, 1.0f, 0.0f);
+						velocityMatrix = velocityMatrix * Matrix.Invert(segmentTransform);
+						r = (velocityMatrix.TranslationXY + particleEffect.ParticleVelocity[i]).Angle() + MathTools.PiOver2;
+					}
+					Matrix particleTransform = MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r);
+					if (segmentIndex >= 0 && particleEffect.SegmentTransforms != null && segmentIndex < particleEffect.SegmentTransforms.Count)
+					{
+						Matrix segmentTransform = particleEffect.SegmentTransforms[segmentIndex];
+						particleTransform = particleTransform * segmentTransform;
+						if (particleEffect.ParamSegmentKeepRotation)
+						{
+							particleTransform = MathTools.Create2DAffineMatrix(particleTransform.TranslationXY.X, particleTransform.TranslationXY.Y, s * sx, s * sy, r);
+						}
+					}
 
-					sourceArea = new RectangleF(frameX * cellX, frameY * cellY, cellX, cellY);
+					if (particleEffect.ParamParticleRelativeToParent)
+					{
+						Matrix parentTransform = Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f) + particleEffect.Rotation);
+						particleTransform = particleTransform * parentTransform;
+						particleTransform.TranslationXY += particleEffect.Position;
+					}
+					else
+					{
+						particleTransform.TranslationXY += particleEffect.ParticleOrigin[i];
+					}
+
+					// Offset position with world forces
+					particleTransform.TranslationXY += particleEffect.ParticleWorldForceOffset[i];
+
+					var sourceArea = new RectangleF(0, 0, particleEffect.ParticleTexture.Width, particleEffect.ParticleTexture.Height);
+					var maxCells = particleEffect.AnimationCells;
+
+					int frame = -1;
+					if (maxCells > 1)
+					{
+						float timelineFrame = particleEffect.ParamTextureFrameTimeline.Get(0, a);
+						if (timelineFrame >= 1.0f)
+						{
+							// 1.0, 2.0, 3.0, etc should not be interpreted as frame 0.
+							timelineFrame -= MathTools.Epsilon;
+						}
+						frame = (int)((particleEffect.ParticleStartFrame[i] + timelineFrame) * maxCells) % maxCells;
+					}
+					if (frame >= 0)
+					{
+						int frameX = frame % particleEffect.ParamTextureCells.X;
+						int frameY = frame / particleEffect.ParamTextureCells.X;
+						float cellX = particleEffect.ParticleTexture.Width / (float)particleEffect.ParamTextureCells.X;
+						float cellY = particleEffect.ParticleTexture.Height / (float)particleEffect.ParamTextureCells.Y;
+
+						sourceArea = new RectangleF(frameX * cellX, frameY * cellY, cellX, cellY);
+					}
+
+					quadBatch.Draw(particleEffect.ParticleTexture, particleTransform, sourceArea, color, sourceArea.Size * particleEffect.ParamTextureAnchor, QuadEffects.None, 0);
 				}
-
-				quadBatch.Draw(particleEffect.ParticleTexture, MathTools.Create2DAffineMatrix(p.X, p.Y, s * sx, s * sy, r), sourceArea, color, sourceArea.Size * particleEffect.ParamTextureAnchor, QuadEffects.None, 0);
 			}
 
 			quadBatch.End();

@@ -217,7 +217,8 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("TextureAnchorY", 0.5f);
 			RegisterDefaultParameter("TextureCellsX", 1);
 			RegisterDefaultParameter("TextureCellsY", 1);
-			RegisterDefaultParameter("TextureFrameTime", 0.5f);
+			RegisterDefaultParameter("TextureFrameStart", 0.0f);
+			RegisterDefaultParameter("TextureFrameTimeline", 1.0f);
 			RegisterDefaultParameter("EmitterLife", 1.0f);
 			RegisterDefaultParameter("EmitterLoop", 0);
 			RegisterDefaultParameter("EmitterSpawnDelay", 0.0f);
@@ -231,6 +232,13 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("EmitterInitialRotation", 0.0f);
 			RegisterDefaultParameter("EmitterInitialRotationSpeed", 0.0f);
 			RegisterDefaultParameter("EmitterInitialScale", 1.0f);
+			RegisterDefaultParameter("SegmentCount", 1);
+			RegisterDefaultParameter("SegmentCenter", 0.0f);
+			RegisterDefaultParameter("SegmentRange", 180.0f);
+			RegisterDefaultParameter("SegmentSpawnType", 0);
+			RegisterDefaultParameter("SegmentKeepRotation", false);
+			RegisterDefaultParameter("Mirror", false);
+			RegisterDefaultParameter("MirrorCenter", 0.0f);
 			RegisterDefaultParameter("ParticleLife", 1.0f);
 			RegisterDefaultParameter("ParticleInfinite", false);
 			RegisterDefaultParameter("ParticleOrientToVelocity", false);
@@ -239,6 +247,8 @@ namespace MG.Framework.Particle
 			RegisterDefaultParameter("ParticleGravityScale", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationX", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationY", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationLocalX", 0.0f);
+			RegisterDefaultParameter("ParticleAccelerationLocalY", 0.0f);
 			RegisterDefaultParameter("ParticleAccelerationAngular", 0.0f);
 			RegisterDefaultParameter("ParticleAirResistance", 0.0f);
 			RegisterDefaultParameter("ParticleTurn", 0.0f);

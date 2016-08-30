@@ -17,6 +17,7 @@ namespace MG.ParticleEditorWindow
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
 		private const int ColumnShow = 2;
+		private const int ColumnTogglable = 3;
 		private int disableChangeCallbacks;
 		private int lastReorderId;
 		private bool disableReorderChanges;
@@ -49,6 +50,7 @@ namespace MG.ParticleEditorWindow
 		{
 			public int Id;
 			public string Name;
+			public bool IsGroup;
 			public List<ItemIndex> Children = new List<ItemIndex>();
 		}
 		
@@ -81,7 +83,7 @@ namespace MG.ParticleEditorWindow
 			treeView.AppendColumn(effectColumn);
 			treeView.AppendColumn(new TreeViewColumn()); // Add a dummy column. This steals the horizontal space right of the label, allowing us to select entries properly.
 
-			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool));
+			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool), typeof(bool));
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
 			
@@ -97,6 +99,7 @@ namespace MG.ParticleEditorWindow
 			tog.Toggled += new Gtk.ToggledHandler(OnToggled);
 			effectColumn.PackStart(tog, false);
 			effectColumn.AddAttribute(tog, "active", ColumnShow);
+			effectColumn.AddAttribute(tog, "activatable", ColumnTogglable);
 
 			var cellRendererText = new CellRendererText();
 			cellRendererText.Editable = true;
@@ -126,7 +129,7 @@ namespace MG.ParticleEditorWindow
 				});
 		}
 
-		void OnToggled(object o, ToggledArgs args)
+		private void OnToggled(object o, ToggledArgs args)
 		{
 			Gtk.TreeIter iter;
  			if (storage.GetIterFromString (out iter, args.Path)) {
@@ -135,6 +138,67 @@ namespace MG.ParticleEditorWindow
 				var id = (int)storage.GetValue(iter, ColumnId);
 				ItemInvisible.Invoke(id, val);
 			}
+		}
+
+		public void ShowAll(bool invokeAction)
+		{
+			storage.Foreach(
+				delegate(TreeModel model, TreePath path, TreeIter treeIter)
+				{
+					bool val = (bool)storage.GetValue(treeIter, ColumnShow);
+					if (!val)
+					{
+						model.SetValue(treeIter, ColumnShow, true);
+						if (invokeAction)
+						{
+							var id = (int)storage.GetValue(treeIter, ColumnId);
+							ItemInvisible.Invoke(id, false);
+						}
+					}
+					return false;
+				});
+		}
+
+		public void SetVisibilityRecursive(int id, bool visible)
+		{
+			storage.Foreach(
+				delegate(TreeModel model, TreePath path, TreeIter treeIter)
+				{
+					if ((int)storage.GetValue(treeIter, ColumnId) == id)
+					{
+						if ((bool)storage.GetValue(treeIter, ColumnTogglable) == true)
+						{
+							model.SetValue(treeIter, ColumnShow, visible);
+							ItemInvisible.Invoke(id, !visible);
+						}
+						if (storage.IterHasChild(treeIter))
+						{
+							int count = storage.IterNChildren(treeIter);
+							for (int i = 0; i < count; ++i)
+							{
+								TreeIter childIter;
+								if (storage.IterNthChild(out childIter, treeIter, i) == true)
+								{
+									int childId = (int)storage.GetValue(childIter, ColumnId);
+									if (storage.IterHasChild(childIter))
+									{
+										SetVisibilityRecursive(childId, visible);
+									}
+									else
+									{
+										if ((bool)storage.GetValue(childIter, ColumnTogglable) == true)
+										{
+											model.SetValue(childIter, ColumnShow, visible);
+											ItemInvisible.Invoke(childId, !visible);
+										}
+									}
+								}
+							}
+						}
+						return true;
+					}
+					return false;
+				});
 		}
 
 		public List<ItemIndex> GetItemIndices()
@@ -146,6 +210,7 @@ namespace MG.ParticleEditorWindow
 				{
 					var id = (int)model.GetValue(treeIter, ColumnId);
 					var name = (string)model.GetValue(treeIter, ColumnName);
+					var togglable = (bool)model.GetValue(treeIter, ColumnTogglable);
 					int parentId = 0;
 
 					TreeIter parentIter;
@@ -155,7 +220,7 @@ namespace MG.ParticleEditorWindow
 					}
 					
 					var childList = GetParentList(parentId, indices);
-					childList.Add(new ItemIndex { Id = id, Name = name });
+					childList.Add(new ItemIndex { Id = id, Name = name, IsGroup = !togglable });
 					return false;
 				});
 
@@ -239,11 +304,11 @@ namespace MG.ParticleEditorWindow
 				TreeIter iter;
 				if (parent.Equals(TreeIter.Zero))
 				{
-					iter = storage.AppendValues(v.Id, v.Name, !invisibleIds.Contains(v.Id));
+					iter = storage.AppendValues(v.Id, v.Name, !invisibleIds.Contains(v.Id), !v.IsGroup);
 				}
 				else
 				{
-					iter = storage.AppendValues(parent, v.Id, v.Name, !invisibleIds.Contains(v.Id));
+					iter = storage.AppendValues(parent, v.Id, v.Name, !invisibleIds.Contains(v.Id), !v.IsGroup);
 				}
 
 				SetValues(iter, v.Children, invisibleIds);

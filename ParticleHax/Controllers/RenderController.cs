@@ -32,7 +32,10 @@ namespace MG.ParticleHax.Controllers
 		private AssetHandler assetHandler;
 		private bool loaded;
 		private Vector2? particlePosition;
+		private float? particleRotation;
+		private bool adjustRotation = false;
 		private ParticleView lastViewMode = ParticleView.FullTree;
+		private float length = 15.0f;
 		
 		public bool Loaded { get { return loaded; } }
 		
@@ -55,6 +58,8 @@ namespace MG.ParticleHax.Controllers
 			renderView.Load += Load;
 			renderView.Draw += Draw;
 			renderView.LeftMousePress += OnPress;
+			renderView.LeftMouseDown += OnDown;
+			renderView.LeftMouseUp += OnUp;
 		}
 		
 		private void Load()
@@ -136,6 +141,7 @@ namespace MG.ParticleHax.Controllers
 					if (model.ParticleEffect != null && definition != model.ParticleEffect.Definition)
 					{
 						particlePosition = null;
+						particleRotation = null;
 					}
 
 					//Log.Info("Creating particle system from definition: " + definition.Name);
@@ -210,6 +216,23 @@ namespace MG.ParticleHax.Controllers
 			primitiveBatch.End();
 		}
 
+		private void DrawGrid(RenderContext renderContext, Color color, int size)
+		{
+			var area = renderContext.ActiveScreen.NormalizedScreenArea;
+			var primitiveBatch = renderContext.PrimitiveBatch;
+
+			primitiveBatch.Begin();
+			for (int x = 0; x < area.Width / size; x++)
+			{
+				for (int y = 0; y < area.Height / size; y++)
+				{
+					primitiveBatch.Draw(new RectangleF(area.X + x * size, area.Y + y * size - 1, size + 1, size + 1), color);
+				}
+			}
+
+			primitiveBatch.End();
+		}
+
 		private void Draw(RenderContext renderContext)
 		{
 			var clearColor = GetBackgroundColor();
@@ -222,6 +245,15 @@ namespace MG.ParticleHax.Controllers
 				DrawCheckboard(renderContext, clearColor);
 			}
 
+			if (Settings.Get<bool>("ShowGrid"))
+			{
+				int gridSize = Settings.Get<int>("GridSize");
+				Color gridColor = clearColor;
+				gridColor.R = gridColor.G = gridColor.B = gridColor.R > (byte)60 || gridColor.A < (byte)128 ? (byte)0 : (byte)128;
+				gridColor.A = 255;
+				DrawGrid(renderContext, gridColor, gridSize);
+			}
+
 			var particleEffect = model.ParticleEffect;
 			if (particleEffect != null)
 			{
@@ -232,12 +264,16 @@ namespace MG.ParticleHax.Controllers
 			if (Settings.Get<bool>("Crosshair.Enable") && (particlePosition != null || particleEffect != null))
 			{
 				var center = particlePosition ?? particleEffect.Position;
-				var length = 15.0f;
 				var color = Settings.Get<Color>("Crosshair.Color");
+				var rotation = particleRotation ?? (particleEffect != null ? particleEffect.Rotation : 0.0f);
+				var upVector = new Vector2(0.0f, length);
+				var rightVector = new Vector2(length, 0.0f);
+				upVector = upVector.Rotated(rotation);
+				rightVector = rightVector.Rotated(rotation);
 
 				renderContext.PrimitiveBatch.Begin(Matrix.Identity, BlendMode.BlendmodeNonPremultiplied);
-				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(length, 0), center + new Vector2(length, 0)), color);
-				renderContext.PrimitiveBatch.Draw(new Line(center - new Vector2(0, length), center + new Vector2(0, length)), color);
+				renderContext.PrimitiveBatch.Draw(new Line(center - rightVector, center + rightVector), color);
+				renderContext.PrimitiveBatch.Draw(new Line(center - upVector * 2.0f, center + upVector), color);
 				renderContext.PrimitiveBatch.End();
 			}
 		}
@@ -275,11 +311,39 @@ namespace MG.ParticleHax.Controllers
 			if (particleSystem == null) return;
 			
 			particleSystem.Position = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+			particleSystem.Rotation = particleRotation ?? 0.0f;
 		}
 
 		private void OnPress(Vector2 pos)
 		{
-			particlePosition = pos;
+			if (adjustRotation)
+			{
+				Vector2 center = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+				Vector2 diff = pos - center;
+				particleRotation = diff.Angle() + MathTools.PiOver2;
+			}
+			else
+			{
+				particlePosition = pos;
+			}
+		}
+
+		private void OnDown(Vector2 pos)
+		{
+			Vector2 center = new Vector2(particlePosition ?? Screen.PrimaryScreen.NormalizedScreenArea.Center);
+			var rotation = particleRotation ?? 0.0f;
+			var upVector = new Vector2(0.0f, length);
+			upVector = upVector.Rotated(rotation);
+			center -= upVector * 1.2f;
+			if (Vector2.DistanceSquared(pos, center) < length * length)
+			{
+				adjustRotation = true;
+			}
+		}
+
+		private void OnUp(Vector2 pos)
+		{
+			adjustRotation = false;
 		}
 
 		//private void ResetChildPosition(ParticleSystem parent)
