@@ -125,7 +125,7 @@ namespace MG.Framework.Particle
 					int frame = -1;
 					if (maxCells > 1)
 					{
-						float timelineFrame = particleEffect.ParamTextureFrameTimeline.Get(0, a);
+						float timelineFrame = particleEffect.ParamTextureFrameTimeline.Get(emitterLifeFraction, particleLifeFraction);
 						if (timelineFrame >= 1.0f)
 						{
 							// 1.0, 2.0, 3.0, etc should not be interpreted as frame 0.
