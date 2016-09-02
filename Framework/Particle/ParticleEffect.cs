@@ -322,7 +322,7 @@ namespace MG.Framework.Particle
 					float segmentStart = -ParamSegmentRange + anglePerSegment / 2.0f;
 					for (int i = 0; i < ParamSegmentCount; ++i)
 					{
-						SegmentTransforms.Add(Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f + ParamSegmentCenter + segmentStart + i * anglePerSegment)));
+						SegmentTransforms.Add(Matrix.CreateRotationZ(MathTools.ToRadians(ParamSegmentCenter + segmentStart + i * anglePerSegment)));
 					}
 				}
 				else if (ParamMirror)

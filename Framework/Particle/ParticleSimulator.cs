@@ -315,6 +315,10 @@ namespace MG.Framework.Particle
 			particleEffect.ParticleSegmentIndex[index] = segmentIndex;
 			particleEffect.ParticleStartFrame[index] = MathTools.Clamp(Math.Abs(particleEffect.ParamTextureFrameStart.Get(e, 0)), 0.0f, 1.0f - MathTools.Epsilon); // 1.0 should be interpreted as last frame.
 			Vector2 posOffset = new Vector2(particleEffect.ParamEmitterOffsetX.Get(e, 0), particleEffect.ParamEmitterOffsetY.Get(e, 0));
+			if (!particleEffect.ParamParticleRelativeToParent)
+			{
+				posOffset = posOffset.Rotated(particleEffect.Rotation);
+			}
 			float initialRotation = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0)) + rotation;
 			float initialScale = particleEffect.ParamEmitterInitialScale.Get(e, 0);
 			particleEffect.ParticleOrigin[index] = position;
