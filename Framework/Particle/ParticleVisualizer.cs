@@ -107,7 +107,7 @@ namespace MG.Framework.Particle
 
 					if (particleEffect.ParamParticleRelativeToParent)
 					{
-						Matrix parentTransform = Matrix.CreateRotationZ(ParticleHelpers.ToRadians(90.0f) + particleEffect.Rotation);
+						Matrix parentTransform = Matrix.CreateRotationZ(particleEffect.Rotation);
 						particleTransform = particleTransform * parentTransform;
 						particleTransform.TranslationXY += particleEffect.Position;
 					}
