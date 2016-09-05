@@ -87,6 +87,7 @@ namespace MonoDevelop.Components.PropertyGrid
 			public int AnimationHeight;
 			public int ChildrenHeight;
 			public uint AnimationHandle;
+			public bool IsDefaultValue;
 		}
 
 		public PropertyGridTable (EditorManager editorManager, PropertyGrid parentGrid)
@@ -292,6 +293,7 @@ namespace MonoDevelop.Components.PropertyGrid
 						row.Expanded = true;
 						row.Label = pd.Category;
 						row.ChildRows = new List<TableRow> ();
+						row.IsDefaultValue = false;
 						rows.Add (row);
 						lastCat = row;
 						rowList = row.ChildRows;
@@ -307,6 +309,7 @@ namespace MonoDevelop.Components.PropertyGrid
 		{
 			foreach (PropertyDescriptor pd in properties)
 				UpdateProperty (pd, instance, rows);
+			UpdateDefaultValueProperty(rows);
 			QueueDraw ();
 			QueueResize ();
 		}
@@ -325,7 +328,42 @@ namespace MonoDevelop.Components.PropertyGrid
 			}
 			return false;
 		}
-	
+
+		void UpdateDefaultValueProperty(IEnumerable<TableRow> rowList)
+		{
+			foreach (var row in rowList)
+			{
+				if (row.Property != null)
+				{
+					// Hijacking Equals(null) to return if the value is default. Interface don't not have anything more reasonable to use and Equals is not used for anything else.
+					row.IsDefaultValue = row.Property.Equals(null);
+				}
+				if (row.ChildRows != null)
+				{
+					UpdateDefaultValueProperty(row.ChildRows);
+				}
+			}
+		}
+
+		bool HasDefaultValue(IEnumerable<TableRow> rowList)
+		{
+			if (rowList != null)
+			{
+				foreach (var row in rowList)
+				{
+					if (!row.IsDefaultValue)
+					{
+						return false;
+					}
+					if (row.ChildRows != null)
+					{
+						return HasDefaultValue(row.ChildRows);
+					}
+				}
+			}
+			return true;
+		}
+
 		void AppendProperty (PropertyDescriptor prop, object instance)
 		{
 			AppendProperty ("", rows, prop, new InstanceData (instance));
@@ -340,7 +378,8 @@ namespace MonoDevelop.Components.PropertyGrid
 				Property = prop,
 				Label = prop.DisplayName,
 				FullName = fullName,
-				Instace = instance,				
+				Instace = instance,	
+				IsDefaultValue = prop.Equals(null),
 			};
 			rowList.Add (row);
 
@@ -495,9 +534,21 @@ namespace MonoDevelop.Components.PropertyGrid
 			Pango.Layout layout = new Pango.Layout (PangoContext);
 			TableRow lastCategory = null;
 
+			Pango.FontDescription defaultFont = new Pango.FontDescription();
+			Pango.FontDescription changedFont = defaultFont.Copy();
+			defaultFont.Weight = Pango.Weight.Bold;
+
 			foreach (var r in rowList) {
 				int w,h;
 				layout.SetText (r.Label);
+				if (r.IsDefaultValue && (r.Expanded || HasDefaultValue(r.ChildRows)))
+				{
+					layout.FontDescription = changedFont;
+				}
+				else
+				{
+					layout.FontDescription = defaultFont;
+				}
 				layout.GetPixelSize (out w, out h);
 				int indent = 0;
 
