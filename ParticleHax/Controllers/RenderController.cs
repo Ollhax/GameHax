@@ -160,6 +160,7 @@ namespace MG.ParticleHax.Controllers
 
 		public void Restart()
 		{
+			particleRotation = null;
 			if (model.ParticleEffect != null)
 			{
 				model.ParticleEffectPool.Destroy(model.ParticleEffect);

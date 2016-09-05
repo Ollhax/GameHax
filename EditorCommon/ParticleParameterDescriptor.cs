@@ -29,6 +29,18 @@ namespace MG.EditorCommon
 		public override bool IsReadOnly { get { return false; } }
 		public override void ResetValue(object component) { }
 		public override bool ShouldSerializeValue(object component) { return false; }
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				// Hijacking Equals(null) to return if the value is default in lack of more appropriate override.
+				return DefinitionParameter.Value.Equals(DeclarationParameter.DefaultValue);
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		public override TypeConverter Converter
 		{
