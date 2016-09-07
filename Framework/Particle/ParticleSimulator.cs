@@ -185,7 +185,7 @@ namespace MG.Framework.Particle
 			particleEffect.EmitterSpawnAccumulator += time.ElapsedSeconds;
 			particleEffect.EmitterAge += time.ElapsedSeconds;
 
-			if (particleEffect.EmitterAge > particleEffect.ParamEmitterLife && particleEffect.ParamEmitterLoopMode == ParticleEffect.LoopMode.Loop)
+			if (particleEffect.EmitterAge >= particleEffect.ParamEmitterLife && particleEffect.ParamEmitterLoopMode == ParticleEffect.LoopMode.Loop)
 			{
 				particleEffect.EmitterAge %= particleEffect.ParamEmitterLife;
 				particleEffect.RestartEmitter();
