@@ -182,6 +182,7 @@ namespace MG.Framework.Particle
 			get
 			{
 				return
+					ParamQualityLevel <= ParticleDefinition.GlobalQualityLevel &&
 					ParamEmitterLife > 0 &&
 					(ParamEmitterCount.IsZero || EmitterCount < EmitterCountMax) &&
 					(EmitterAge < ParamEmitterLife || ParamEmitterLoopMode == LoopMode.Infinite);
