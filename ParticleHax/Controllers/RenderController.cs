@@ -27,6 +27,8 @@ namespace MG.ParticleHax.Controllers
 			High
 		}
 
+		private const string backgroundImageFilters = "Image Files (*.png)|*.png|All files (*.*)|*.*";
+
 		private MainController controller;
 		private Model model;
 		private AssetHandler assetHandler;
@@ -36,6 +38,8 @@ namespace MG.ParticleHax.Controllers
 		private bool adjustRotation = false;
 		private ParticleView lastViewMode = ParticleView.FullTree;
 		private float length = 15.0f;
+
+		private Texture2D backgroundImageTexture;
 		
 		public bool Loaded { get { return loaded; } }
 		
@@ -102,6 +106,22 @@ namespace MG.ParticleHax.Controllers
 			if (particleEffect == null || lastViewMode != ViewMode)
 			{
 				OnItemSelected(model.CurrentDefinition);
+			}
+		}
+
+		public void OnChangeBackgroundImage()
+		{
+			var result = controller.ShowOpenDialog("Open Background Image...", backgroundImageFilters, "");
+
+			if (backgroundImageTexture != null)
+			{
+				backgroundImageTexture.Dispose();
+				backgroundImageTexture = null;
+			}
+
+			if (result.Accepted)
+			{
+				backgroundImageTexture = new Texture2D(result.SelectedPath);
 			}
 		}
 
@@ -244,6 +264,13 @@ namespace MG.ParticleHax.Controllers
 			if (clearColor.A != 255)
 			{
 				DrawCheckboard(renderContext, clearColor);
+			}
+
+			if (backgroundImageTexture != null)
+			{
+				renderContext.QuadBatch.Begin(Matrix.Identity);
+				renderContext.QuadBatch.Draw(backgroundImageTexture, (new Vector2(renderContext.ActiveScreen.ScreenSize) - backgroundImageTexture.Size) * 0.5f);
+				renderContext.QuadBatch.End();
 			}
 
 			if (Settings.Get<bool>("ShowGrid"))
