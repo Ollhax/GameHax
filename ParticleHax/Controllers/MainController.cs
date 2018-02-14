@@ -127,6 +127,7 @@ namespace MG.ParticleHax.Controllers
 			window.EditCut += () => clipboardController.Cut(model.CurrentDefinitionId);
 			window.EditCopy += () => clipboardController.Copy(model.CurrentDefinitionId);
 			window.EditPaste += () => clipboardController.Paste(model.CurrentDefinitionId);
+			window.ChangeBackgroundImage += renderController.OnChangeBackgroundImage;
 			treeController.ItemSelected += renderController.OnItemSelected;
 			treeController.ItemSelected += parameterController.OnChangeDefinition;
 			treeController.ItemSelected += OnItemSelected;

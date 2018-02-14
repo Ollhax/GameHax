@@ -75,6 +75,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action ToggleAutoReplay = delegate { };
 		public event System.Action SetGridSize = delegate { };
 		public event System.Action BackgroundColorChanged = delegate { };
+		public event System.Action ChangeBackgroundImage = delegate { };
 		public event System.Action ViewModeChanged = delegate { };
 		public event System.Action QualityLevelChanged = delegate { };
 		
@@ -592,6 +593,11 @@ namespace MG.ParticleEditorWindow
 			}
 
 			viewShowColor[0].Active = true;
+
+			// Background image
+			var backgroundImageMenuItem = new MenuItem("Background Image...");
+			backgroundImageMenuItem.Activated += (sender, args) => ChangeBackgroundImage.Invoke();
+			viewMenu.Append(backgroundImageMenuItem);
 
 			// Quality level submenu
 			var qualityLevelMenu = new Menu();
