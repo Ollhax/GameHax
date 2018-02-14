@@ -37,6 +37,7 @@ namespace MG.ParticleHax.Controllers
 
 			Settings.Set("ViewMode", (int)(RenderController.ParticleView.FullTree));
 			Settings.Set("QualityLevel", (int)(RenderController.ParticleQualityLevel.High));
+			Settings.Set("AutoReplay", true);
 			
 			Settings.Load(); // Override defaults
 			Settings.Save(); // Save any missing settings
@@ -52,6 +53,9 @@ namespace MG.ParticleHax.Controllers
 
 			window.ViewMode = Settings.Get<int>("ViewMode");
 			window.ViewModeChanged += OnViewModeChanged;
+
+			window.ViewAutoReplay = Settings.Get<bool>("AutoReplay");
+			window.ToggleAutoReplay += OnToggleAutoReplay;
 
 			window.QualityLevel = Settings.Get<int>("QualityLevel");
 			window.QualityLevelChanged += OnQualityLevelChanged;
@@ -93,6 +97,12 @@ namespace MG.ParticleHax.Controllers
 		private void OnQualityLevelChanged()
 		{
 			Settings.Set("QualityLevel", window.QualityLevel);
+			Settings.Save();
+		}
+
+		private void OnToggleAutoReplay()
+		{
+			Settings.Set("AutoReplay", window.ViewAutoReplay);
 			Settings.Save();
 		}
 

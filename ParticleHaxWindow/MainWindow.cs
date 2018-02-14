@@ -72,6 +72,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
 		public event System.Action ToggleShowGrid = delegate { };
+		public event System.Action ToggleAutoReplay = delegate { };
 		public event System.Action SetGridSize = delegate { };
 		public event System.Action BackgroundColorChanged = delegate { };
 		public event System.Action ViewModeChanged = delegate { };
@@ -91,6 +92,7 @@ namespace MG.ParticleEditorWindow
 		
 		public bool ViewShowOrigin { get { return viewShowOrigin.Active; } set { viewShowOrigin.Active = value; } }
 		public bool ViewShowGrid { get { return viewShowGrid.Active; } set { viewShowGrid.Active = value; } }
+		public bool ViewAutoReplay { get { return viewAutoReplay.Active; } set { viewAutoReplay.Active = value; } }
 
 		public int ViewGridSize
 		{
@@ -416,6 +418,7 @@ namespace MG.ParticleEditorWindow
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
 		private CheckMenuItem viewShowGrid;
+		private CheckMenuItem viewAutoReplay;
 		private Dictionary<int, RadioMenuItem> viewGridSizeMap = new Dictionary<int, RadioMenuItem>();
 		private List<ColorMenuItem> viewShowColor = new List<ColorMenuItem>();
 
@@ -518,6 +521,11 @@ namespace MG.ParticleEditorWindow
 			viewShowGrid.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.g, ModifierType.ControlMask, AccelFlags.Visible));
 			viewShowGrid.Activated += (sender, args) => ToggleShowGrid.Invoke();
 			viewMenu.Append(viewShowGrid);
+
+			viewAutoReplay = new CheckMenuItem("Auto Replay Effect");
+			viewAutoReplay.AddAccelerator("activate", accelerators, new AccelKey(Gdk.Key.r, ModifierType.ControlMask, AccelFlags.Visible));
+			viewAutoReplay.Activated += (sender, args) => ToggleAutoReplay.Invoke();
+			viewMenu.Append(viewAutoReplay);
 
 			// Grid size submenu
 			var setGridMenu = new Menu();

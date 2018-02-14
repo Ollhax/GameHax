@@ -99,7 +99,7 @@ namespace MG.ParticleHax.Controllers
 				}
 			}
 
-			if (particleEffect == null || lastViewMode != ViewMode)
+			if (particleEffect == null && Settings.Get<bool>("AutoReplay") || lastViewMode != ViewMode)
 			{
 				OnItemSelected(model.CurrentDefinition);
 			}

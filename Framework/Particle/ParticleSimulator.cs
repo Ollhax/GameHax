@@ -13,7 +13,15 @@ namespace MG.Framework.Particle
 
 		private static void UpdateInternal(ParticleEffect particleEffect, Time time)
 		{
-			if (time.ElapsedSeconds <= 0 || particleEffect.ParamQualityLevel > ParticleDefinition.GlobalQualityLevel)
+			if (particleEffect.ParamQualityLevel > ParticleDefinition.GlobalQualityLevel)
+			{
+				if (particleEffect.ParticleData.ActiveParticles > 0)
+				{
+					particleEffect.ParticleData.ActiveParticles = 0;
+				}
+				return;
+			}
+			if (time.ElapsedSeconds <= 0)
 				return;
 
 			particleEffect.TimeSinceStart += time.ElapsedSeconds;
@@ -185,7 +193,7 @@ namespace MG.Framework.Particle
 			particleEffect.EmitterSpawnAccumulator += time.ElapsedSeconds;
 			particleEffect.EmitterAge += time.ElapsedSeconds;
 
-			if (particleEffect.EmitterAge > particleEffect.ParamEmitterLife && particleEffect.ParamEmitterLoopMode == ParticleEffect.LoopMode.Loop)
+			if (particleEffect.EmitterAge >= particleEffect.ParamEmitterLife && particleEffect.ParamEmitterLoopMode == ParticleEffect.LoopMode.Loop)
 			{
 				particleEffect.EmitterAge %= particleEffect.ParamEmitterLife;
 				particleEffect.RestartEmitter();
@@ -315,11 +323,12 @@ namespace MG.Framework.Particle
 			particleEffect.ParticleSegmentIndex[index] = segmentIndex;
 			particleEffect.ParticleStartFrame[index] = MathTools.Clamp(Math.Abs(particleEffect.ParamTextureFrameStart.Get(e, 0)), 0.0f, 1.0f - MathTools.Epsilon); // 1.0 should be interpreted as last frame.
 			Vector2 posOffset = new Vector2(particleEffect.ParamEmitterOffsetX.Get(e, 0), particleEffect.ParamEmitterOffsetY.Get(e, 0));
-			if (!particleEffect.ParamParticleRelativeToParent)
+			float initialRotation = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0));
+			if (!particleEffect.ParamParticleRelativeToParent && rotation != 0)
 			{
-				posOffset = posOffset.Rotated(particleEffect.Rotation);
+				posOffset = posOffset.Rotated(rotation);
+				initialRotation += rotation;
 			}
-			float initialRotation = MathTools.ToRadians(particleEffect.ParamEmitterInitialRotation.Get(e, 0)) + rotation;
 			float initialScale = particleEffect.ParamEmitterInitialScale.Get(e, 0);
 			particleEffect.ParticleOrigin[index] = position;
 			particleEffect.ParticlePosition[index] = posOffset;
