@@ -12,6 +12,7 @@ namespace MG.ParticleEditorWindow
 	{
 		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
+		private Gtk.TreeModelSort sortedStorage;
 		private Gtk.TreeView treeView;
 		private Gtk.TreeViewColumn effectColumn;
 		private const int ColumnId = 0;
@@ -72,13 +73,13 @@ namespace MG.ParticleEditorWindow
 			treeView.EnableSearch = true;
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
-			treeView.HeadersVisible = false;
 			
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 
 			effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
+			effectColumn.SortColumnId = 0;
 			
 			treeView.AppendColumn(effectColumn);
 			treeView.AppendColumn(new TreeViewColumn()); // Add a dummy column. This steals the horizontal space right of the label, allowing us to select entries properly.
@@ -86,8 +87,15 @@ namespace MG.ParticleEditorWindow
 			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool), typeof(bool));
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
+
+			sortedStorage = new Gtk.TreeModelSort(storage);
+			sortedStorage.SetSortFunc(0, delegate (TreeModel model, TreeIter a, TreeIter b) {
+				string s1 = (string)model.GetValue(a, 1);
+				string s2 = (string)model.GetValue(b, 1);
+				return String.Compare(s1, s2);
+			});
 			
-			treeView.Model = storage;
+			treeView.Model = sortedStorage;
 			treeView.Selection.Changed += OnSelectionChanged;
 			//treeView.CursorChanged += (sender, args) => ItemSelected(treeView.Selection.);
 			//treeView.CursorChanged += OnCursorChanged;
@@ -258,7 +266,7 @@ namespace MG.ParticleEditorWindow
 			treeView.MapExpandedRows(delegate(Gtk.TreeView view, TreePath path)
 				{
 					TreeIter iter;
-					if (treeView.Model.GetIter(out iter, path))
+					if (storage.GetIter(out iter, path))
 					{
 						expandedStatus.Add((int)storage.GetValue(iter, ColumnId));
 					}
