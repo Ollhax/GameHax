@@ -33,6 +33,7 @@ namespace MG.ParticleHax.Controllers
 			treeView.ItemDeleted += RemoveParticleSystem;
 			treeView.CreateContextMenu += OnCreateContextMenu;
 			treeView.ItemInvisible += OnItemInvisible;
+			treeView.SortEffects += OnSortEffects;
 			model.UndoHandler.UndoEvent += OnUndoRedoEvent;
 			model.UndoHandler.RedoEvent += OnUndoRedoEvent;
 		}
@@ -203,6 +204,12 @@ namespace MG.ParticleHax.Controllers
 		private void OnSetVisibilityRecursive(int id, bool visible)
 		{
 			treeView.SetVisibilityRecursive(id, visible);
+		}
+
+		private void OnSortEffects()
+		{
+			var sortAction = new SortAction(controller, model);
+			model.UndoHandler.ExecuteAction(sortAction);
 		}
 
 		private bool FindItemLocation(List<TreeView.ItemIndex> indices, int itemId, int parentId, out int newIndex, out int newParent)

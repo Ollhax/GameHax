@@ -10,11 +10,12 @@ namespace MG.ParticleEditorWindow
 {
 	public class TreeView
 	{
+		private Gtk.VBox box;
 		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
-		private Gtk.TreeModelSort sortedStorage;
 		private Gtk.TreeView treeView;
 		private Gtk.TreeViewColumn effectColumn;
+		private Gtk.Button sortButton;
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
 		private const int ColumnShow = 2;
@@ -25,7 +26,7 @@ namespace MG.ParticleEditorWindow
 		private HashSet<int> expandedStatus = new HashSet<int>();
 		private int currentSelection;
 
-		internal Widget Widget { get { return scrolledWindow; } }
+		internal Widget Widget { get { return box; } }
 		
 		public class ContextMenu
 		{
@@ -61,25 +62,32 @@ namespace MG.ParticleEditorWindow
 		public event Action<int, bool> ItemInvisible = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
+		public event Action SortEffects = delegate { };
 		
 		public TreeView()
 		{
+			box = new VBox();
 			treeView = new Gtk.TreeView();
 			scrolledWindow = new ScrolledWindow();
-			
+			sortButton = new Gtk.Button("Sort by name");
+
+			box.PackStart(sortButton, false, false, 0);
+			sortButton.Clicked += OnSortEffects;
+
+			box.PackStart(scrolledWindow, true, true, 0);
 			scrolledWindow.Add(treeView);
 			treeView.CanFocus = true;
 			treeView.Name = "treeview";
 			treeView.EnableSearch = true;
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
+			treeView.HeadersVisible = false;
 			
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 
 			effectColumn = new Gtk.TreeViewColumn();
 			effectColumn.Title = "Effects";
-			effectColumn.SortColumnId = 0;
 			
 			treeView.AppendColumn(effectColumn);
 			treeView.AppendColumn(new TreeViewColumn()); // Add a dummy column. This steals the horizontal space right of the label, allowing us to select entries properly.
@@ -88,14 +96,8 @@ namespace MG.ParticleEditorWindow
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
 
-			sortedStorage = new Gtk.TreeModelSort(storage);
-			sortedStorage.SetSortFunc(0, delegate (TreeModel model, TreeIter a, TreeIter b) {
-				string s1 = (string)model.GetValue(a, 1);
-				string s2 = (string)model.GetValue(b, 1);
-				return String.Compare(s1, s2);
-			});
-			
-			treeView.Model = sortedStorage;
+
+			treeView.Model = storage;
 			treeView.Selection.Changed += OnSelectionChanged;
 			//treeView.CursorChanged += (sender, args) => ItemSelected(treeView.Selection.);
 			//treeView.CursorChanged += OnCursorChanged;
@@ -361,6 +363,11 @@ namespace MG.ParticleEditorWindow
 		//    var value = model.GetValue(iter, 0);
 		//    Console.WriteLine(value);
 		//}
+
+		private void OnSortEffects(object sender, EventArgs eventArgs)
+		{
+			SortEffects.Invoke();
+		}
 		
 		[GLib.ConnectBefore]
 		private void OnButtonPress(object o, ButtonPressEventArgs args)

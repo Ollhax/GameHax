@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MG.Framework.Particle
 {
@@ -121,6 +122,16 @@ namespace MG.Framework.Particle
 		public bool Remove(ParticleDefinition item)
 		{
 			return children.Remove(item);
+		}
+
+		public void SortByName()
+		{
+			children.Sort((a, b) => String.Compare(a.Name, b.Name));
+		}
+
+		public void Sort(Comparer<ParticleDefinition> comparer)
+		{
+			children.Sort(comparer);
 		}
 
 		public IEnumerator<ParticleDefinition> GetEnumerator()
