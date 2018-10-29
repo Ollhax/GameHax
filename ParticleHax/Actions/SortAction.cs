@@ -35,9 +35,22 @@ namespace MG.ParticleHax.Actions
 			//Log.Info("Sort by name");
 			var collection = this.model.DefinitionTable.Definitions;
 			collection.SortByName();
-			controller.UpdateTree = true;
-			model.Modified = true;
-			return true;
+
+			// Check that the order actually changed by comparing to saved id list.
+			var index = 0;
+			foreach (var def in collection)
+			{
+				if (def.Id != oldOrder[index])
+				{
+					// Found change.
+					controller.UpdateTree = true;
+					model.Modified = true;
+					return true;
+				}
+				index++;
+			}
+
+			return false;
 		}
 
 		protected override void CallUndo()

@@ -10,12 +10,10 @@ namespace MG.ParticleEditorWindow
 {
 	public class TreeView
 	{
-		private Gtk.VBox box;
 		private ScrolledWindow scrolledWindow;
 		private Gtk.TreeStore storage;
 		private Gtk.TreeView treeView;
 		private Gtk.TreeViewColumn effectColumn;
-		private Gtk.Button sortButton;
 		private const int ColumnId = 0;
 		private const int ColumnName = 1;
 		private const int ColumnShow = 2;
@@ -26,7 +24,7 @@ namespace MG.ParticleEditorWindow
 		private HashSet<int> expandedStatus = new HashSet<int>();
 		private int currentSelection;
 
-		internal Widget Widget { get { return box; } }
+		internal Widget Widget { get { return scrolledWindow; } }
 		
 		public class ContextMenu
 		{
@@ -62,19 +60,11 @@ namespace MG.ParticleEditorWindow
 		public event Action<int, bool> ItemInvisible = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
-		public event Action SortEffects = delegate { };
 		
 		public TreeView()
 		{
-			box = new VBox();
 			treeView = new Gtk.TreeView();
 			scrolledWindow = new ScrolledWindow();
-			sortButton = new Gtk.Button("Sort by name");
-
-			box.PackStart(sortButton, false, false, 0);
-			sortButton.Clicked += OnSortEffects;
-
-			box.PackStart(scrolledWindow, true, true, 0);
 			scrolledWindow.Add(treeView);
 			treeView.CanFocus = true;
 			treeView.Name = "treeview";
@@ -364,11 +354,6 @@ namespace MG.ParticleEditorWindow
 		//    Console.WriteLine(value);
 		//}
 
-		private void OnSortEffects(object sender, EventArgs eventArgs)
-		{
-			SortEffects.Invoke();
-		}
-		
 		[GLib.ConnectBefore]
 		private void OnButtonPress(object o, ButtonPressEventArgs args)
 		{

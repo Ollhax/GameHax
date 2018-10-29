@@ -68,6 +68,7 @@ namespace MG.ParticleEditorWindow
 		public event System.Action EditCut = delegate { };
 		public event System.Action EditCopy = delegate { };
 		public event System.Action EditPaste = delegate { };
+		public event System.Action EditSort = delegate { };
 		public event System.Action<ClosingEventArgs> Closing = delegate { };
 		public event System.Action Closed = delegate { };
 		public event System.Action ToggleShowOrigin = delegate { };
@@ -415,6 +416,7 @@ namespace MG.ParticleEditorWindow
 		private ImageMenuItem editCut;
 		private ImageMenuItem editCopy;
 		private ImageMenuItem editPaste;
+		private ImageMenuItem editSort;
 
 		private MenuItem viewMenuItem;
 		private CheckMenuItem viewShowOrigin;
@@ -506,6 +508,13 @@ namespace MG.ParticleEditorWindow
 			editPaste = new ImageMenuItem(Stock.Paste, accelerators);
 			editPaste.Activated += (sender, args) => EditPaste.Invoke();
 			editMenu.Append(editPaste);
+
+			editMenu.Append(new SeparatorMenuItem());
+
+			editSort = new ImageMenuItem("Sort effects list by name");
+			editSort.Image = new Gtk.Image(Stock.SortAscending, IconSize.Menu);
+			editSort.Activated += (sender, args) => EditSort.Invoke();
+			editMenu.Append(editSort);
 			
 			// View menu
 			viewMenuItem = new MenuItem("_View");
