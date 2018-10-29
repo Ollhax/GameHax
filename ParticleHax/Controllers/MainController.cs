@@ -10,6 +10,7 @@ using MG.Framework.Assets;
 using MG.Framework.Particle;
 using MG.Framework.Utility;
 using MG.ParticleEditorWindow;
+using MG.ParticleHax.Actions;
 
 namespace MG.ParticleHax.Controllers
 {
@@ -127,6 +128,7 @@ namespace MG.ParticleHax.Controllers
 			window.EditCut += () => clipboardController.Cut(model.CurrentDefinitionId);
 			window.EditCopy += () => clipboardController.Copy(model.CurrentDefinitionId);
 			window.EditPaste += () => clipboardController.Paste(model.CurrentDefinitionId);
+			window.EditSort += OnEditSort;
 			window.ChangeBackgroundImage += renderController.OnChangeBackgroundImage;
 			treeController.ItemSelected += renderController.OnItemSelected;
 			treeController.ItemSelected += parameterController.OnChangeDefinition;
@@ -233,6 +235,12 @@ namespace MG.ParticleHax.Controllers
 		private void OnItemSelected(ParticleDefinition particleDefinition)
 		{
 			window.CutCopyEnabled = particleDefinition != null;
+		}
+
+		private void OnEditSort()
+		{
+			var sortAction = new SortAction(this, model);
+			model.UndoHandler.ExecuteAction(sortAction);
 		}
 
 		private void UpdateTitleInternal()

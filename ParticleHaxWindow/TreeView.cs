@@ -53,19 +53,19 @@ namespace MG.ParticleEditorWindow
 			public bool IsGroup;
 			public List<ItemIndex> Children = new List<ItemIndex>();
 		}
-		
+
 		public event Action<int> ItemSelected = delegate { };
 		public event Action<int> ItemMoved = delegate { };
 		public event Action<int> ItemDeleted = delegate { };
 		public event Action<int, bool> ItemInvisible = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
-		
+
 		public TreeView()
 		{
 			treeView = new Gtk.TreeView();
 			scrolledWindow = new ScrolledWindow();
-			
+
 			scrolledWindow.Add(treeView);
 			treeView.CanFocus = true;
 			treeView.Name = "treeview";
@@ -73,7 +73,7 @@ namespace MG.ParticleEditorWindow
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
 			treeView.HeadersVisible = false;
-			
+
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 
@@ -86,7 +86,7 @@ namespace MG.ParticleEditorWindow
 			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool), typeof(bool));
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
-			
+
 			treeView.Model = storage;
 			treeView.Selection.Changed += OnSelectionChanged;
 			//treeView.CursorChanged += (sender, args) => ItemSelected(treeView.Selection.);
@@ -258,7 +258,7 @@ namespace MG.ParticleEditorWindow
 			treeView.MapExpandedRows(delegate(Gtk.TreeView view, TreePath path)
 				{
 					TreeIter iter;
-					if (treeView.Model.GetIter(out iter, path))
+					if (storage.GetIter(out iter, path))
 					{
 						expandedStatus.Add((int)storage.GetValue(iter, ColumnId));
 					}
@@ -353,7 +353,7 @@ namespace MG.ParticleEditorWindow
 		//    var value = model.GetValue(iter, 0);
 		//    Console.WriteLine(value);
 		//}
-		
+
 		[GLib.ConnectBefore]
 		private void OnButtonPress(object o, ButtonPressEventArgs args)
 		{
