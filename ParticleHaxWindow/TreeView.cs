@@ -53,18 +53,19 @@ namespace MG.ParticleEditorWindow
 			public bool IsGroup;
 			public List<ItemIndex> Children = new List<ItemIndex>();
 		}
-		
+
 		public event Action<int> ItemSelected = delegate { };
 		public event Action<int> ItemMoved = delegate { };
 		public event Action<int> ItemDeleted = delegate { };
 		public event Action<int, bool> ItemInvisible = delegate { };
 		public event Func<int, string, bool> ItemRenamed = delegate { return false; };
 		public event Action<ContextMenu> CreateContextMenu = delegate { };
-		
+
 		public TreeView()
 		{
 			treeView = new Gtk.TreeView();
 			scrolledWindow = new ScrolledWindow();
+
 			scrolledWindow.Add(treeView);
 			treeView.CanFocus = true;
 			treeView.Name = "treeview";
@@ -72,7 +73,7 @@ namespace MG.ParticleEditorWindow
 			treeView.SearchColumn = ColumnName;
 			treeView.Reorderable = true;
 			treeView.HeadersVisible = false;
-			
+
 			//treeView.EnableGridLines = TreeViewGridLines.Horizontal;
 			//treeView.EnableTreeLines = true;
 
@@ -85,7 +86,6 @@ namespace MG.ParticleEditorWindow
 			storage = new Gtk.TreeStore(typeof(int), typeof(string), typeof(bool), typeof(bool));
 			storage.RowChanged += OnRowChanged;
 			storage.RowDeleted += OnRowDeleted;
-
 
 			treeView.Model = storage;
 			treeView.Selection.Changed += OnSelectionChanged;
